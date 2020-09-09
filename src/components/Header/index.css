@@ -1,0 +1,27 @@
+.nav-item {
+  font-size: 16px;
+  font-family: Helvetica;
+  line-height: 16px;
+  margin: 5px;
+}
+
+.nav-pills .nav-link.active {
+  border-radius: 4px;
+  background-color: #FF8212;
+}
+
+.navbar-light .navbar-nav .nav-link {
+  color: #666F83;
+}
+
+.navbar-light .navbar-nav .nav-link.active {
+  color: #FFFFFF;
+}
+
+.navbar-light .navbar-nav .nav-link:hover {
+  background-color: #E2E4EA;
+}
+
+.navbar-light .navbar-nav .nav-link.active:hover {
+  background-color: #FF8212;
+}

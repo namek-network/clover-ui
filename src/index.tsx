@@ -1,6 +1,8 @@
 import React, { StrictMode } from 'react'
 import ReactDOM from 'react-dom';
+import ReactGA from 'react-ga';
 import { Provider } from 'react-redux';
+import { isMobile } from 'react-device-detect';
 import styled, { createGlobalStyle } from 'styled-components';
 import { defaultFontSizeParagraph, defaultFontFamilyEn } from './styles';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -13,6 +15,9 @@ import ImgBg from './assets/images/bg.png';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faCog, faCheckSquare, faCoffee } from '@fortawesome/free-solid-svg-icons';
 library.add(faCog, faCheckSquare, faCoffee);
+
+ReactGA.initialize("UA-177617249-1");
+ReactGA.set({customBrowserType: isMobile ? 'mobile' : 'desktop'});
 
 const BithumbGlobalStyle = createGlobalStyle`
   body {

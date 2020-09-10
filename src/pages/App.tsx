@@ -6,7 +6,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 
 import Swap from './Swap';
-import { RedirectPathToSwapOnly, RedirectToSwap } from './Swap/redirects';
+import Pool from './Pool'
 import Lending from './Lending';
 
 const AppWrapper = styled.div`
@@ -20,7 +20,7 @@ const BodyWrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding-top: 120px;
+  padding-top: 60px;
   align-items: center;
 
   flex: 1;
@@ -39,8 +39,8 @@ export default class App extends Component {
             <BodyWrapper>
               <Switch>
                 <Route exact strict path="/swap" component={Swap} />
+                <Route exact strict path="/pool" component={Pool} />
                 <Route exact strict path="/lending" component={Lending} />
-                {/* <Route component={RedirectPathToSwapOnly} /> */}
               </Switch>
             </BodyWrapper>
             <Footer />

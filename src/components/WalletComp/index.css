@@ -1,0 +1,267 @@
+.btn-custom {
+  color: #F99E3C;
+  border: 1px solid #F99E3C;
+  background-color: transparent;
+  border-radius: 4px;
+  margin-right: 6px;
+  outline:none;
+}
+
+.btn-custom:hover  {
+  background-color: rgba(249,158,60,0.5);
+  border-color: rgba(249,158,60,0.1);
+  color: white;
+  outline:none;
+}
+
+.btn-custom:focus  {
+  outline:none;
+}
+
+.content-width {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 470px;
+  color: #777;
+  padding: 16px;
+}
+
+.wallet-dia-close-btn {
+  margin-left: 280px;
+  cursor: pointer;
+}
+
+.dialog-custom {
+  border-radius: 16px !important;
+}
+
+.dialog-item-text-right {
+  flex: 0 0 auto !important;
+  color: #C5CAD5;
+}
+
+.dialog-item-text-right:hover {
+  color: #F99E3C;
+}
+
+.dialog-item-text-right-hover {
+  color: #F99E3C !important;
+}
+
+
+.dialog-item-text-left {
+  font-size: 18px;
+  font-family: Helvetica;
+  color: #111A34;
+}
+
+.list-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.item-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-left: 24px;
+  margin-right: 25px;
+  margin-bottom: 12px;
+  border-radius: 16px;
+  padding-left: 12px;
+  padding-right: 24px;
+  height: 82px;
+  box-shadow: 0px 0px 20px 0px rgba(17, 26, 52, 0.05);
+  cursor: pointer;
+}
+
+.item-container:hover {
+  box-shadow: 0px 0px 20px 0px rgba(17, 26, 52, 0.1);
+  border: 1px solid #FF8212;
+}
+
+.item-container img {
+  width: 50px;
+  margin-right: 8px;
+}
+
+.bottom-text {
+  font-size: 16px;
+  font-family: Helvetica;
+  color: #858B9C;
+  margin-top: 100px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.bottom-text-right {
+  color: #FF8212;
+}
+
+.addr-container {
+  font-size: 14px;
+  color: #FF8212;
+  font-family: PingFangSC-Regular, PingFang SC;
+  cursor: pointer;
+}
+
+.addr-container img {
+  width: 20px;
+  margin-right: 6px;
+  margin-left: 4px;
+}
+
+.asset-content-width {
+  width: 528px;
+}
+
+.asset-account-container {
+  display: flex;
+  flex-direction: column;
+  margin-left: 24px;
+}
+
+.asset-addr-container {
+  display: flex;
+  font-size: 32px;
+  font-family: Roboto-Medium, Roboto;
+  font-weight: 500;
+  color: #111A34;
+  height: 32px;
+  line-height: 32px;
+}
+
+.asset-addr-container img {
+  width: 24px;
+  margin-right: 6px;
+}
+
+.asset-change-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.asset-change-left {
+  margin-top: 5px;
+}
+
+.asset-change-btn {
+  background: #FCF0DC;
+  border-radius: 4px;
+  color: #FF8212;
+  padding: 4px;
+  font-size: 14px;
+  margin-left: 105px;
+  cursor: pointer;
+}
+
+.asset-copy {
+  color: #FF8212;
+  font-size: 14px;
+  font-family: Roboto-Regular, Roboto;
+}
+
+.asset-copy-margin {
+  margin-right: 24px;
+  cursor: pointer;
+}
+
+.asset-copy-right {
+  cursor: pointer;
+}
+
+.asset-token-container {
+  display: flex;
+  flex-direction: column;
+  margin-left: 24px;
+  margin-right: 24px;
+  margin-top: 20px;
+}
+
+.asset-token-amount-item{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px; 
+}
+
+.row-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.asset-token-title {
+  font-size: 16px;
+  font-family: Helvetica-Light, Helvetica;
+  font-weight: 300;
+  color: #666F83;
+}
+
+.asset-token-name {
+  font-size: 18px;
+  font-family: Helvetica;
+  color: #111A34;
+  height: 18px;
+}
+
+.asset-deposit-name {
+  font-size: 14px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: #FF8212;
+  cursor: pointer;
+}
+
+.margin-left-15 {
+  margin-left: 15px;
+}
+
+.margin-left-9 {
+  margin-left: 9px;
+}
+
+.margin-bottom-16 {
+  margin-bottom: 16px;
+}
+
+.margin-top-10 {
+  margin-top: 10px;
+}
+
+.margin-top-20 {
+  margin-top: 20px;
+}
+
+.margin-bottom-8 {
+  margin-bottom: 8px;
+}
+
+.padding-16 {
+  padding: 16px;
+}
+
+.asset-amount-text {
+  font-size: 16px;
+  font-family: Helvetica;
+  color: #858B9C;
+}
+
+.asset-token-list {
+  background: #F9FAFB;
+  border-radius: 8px;
+  margin-top: 8px;
+}
+
+.asset-trans-text {
+  font-size: 14px;
+  font-family: Helvetica;
+  color: #41485D;
+}
+
+.asset-trans-item {
+  display: flex;
+  flex-direction: row; 
+}

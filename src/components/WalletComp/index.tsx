@@ -17,6 +17,8 @@ import { ToastContainer, toast, Slide } from 'react-toastify';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import 'react-toastify/dist/ReactToastify.css';
 import {getAddress} from './utils'
+import {getApi} from './pApi'
+import { useBalance, useBalanceUpdate, useAddressUpdate, useAddress } from '../../state/application/hooks';
 
 const accountTypes = [
   {
@@ -58,6 +60,11 @@ export default function WalletComp() {
   const [accountAddress, setAccountAddress] = useState('');
   const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([])
   const [selectedAccount, setSelectedAccount] = useState<any>({})
+
+  const myBalance = useBalance()
+  const myAddress = useAddress()
+  const updateBalance = useBalanceUpdate()
+  const updateAddress = useAddressUpdate()
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -102,7 +109,15 @@ export default function WalletComp() {
     setSelectedAccount(allAccounts[0])
     setAccountAddress(getAddress(allAccounts[0].address))
 
-    return accounts;
+    let api = await getApi()
+    const { nonce, data: balance } = await api.getAccount(allAccounts[0].address)
+    updateBalance({
+      bxb: `${balance.free}`,
+      busd: '200000000000',
+      beth: '3200000000000',
+      dot: '200000000000'
+    })
+    updateAddress(allAccounts[0].address)
   }
 
     return (

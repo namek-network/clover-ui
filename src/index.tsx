@@ -14,6 +14,8 @@ import ImgBg from './assets/images/bg.png';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faCog, faCheckSquare, faCoffee } from '@fortawesome/free-solid-svg-icons';
+import './i18n';
+
 library.add(faCog, faCheckSquare, faCoffee);
 
 ReactGA.initialize("UA-177617249-1");

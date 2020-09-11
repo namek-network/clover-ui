@@ -2,16 +2,18 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import Dialog from '@material-ui/core/Dialog';
 import './index.css'
+import { useTranslation } from 'react-i18next'
 
 const accountTypes = ['Math Wallet', 'ImToken Wallet', 'Lunie Wallet'];
 
 export default function WalletSelectDialog(props: any) {
-  const { onClose, selectedValue, open, accountTypes } = props;
+  const { onClose, open, accountTypes } = props;
   const [hoverValue, setHoverValue] = useState({});
 
+  const { t } = useTranslation()
   const handleClose = () => {
     setHoverValue({})
-    onClose(selectedValue);
+    onClose({});
   };
 
   const handleListItemClick = (value: any) => {
@@ -22,7 +24,7 @@ export default function WalletSelectDialog(props: any) {
   return (
     <Dialog onClose={handleClose} aria-labelledby="simple-dialog-title" open={open} classes={{paper: "dialog-custom"}}>
       <div className="content-width">
-        <div>Connect to a wallet</div>
+        <div>{t('connectToWallet')}</div>
         <div className="wallet-dia-close-btn" onClick={() => handleClose()}>x</div>
       </div>
       <div className='list-container'>
@@ -51,6 +53,5 @@ export default function WalletSelectDialog(props: any) {
 WalletSelectDialog.propTypes = {
   onClose: PropTypes.func.isRequired,
   open: PropTypes.bool.isRequired,
-  selectedValue: PropTypes.object.isRequired,
   accountTypes: PropTypes.array.isRequired
 };

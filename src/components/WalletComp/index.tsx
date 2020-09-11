@@ -19,6 +19,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import {getAddress} from './utils'
 import {getApi} from './pApi'
 import { useBalance, useBalanceUpdate, useAddressUpdate, useAddress } from '../../state/application/hooks';
+import { useTranslation } from 'react-i18next'
 
 const accountTypes = [
   {
@@ -66,12 +67,17 @@ export default function WalletComp() {
   const updateBalance = useBalanceUpdate()
   const updateAddress = useAddressUpdate()
 
+  const { t } = useTranslation()
+
   const handleClickOpen = () => {
     setOpen(true);
   };
 
   const handleClose = (value: any) => {
     setOpen(false);
+    if (_.isEmpty(value)) {
+      return
+    }
     setSelectedWallet(value);
     loadAccount();
   };
@@ -88,20 +94,20 @@ export default function WalletComp() {
     const injected = await web3Enable('bxb');
 
     if (!injected.length) {
-      toast("未检测到钱包，请安装麦子钱包插件");
+      toast(t("notFoundWallet"));
       return;
     }
 
     const mathWallet = _.find(injected, (w: any) => w.isMathWallet === true)
     if (_.isEmpty(mathWallet)) {
-      toast("未检测到钱包，请安装麦子钱包插件");
+      toast(t("notFoundWallet"));
       return;
     }
 
     const allAccounts = await web3Accounts();
 
     if (!allAccounts.length) {
-      toast("未发现钱包，请添加一个钱包");
+      toast(t("addWallet"));
       return;
     }
 
@@ -124,7 +130,7 @@ export default function WalletComp() {
       <div>
         {
           accountAddress === '' ? <button className="btn-custom" onClick={handleClickOpen}>
-          Connect to a wallet</button> : <div className="addr-container" onClick={handleAssetOpen}>
+          {t('connectToWallet')}</button> : <div className="addr-container" onClick={handleAssetOpen}>
               <span>{accountAddress}</span>
               <img src={_.get(selectedWallet, 'icon', accountTypes[0].icon)}></img>
             </div>
@@ -144,7 +150,6 @@ export default function WalletComp() {
           open={assetOpen}></AssetDialog>
         <WalletSelectDialog 
           accountTypes={accountTypes} 
-          selectedValue={selectedWallet} 
           open={open} 
           onClose={handleClose}></WalletSelectDialog>
       </div>

@@ -5,6 +5,7 @@ import { SwapPoolTabs } from '../../components/NavigationTabs'
 import CurrencyInputPanel from '../../components/CurrencyInputPanel'
 import { Wrapper } from '../../components/Swap/styleds'
 import Currency from '../../entities/currency';
+import { useTokens } from '../../state/token/hooks';
 
 
 const BodyWrapper = styled.div`
@@ -16,10 +17,12 @@ const BodyWrapper = styled.div`
   padding: 1rem;
 `;
 
-export default class Swap extends Component {
-  render() {
-    return (
-      <BodyWrapper>
+export default function Swap() {
+  const tokens = useTokens();
+  console.log('supported tokens: ', tokens);
+
+  return (
+    <BodyWrapper>
         <SwapPoolTabs active={'swap'} />
         <Wrapper id="swap-page">
           <AutoColumn gap={'md'}>
@@ -40,6 +43,6 @@ export default class Swap extends Component {
           </AutoColumn>
         </Wrapper>
       </BodyWrapper>
-    );
-  }
+  );
 }
+

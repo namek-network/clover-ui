@@ -1,4 +1,3 @@
-import Currency from '../../entities/currency';
 import React, { CSSProperties, MutableRefObject, useCallback, useMemo } from 'react'
 import { FixedSizeList } from 'react-window'
 import { Text } from 'rebass'
@@ -6,8 +5,9 @@ import styled from 'styled-components'
 import Column from '../Column'
 import CurrencyLogo from '../CurrencyLogo'
 import { MenuItem } from './styleds'
+import { Token } from '../../state/token/types'
 
-function currencyKey(currency: Currency): string {
+function currencyKey(currency: Token): string {
   return currency.symbol;
 }
 
@@ -44,7 +44,7 @@ function CurrencyRow({
   otherSelected,
   style
 }: {
-  currency: Currency
+  currency: Token
   onSelect: () => void
   isSelected: boolean
   otherSelected: boolean
@@ -63,7 +63,7 @@ function CurrencyRow({
     >
       <CurrencyLogo currency={currency} size={'24px'} />
       <Column>
-        <Text title={currency.name} fontWeight={500}>
+        <Text title={currency.symbol} fontWeight={500}>
           {currency.symbol}
         </Text>
       </Column>
@@ -81,18 +81,19 @@ export default function CurrencyList({
   showDot
 }: {
   height: number
-  currencies: Currency[]
-  selectedCurrency?: Currency | null
-  onCurrencySelect: (currency: Currency) => void
-  otherCurrency?: Currency | null
+  currencies: Token[]
+  selectedCurrency?: Token | null
+  onCurrencySelect: (currency: Token) => void
+  otherCurrency?: Token | null
   fixedListRef?: MutableRefObject<FixedSizeList | undefined>
   showDot: boolean
 }) {
-  const itemData = useMemo(() => (showDot ? [Currency.Dot, ...currencies] : currencies), [currencies, showDot])
+  // const itemData = useMemo(() => (showDot ? [Currency.Dot, ...currencies] : currencies), [currencies, showDot])
+  const itemData = currencies;
 
   const Row = useCallback(
     ({ data, index, style }) => {
-      const currency: Currency = data[index]
+      const currency: Token = data[index]
       const isSelected = Boolean(selectedCurrency && (selectedCurrency == currency))
       const otherSelected = Boolean(otherCurrency && (otherCurrency == currency))
       const handleSelect = () => onCurrencySelect(currency)

@@ -1,6 +1,6 @@
-import Currency from '../../entities/currency';
 import React from 'react'
 import styled from 'styled-components'
+import { Token } from '../../state/token/types';
 
 import Logo from '../Logo'
 
@@ -14,7 +14,7 @@ export default function CurrencyLogo({
   size = '24px',
   style
 }: {
-  currency?: Currency
+  currency?: Token
   size?: string
   style?: React.CSSProperties
 }) {

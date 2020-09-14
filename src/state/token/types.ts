@@ -1,6 +1,6 @@
 export type Token = {
   symbol: string
-  logo?: string
+  logo: string
 }
 
 export type TokenState = {

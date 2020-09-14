@@ -26,25 +26,22 @@ const StyledNavLink = styled(NavLink).attrs({
   cursor: pointer;
   text-decoration: none;
   color: #888D9B;
-  font-size: 20px;
+  font-size: 16px;
+  font-weight: bold;
+  font-family: Roboto-Bold, Roboto;
 
   &.${activeClassName} {
     border-radius: 12px;
-    font-weight: 500;
-    color: #000000;
+    font-weight: bolder;
+    color: #FF8212;
     text-decoration: none;
   }
 
   :hover,
   :focus {
-    color: ${darken(0.1, '#000000')};
+    color: ${darken(0.1, '#FF8212')};
     text-decoration: none;
   }
-`;
-
-const ActiveText = styled.div`
-  font-weight: 500;
-  font-size: 20px;
 `;
 
 export function SwapPoolTabs({ active }: { active: 'swap' | 'pool' }) {

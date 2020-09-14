@@ -1,4 +1,3 @@
-import Currency from '../../entities/currency';
 import React, { KeyboardEvent, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import styled, { keyframes } from 'styled-components'
 import ReactGA from 'react-ga'
@@ -9,8 +8,10 @@ import Column from '../Column'
 import QuestionHelper from '../QuestionHelper'
 import Row, { RowBetween } from '../Row'
 import CurrencyList from './CurrencyList'
+import { Token } from '../../state/token/types'
 import { PaddedColumn, SearchInput, Separator } from './styleds'
 import AutoSizer from 'react-virtualized-auto-sizer'
+import { useTokens } from '../../state/token/hooks';
 
 const CloseIcon = styled(X)<{ onClick: () => void }>`
   cursor: pointer;
@@ -19,17 +20,28 @@ const CloseIcon = styled(X)<{ onClick: () => void }>`
 interface CurrencySearchProps {
   isOpen: boolean
   onDismiss: () => void
-  selectedCurrency?: Currency | null
+  selectedCurrency?: Token | null,
+  onCurrencySelect: (currency: Token) => void
 }
 
 export function CurrencySearch({
   selectedCurrency,
+  onCurrencySelect,
   onDismiss,
   isOpen
 }: CurrencySearchProps) {
+  const currencyList = useTokens();
 
   const fixedList = useRef<FixedSizeList>()
   const [searchQuery, setSearchQuery] = useState<string>('')
+
+  const handleCurrencySelect = useCallback(
+    (currency: Token) => {
+      onCurrencySelect(currency)
+      onDismiss()
+    },
+    [onDismiss, onCurrencySelect]
+  )
 
    // clear the input on open
    useEffect(() => {
@@ -77,9 +89,9 @@ export function CurrencySearch({
           {({ height }) => (
             <CurrencyList
               height={height}
-              currencies={Currency.BuiltinCurrencies}
+              currencies={currencyList}
               selectedCurrency={selectedCurrency}
-              onCurrencySelect={() => {}}
+              onCurrencySelect={handleCurrencySelect}
               otherCurrency={null}
               fixedListRef={fixedList}
               showDot={false}

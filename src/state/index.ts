@@ -2,6 +2,7 @@ import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
 import { save, load } from 'redux-localstorage-simple';
 
 import application from './application/reducer';
+import settings from './settings/reducer';
 import token from './token/reducer';
 import swap from './swap/reducer';
 
@@ -10,6 +11,7 @@ const PERSISTED_KEYS: string[] = [];
 const store = configureStore({
   reducer: {
     application,
+    settings,
     token,
     swap
   },

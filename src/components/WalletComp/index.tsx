@@ -1,7 +1,6 @@
-import React, { Component, useState } from 'react';
-import PropTypes from 'prop-types';
+import React, { Component, useEffect, useState } from 'react';
 import { web3Accounts, web3Enable, web3FromAddress } from '@polkadot/extension-dapp';
-import Dialog from '@material-ui/core/Dialog';
+
 import './index.css'
 import _ from 'lodash'
 import WalletSelectDialog from './walletSelectDialog'
@@ -14,7 +13,7 @@ import BethIcon from '../../assets/images/icon-beth.svg';
 import BusdIcon from '../../assets/images/icon-busd.svg';
 import BdotIcon from '../../assets/images/icon-dot.svg';
 import { ToastContainer, toast, Slide } from 'react-toastify';
-import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
+import { InjectedAccountWithMeta, InjectedExtension } from '@polkadot/extension-inject/types';
 import 'react-toastify/dist/ReactToastify.css';
 import {getAddress} from './utils'
 import {getApi} from './pApi'
@@ -111,9 +110,15 @@ export default function WalletComp() {
       return;
     }
 
-    setAccounts(allAccounts)
-    setSelectedAccount(allAccounts[0])
-    setAccountAddress(getAddress(allAccounts[0].address))
+    const mathAccounts: any = await findMathAccount(allAccounts)
+    if (_.isEmpty(mathAccounts)) {
+      toast(t("addWallet"));
+      return;
+    }
+
+    setAccounts(mathAccounts)
+    setSelectedAccount(mathAccounts[0])
+    setAccountAddress(getAddress(mathAccounts[0].address))
 
     let api = await getApi()
     const { nonce, data: balance } = await api.getAccount(allAccounts[0].address)
@@ -124,6 +129,20 @@ export default function WalletComp() {
       dot: '200000000000'
     })
     updateAddress(allAccounts[0].address)
+  }
+
+  async function findMathAccount(allAccounts: InjectedAccountWithMeta[]) {
+    return Promise.all(_.map(allAccounts, async (acc) => {
+      return await web3FromAddress(acc.address)
+    })).then((wallets: InjectedExtension[]) => {
+      return _.filter(_.zipWith(allAccounts, wallets, (a: InjectedAccountWithMeta, w: any) => {
+        if (w && w.isMathWallet) {
+          return a
+        } else {
+          return {}
+        }
+      }), (x) => !_.isEmpty(x))
+    })
   }
 
     return (

@@ -1,0 +1,4 @@
+[gerrit]
+host=code.rayclass.com
+port=29418
+project=font-oed

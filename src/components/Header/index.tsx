@@ -3,7 +3,7 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import styled from 'styled-components';
 import WalletComp from '../WalletComp'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import SettingsComp from '../Settings'
 import './index.css';
 import ImgLogo from '../../assets/images/logo.svg';
 
@@ -43,11 +43,7 @@ export default class Header extends Component {
         </Nav>
 
         <WalletComp></WalletComp>
-        <Nav>
-          <Navbar.Brand href="#/settings">
-            <FontAwesomeIcon icon="cog" color="#F78408" size="sm" />
-          </Navbar.Brand>
-        </Nav>
+        <SettingsComp></SettingsComp>
       </NavbarWrapper>
     );
   }

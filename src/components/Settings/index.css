@@ -1,0 +1,154 @@
+.setting-container {
+  position: relative;
+}
+
+.panel-container {
+  position: absolute;
+  top: 35px;
+  right: 0;
+  width: 264px;
+  height: 137px;
+  background: white;
+  box-shadow: 0px 0px 20px 0px rgba(17, 26, 52, 0.1);
+  border-radius: 8px;
+  z-index: 1000;
+  padding-top: 16px;
+  padding-left: 16px;
+}
+
+.setting-btn-container {
+  color: #F78408;
+  cursor: pointer;
+  border-radius: 4px;
+  padding-left: 8px;
+  padding-right: 8px;
+  padding-top: 4px;
+  padding-bottom: 2px;
+}
+.setting-btn-container:hover {
+  background: #FCF0DC;
+}
+
+.title {
+  height: 14px;
+  font-size: 14px;
+  font-family: Helvetica;
+  color: #858B9C;
+  line-height: 14px;
+}
+
+.panel-container input {
+  width: 47px;
+  height: 24px;
+  border-radius: 4px;
+  border: 1px solid #A8ADBD;
+  font-size: 16px;
+  color: #666F83;
+  text-align: center;
+}
+
+.minute-text {
+  height: 24px;
+  font-size: 14px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  margin-left: 8px;
+  line-height: 24px;
+  color: #41485D;
+}
+
+.info-text {
+  cursor: pointer;
+  font-size: 14px;
+  font-family: fontoed;
+  color: #F5A623;
+  margin-left: 4px;
+}
+
+.slip-container {
+  margin-top: 5px;
+}
+.option-btn {
+  border: 0;
+  font-family: Roboto-Light, Roboto;
+  outline:none;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 0 4px;
+  height: 24px;
+  line-height: 24px;
+  width: 50px;
+}
+
+.inactive-btn {
+  color: #666F83;
+  background: transparent;
+}
+
+.active-btn  { 
+  color: white;
+  background: #FF8212;
+  border-radius: 4px;
+}
+
+.option-btn:focus {
+  outline:none;
+}
+
+.btn-margin {
+  margin-left: 5px;
+}
+
+.input-container {
+  width: 47px;
+  height: 20px;
+  border-radius: 4px;
+  margin-left: 5px;
+}
+
+.input-container-active {
+  border: 1px solid #F5A623;
+}
+
+.input-container-inactive {
+  border: 1px solid #A8ADBD;
+}
+
+.input-container-inactive input {
+  border: 0;
+  height: 16px;
+  line-height: 16px;
+  font-size: 16px;
+  text-align: right;
+  outline: none;
+  font-family: Roboto-Light, Roboto;
+}
+
+.input-container-active input {
+  border: 0;
+  height: 16px;
+  line-height: 16px;
+  font-size: 16px;
+  text-align: right;
+  outline: none;
+  font-family: Roboto-Light, Roboto;
+  color: #F5A623 !important;
+}
+
+.input-container input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+.per-text {
+  margin-left: 3px;
+  font-size: 14px;
+  font-family: Roboto-Light, Roboto;
+}
+
+.inline-div {
+  display: inline;
+}
+
+.margin-title {
+  margin-top: 14px;
+}

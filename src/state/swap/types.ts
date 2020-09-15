@@ -2,8 +2,8 @@ import { TokenType } from '../token/types';
 
 export type SwapState = {
   fromToken?: TokenType,
-  fromTokenAmount?: number,
+  fromTokenAmount?: string,
 
   toToken?: TokenType,
-  toTokenAmount?: number
+  toTokenAmount?: string
 }

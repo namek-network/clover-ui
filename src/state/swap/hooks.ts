@@ -9,7 +9,7 @@ export function useFromToken(): TokenType | undefined {
   return useSelector((state: AppState) => state.swap.fromToken);
 }
 
-export function useFromTokenAmount(): number | undefined {
+export function useFromTokenAmount(): string | undefined {
   return useSelector((state: AppState) => state.swap.fromTokenAmount);
 }
 
@@ -17,7 +17,7 @@ export function useToToken(): TokenType | undefined {
   return useSelector((state: AppState) => state.swap.toToken);
 }
 
-export function useToTokenAmount(): number | undefined {
+export function useToTokenAmount(): string | undefined {
   return useSelector((state: AppState) => state.swap.toTokenAmount);
 }
 
@@ -26,9 +26,19 @@ export function useSetFromToken(): (token: TokenType) => void {
   return useCallback((token: TokenType) => dispatch(setFromToken({token})), [dispatch]);
 }
 
+export function useSetFromTokenAmount(): (amount: string) => void {
+  const dispatch = useDispatch();
+  return useCallback((amount: string) => dispatch(setFromTokenAmount({amount})), [dispatch]);
+}
+
 export function useSetToToken(): (token: TokenType) => void {
   const dispatch = useDispatch();
   return useCallback((token: TokenType) => dispatch(setToToken({token})), [dispatch]);
+}
+
+export function useSetToTokenAmount(): (amount: string) => void {
+  const dispatch = useDispatch();
+  return useCallback((amount: string) => dispatch(setToTokenAmount({amount})), [dispatch]);
 }
 
 export function useSwitchFromToTokens(): () => void {

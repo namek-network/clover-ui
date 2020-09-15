@@ -11,7 +11,7 @@ import { Wrapper, ArrowWrapper, BottomGrouping } from '../../components/Swap/sty
 import { Button as RebassButton, ButtonProps } from 'rebass/styled-components'
 import { TokenType } from '../../state/token/types';
 import { useTokenTypes } from '../../state/token/hooks';
-import { useFromToken, useFromTokenAmount, useToToken, useToTokenAmount, useSetFromToken, useSetToToken, useSwitchFromToTokens } from '../../state/swap/hooks';
+import { useFromToken, useFromTokenAmount, useToToken, useToTokenAmount, useSetFromToken, useSetToToken, useSetFromTokenAmount, useSetToTokenAmount, useSwitchFromToTokens } from '../../state/swap/hooks';
 
 const BodyWrapper = styled.div`
   position: relative;
@@ -91,14 +91,22 @@ const ConnectWallet = styled(RebassButton)`
 export default function Swap() {
 
   const fromToken = useFromToken();
+  const fromTokenAmount = useFromTokenAmount();
   const toToken = useToToken();
+  const toTokenAmount = useToTokenAmount();
 
 
   const setFromToken = useSetFromToken();
   const handleFromTokenSelect = (selectedToken: TokenType) => setFromToken(selectedToken);
 
+  const setFromTokenAmount = useSetFromTokenAmount();
+  const handleSetFromTokenAmount = (amount: string) => setFromTokenAmount(amount);
+
   const setToToken = useSetToToken();
   const handleToTokenSelect = (toToken: TokenType) => setToToken(toToken);
+
+  const setToTokenAmount = useSetToTokenAmount();
+  const handleSetToTokenAmount = (amount: string) => setToTokenAmount(amount);
 
   const switchFromToToken = useSwitchFromToTokens();
 
@@ -109,8 +117,8 @@ export default function Swap() {
         <AutoColumn gap={'md'}>
           <CurrencyInputPanel
               id="swap-currency-input"
-              value=''
-              onUserInput={value => {}}
+              value={fromTokenAmount || ''}
+              onUserInput={handleSetFromTokenAmount}
               currency={fromToken}
               onCurrencySelect={handleFromTokenSelect}
             />
@@ -133,8 +141,8 @@ export default function Swap() {
           </AutoColumn>
           <CurrencyInputPanel
             id="swap-currency-output"
-            value=''
-            onUserInput={value => {}}
+            value={toTokenAmount || ''}
+            onUserInput={handleSetToTokenAmount}
             currency={toToken}
             onCurrencySelect={handleToTokenSelect}
           />

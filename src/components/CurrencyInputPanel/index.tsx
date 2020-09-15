@@ -6,6 +6,7 @@ import { TokenType } from '../../state/token/types';
 import CurrencySearchModal from '../SearchModal/CurrencySearchModal'
 import CurrencyLogo from '../CurrencyLogo'
 import { ReactComponent as DropDown }  from '../../assets/images/dropdown.svg';
+import { escapeRegExp } from '../../utils'
 
 const InputPanel = styled.div<{ hideInput?: boolean }>`
   display: flex;
@@ -76,20 +77,22 @@ const StyledDropDown = styled(DropDown)`
 
 const NumericalInput = styled.input`
   width: 0;
-  height: 40px;
-  line-height: 40px;
+  height: 50px;
+  line-height: 50px;
   position: relative;
   font-weight: 500;
+  font-family: Roboto-Medium, Roboto;
   outline: none;
   border: none;
   flex: 1 1 auto;
+  color: #111A34;
   background-color: #FFFFFF;
-  font-size: 36px;
+  font-size: 40px;
   text-align: left;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2);
+  text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.5);
   padding: 0px;
 
   -webkit-appearance: textfield;
@@ -106,7 +109,8 @@ const NumericalInput = styled.input`
   }
 
   ::placeholder {
-    color: #C3C5CB;
+    color: #E2E4EA;
+    text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2);
   }
 `;
 
@@ -115,7 +119,7 @@ interface CurrencyInputPanelProps {
   value: string
   onUserInput: (value: string) => void,
   currency?: TokenType | null,
-  onCurrencySelect: (currency: TokenType) => void
+  onCurrencySelect: (currency: TokenType) => void,
 }
 
 export default function CurrencyInputPanel({
@@ -168,7 +172,17 @@ export default function CurrencyInputPanel({
             minLength={1}
             maxLength={79}
             spellCheck="false"
-            />
+            value={value}
+            onChange={event => {
+              // replace commas with periods, because bithumb exclusively uses period as the decimal separator
+              const nextUserInput = event.target.value.replace(/,/g, '.');
+              const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`) // match escaped "." characters via in a non-capturing group
+              if (nextUserInput === '' || inputRegex.test(escapeRegExp(nextUserInput))) {
+                onUserInput(nextUserInput)
+              }
+            }}
+          />
+
         </InputRow>
       </Container>
 

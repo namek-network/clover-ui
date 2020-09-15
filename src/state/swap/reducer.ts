@@ -6,7 +6,9 @@ import BuiltInTokens from '../token/tokens';
 
 const initialState: SwapState = {
   fromToken: BuiltInTokens[0],
-  toToken: BuiltInTokens[1]
+  toToken: BuiltInTokens[1],
+  fromTokenAmount: '',
+  toTokenAmount: ''
 }
   
 export default createReducer(initialState, builder =>

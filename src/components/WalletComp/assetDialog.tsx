@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Dialog from '@material-ui/core/Dialog';
 import {getAddress, tokenTypes} from './utils'
 import _ from 'lodash'
+import { TokenAmount } from '../../state/wallet/types'
 
 import './index.css'
 
@@ -12,6 +13,8 @@ export default function AssetDialog(props: any) {
   const { account, assets, wallet, transactions, onClose, open } = props;
 
   const assetListTemp = _.map(tokenTypes, (tt: any) => {return {...tt, amount: '1.132'}})
+
+  const { tokenAmounts } = account
 
   const handleClose = () => {
     onClose();
@@ -45,19 +48,19 @@ export default function AssetDialog(props: any) {
         <div className="asset-token-title">My assets</div>
         <div className="asset-token-list">
           {
-            assetListTemp.map((ast: any, key: any) => (
+            tokenAmounts.map((tokenAmount: TokenAmount, key: any) => (
               <div className='asset-token-amount-item' key={key}>
                 <div className="row-container">
-                  <img src={ast.icon}></img>
+                  <img src={tokenAmount.tokenType.logo}></img>
                   <div className="margin-left-9">
-                    <div className="asset-token-name">{ast.name}</div>
+                    <div className="asset-token-name">{tokenAmount.tokenType.name}</div>
                     <div className="asset-deposit-name">
                       <span>Deposit</span>
                       <span className="margin-left-15">Convert to ETH</span>
                     </div>
                   </div>
                 </div>
-                <div className="asset-amount-text">{ast.amount}</div>
+                <div className="asset-amount-text">{tokenAmount.amount}</div>
               </div>
             ))
             }
@@ -75,25 +78,7 @@ export default function AssetDialog(props: any) {
             <span>Swap 14 BxETH for 12.6743553 DOT</span>
           </div>
         </div>
-          
       </div>
-      {/* <div className='list-container'>
-        {
-            accountTypes.map((account: any, key: any) => (
-              <div className='item-container' key={key}
-              onClick={() => handleListItemClick(account)}>
-                  <div className='dialog-item-text-left'>
-                    <img src={account.icon}></img>
-                    {account.name}
-                  </div>
-                  <div className={'dialog-item-text-right ' + (account === hoverValue ? 'dialog-item-text-right-hover' : '')}>{'>'}</div>
-              </div>
-            ))
-          }
-      </div>
-      <div className="bottom-text">
-        By connecting, I accept bithumb’s <span className="bottom-text-right">Terms of Service</span>
-      </div> */}
     </Dialog>
   );
 }

@@ -8,4 +8,11 @@ export type TokenState = {
   tokenBySymbols: {
     [symbol: string]: Token
   }
+  tokenTypes: TokenType[]
+}
+
+export type TokenType = {
+  id: number,
+  name: string,
+  logo?: string
 }

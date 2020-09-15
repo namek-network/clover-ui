@@ -4,8 +4,6 @@ import Dialog from '@material-ui/core/Dialog';
 import './index.css'
 import { useTranslation } from 'react-i18next'
 
-const accountTypes = ['Math Wallet', 'ImToken Wallet', 'Lunie Wallet'];
-
 export default function WalletSelectDialog(props: any) {
   const { onClose, open, accountTypes } = props;
   const [hoverValue, setHoverValue] = useState({});

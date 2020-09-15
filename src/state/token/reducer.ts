@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { createReducer } from '@reduxjs/toolkit';
-import { setTokens, clearTokens } from './actions';
-import { TokenState } from './types';
+import { setTokens, clearTokens, tokenTypes } from './actions';
+import { TokenState, TokenType } from './types';
 import BuiltInTokens from './tokens';
 
 // const Dot: Token = { symbol: 'Dot', logo: require('../../assets/images/icon-dot.svg') };
@@ -13,7 +13,8 @@ import BuiltInTokens from './tokens';
 
 const initialState: TokenState = {
   tokens: BuiltInTokens,
-  tokenBySymbols: _.keyBy(BuiltInTokens, 'symbol')
+  tokenBySymbols: _.keyBy(BuiltInTokens, 'symbol'),
+  tokenTypes: []
 }
   
 export default createReducer(initialState, builder =>
@@ -26,6 +27,10 @@ export default createReducer(initialState, builder =>
     .addCase(clearTokens, (state, action) => {
       state.tokens = [];
       state.tokenBySymbols = {};
+    })
+    .addCase(tokenTypes, (state, action) => {
+      const {types} = action.payload;
+      state.tokenTypes = types || [];
     })
 );
   

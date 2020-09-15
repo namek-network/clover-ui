@@ -17,8 +17,11 @@ import { InjectedAccountWithMeta, InjectedExtension } from '@polkadot/extension-
 import 'react-toastify/dist/ReactToastify.css';
 import {getAddress} from './utils'
 import {getApi} from './pApi'
-import { useBalance, useBalanceUpdate, useAddressUpdate, useAddress } from '../../state/application/hooks';
+import { useAccountInfo, useAccountInfoUpdate } from '../../state/wallet/hooks';
 import { useTranslation } from 'react-i18next'
+import { getTokenTypes, getTokenAmount } from '../../utils/httpServices';
+import { TokenType } from '../../state/token/types'
+import { useTokenTypes, useTokenTypesUpdate } from '../../state/token/hooks'
 
 const accountTypes = [
   {
@@ -34,21 +37,13 @@ const accountTypes = [
     showName: 'Lunie',
     icon: LunieIcon
   }];
-const tokenTypes = [
-  {
-    name: 'BXB',
-    icon: BxbIcon
-  }, {
-    name: 'BUSD',
-    icon: BusdIcon
-  }, {
-    name: 'DOT',
-    icon: BdotIcon
-  }, {
-    name: 'BETH',
-    icon: BethIcon
-  }
-];
+const tokenTypes = {
+    BXB: BxbIcon,
+    BUSD: BusdIcon,
+    DOT: BdotIcon,
+    BETH: BethIcon
+  };
+
 
 export default function WalletComp() {
   const [open, setOpen] = useState(false);
@@ -61,12 +56,33 @@ export default function WalletComp() {
   const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([])
   const [selectedAccount, setSelectedAccount] = useState<any>({})
 
-  const myBalance = useBalance()
-  const myAddress = useAddress()
-  const updateBalance = useBalanceUpdate()
-  const updateAddress = useAddressUpdate()
+  const myInfo = useAccountInfo()
+  const updateAccountInfo = useAccountInfoUpdate()
+
+  const myTokenTypes = useTokenTypes()
+  const updateTokenTypeList = useTokenTypesUpdate()
 
   const { t } = useTranslation()
+
+  async function loadTokenTypes() {
+    const ret = await getTokenTypes()
+
+    if (_.isEmpty(ret)) {
+      return
+    }
+
+    ret.result = ret.result || []
+    const tokenTypeList = _.map(ret.result, (tokenType: TokenType) => {
+      tokenType.logo = _.get(tokenTypes, tokenType.name, '')
+      return tokenType
+    })
+
+    updateTokenTypeList(tokenTypeList)
+  }
+
+  useEffect(() => {
+    loadTokenTypes()
+  }, []);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -78,18 +94,36 @@ export default function WalletComp() {
       return
     }
     setSelectedWallet(value);
-    loadAccount();
+    loadAccount(value);
   };
 
   const handleAssetOpen = () => {
+    console.log(myInfo)
     setAssetOpen(true)
   }
 
   const handleAssetClose = () => {
     setAssetOpen(false)
   }
+
+  async function loadTokenAmount(addr: string, tokenName: string) {
+    const ret = await getTokenAmount(addr, tokenName)
+
+    if (_.isEmpty(ret)) {
+      return '0'
+    }
+
+    return ret.result
+  }
+
+  async function loadAllTokenAmount(addr: string) {
+    return Promise.all(_.map(myTokenTypes, async (tokenType) => {
+      const amount = await loadTokenAmount(addr, tokenType.name)
+      return {tokenType, amount}
+    }))
+  }
   
-  async function loadAccount() {
+  async function loadAccount(wallet: any) {
     const injected = await web3Enable('bxb');
 
     if (!injected.length) {
@@ -121,14 +155,14 @@ export default function WalletComp() {
     setAccountAddress(getAddress(mathAccounts[0].address))
 
     let api = await getApi()
-    const { nonce, data: balance } = await api.getAccount(allAccounts[0].address)
-    updateBalance({
-      bxb: `${balance.free}`,
-      busd: '200000000000',
-      beth: '3200000000000',
-      dot: '200000000000'
-    })
-    updateAddress(allAccounts[0].address)
+
+    const tokenAmounts = await loadAllTokenAmount(mathAccounts[0].address)
+    const info = {
+      address: allAccounts[0].address,
+      walletName: '' + _.get(wallet, 'name', ''),
+      tokenAmounts
+    }
+    updateAccountInfo(info)
   }
 
   async function findMathAccount(allAccounts: InjectedAccountWithMeta[]) {
@@ -161,7 +195,7 @@ export default function WalletComp() {
           React-toastify
           hideProgressBar={true}/>
         <AssetDialog 
-          account={selectedAccount} 
+          account={myInfo} 
           assets={[]}
           wallet={selectedWallet}
           transactions={[]}

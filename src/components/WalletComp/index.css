@@ -28,7 +28,8 @@
 }
 
 .wallet-dia-close-btn {
-  margin-left: 280px;
+  font-size: 20px;
+  color: #ccc;
   cursor: pointer;
 }
 
@@ -38,7 +39,7 @@
 
 .dialog-item-text-right {
   flex: 0 0 auto !important;
-  color: #C5CAD5;
+  color: #666F83;
 }
 
 .dialog-item-text-right:hover {

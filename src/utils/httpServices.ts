@@ -1,3 +1,4 @@
+import _ from 'lodash'
 
 const baseUrl = "https://rpc.ownstack.cn"
 export function getTokenTypes() {
@@ -22,12 +23,13 @@ export function getTokenTypes() {
     })
 }
 
-export function getTokenAmount(addr: string, tokenName: string) {
+export function getTokenAmount(addr: string, tokenName?: string) {
+  const p = _.isEmpty(tokenName) ? [addr] : [addr, tokenName]
   const params = {
     "jsonrpc": "2.0",
      "id": 1,
-     "method": "currencyBalance_balance",
-     "params": [addr, tokenName]
+     "method": "get_balance",
+     "params": p
    }
 
    return fetch(baseUrl, {

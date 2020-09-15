@@ -22,6 +22,7 @@ import { useTranslation } from 'react-i18next'
 import { getTokenTypes, getTokenAmount } from '../../utils/httpServices';
 import { TokenType } from '../../state/token/types'
 import { useTokenTypes, useTokenTypesUpdate } from '../../state/token/hooks'
+import { TypePredicateKind } from 'typescript';
 
 const accountTypes = [
   {
@@ -106,21 +107,21 @@ export default function WalletComp() {
     setAssetOpen(false)
   }
 
-  async function loadTokenAmount(addr: string, tokenName: string) {
-    const ret = await getTokenAmount(addr, tokenName)
-
-    if (_.isEmpty(ret)) {
-      return '0'
-    }
-
-    return ret.result
-  }
-
   async function loadAllTokenAmount(addr: string) {
-    return Promise.all(_.map(myTokenTypes, async (tokenType) => {
-      const amount = await loadTokenAmount(addr, tokenType.name)
-      return {tokenType, amount}
-    }))
+    const ret = await getTokenAmount(addr)
+    
+    const types =  _.map(ret.result, (arr) => {
+      const t = _.find(myTokenTypes, (tokenType) => tokenType.name === arr[0])
+      return {
+        tokenType: t ?? {
+          id: -1,
+          name: ''
+        },
+        amount: arr[1]
+      }
+    })
+
+    return _.filter(types, (t) => t.tokenType.id >= 0)
   }
   
   async function loadAccount(wallet: any) {
@@ -154,7 +155,7 @@ export default function WalletComp() {
     setSelectedAccount(mathAccounts[0])
     setAccountAddress(getAddress(mathAccounts[0].address))
 
-    let api = await getApi()
+    // let api = await getApi()
 
     const tokenAmounts = await loadAllTokenAmount(mathAccounts[0].address)
     const info = {

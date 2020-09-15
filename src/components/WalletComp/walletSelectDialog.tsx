@@ -23,7 +23,7 @@ export default function WalletSelectDialog(props: any) {
     <Dialog onClose={handleClose} aria-labelledby="simple-dialog-title" open={open} classes={{paper: "dialog-custom"}}>
       <div className="content-width">
         <div>{t('connectToWallet')}</div>
-        <div className="wallet-dia-close-btn" onClick={() => handleClose()}>x</div>
+        <div className="wallet-dia-close-btn" onClick={() => handleClose()}><i className="fa fo-x"></i></div>
       </div>
       <div className='list-container'>
         {
@@ -36,7 +36,7 @@ export default function WalletSelectDialog(props: any) {
                     <img src={account.icon}></img>
                     {account.name}
                   </div>
-                  <div className={'dialog-item-text-right ' + (account === hoverValue ? 'dialog-item-text-right-hover' : '')}>{'>'}</div>
+                  <div className={'dialog-item-text-right ' + (account === hoverValue ? 'dialog-item-text-right-hover' : '')}><i className="fa fo-chevron-right"></i></div>
               </div>
             ))
           }

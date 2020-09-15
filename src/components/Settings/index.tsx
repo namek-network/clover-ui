@@ -4,6 +4,8 @@ import './index.css'
 import '../../assets/vendors/font-bxb/bxb-font.css'
 import SlippageChoiceComp from './slippageChoiceComp'
 import TranDeadlineComp from './tranDeadlineComp';
+import Tooltip from '@material-ui/core/Tooltip';
+
 
 export default function SettingsComp() {
   const [open, setOpen] = useState(false)
@@ -34,15 +36,24 @@ export default function SettingsComp() {
   })
     return (
       <div className="setting-container">
-        <div className="setting-btn-container" onClick={handleClick}><i className="fa fo-settings"></i></div>
+        <div className="setting-btn-container" onClick={handleClick}><i className="fa fo-settings"></i>
+        </div>
         {
           open && 
           <div className="panel-container" onClick={stopPropagation}>
-            <div className="title">Slippage tolerance<i className="fa fo-alert-circle info-text"></i></div>
+            <div className="title">Slippage tolerance
+              <Tooltip title="Your transaction will revert if there is a large, unfavorable price movement before it is confirmed.">
+                <i className="fa fo-alert-circle info-text"></i>
+              </Tooltip>
+            </div>
             <SlippageChoiceComp 
               slippageTol={spt} 
               setSlippageTol={sptUpdate}></SlippageChoiceComp>
-            <div className="title margin-title">Transaction Deadline<i className="fa fo-alert-circle info-text"></i></div>
+            <div className="title margin-title">Transaction Deadline
+              <Tooltip title="Your transaction will revert if it is pending for more than this long.">
+                <i className="fa fo-alert-circle info-text"></i>
+              </Tooltip>
+            </div>
             <TranDeadlineComp 
               transDeadline={td}
               setTransDeadline={tdUpdate}></TranDeadlineComp>

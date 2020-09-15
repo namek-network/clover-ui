@@ -4,6 +4,8 @@ import Dialog from '@material-ui/core/Dialog';
 import {getAddress, tokenTypes} from './utils'
 import _ from 'lodash'
 import { TokenAmount } from '../../state/wallet/types'
+import {format} from '../../utils/balanceUtils'
+import { formatBalance } from '@polkadot/util';
 
 import './index.css'
 
@@ -28,7 +30,7 @@ export default function AssetDialog(props: any) {
     <Dialog onClose={handleClose} open={open} classes={{paper: "dialog-custom"}}>
       <div className="content-width asset-content-width">
         <div>My account</div>
-        <div className="wallet-dia-close-btn" onClick={() => handleClose()}>x</div>
+        <div className="wallet-dia-close-btn" onClick={() => handleClose()}><i className="fa fo-x"></i></div>
       </div>
       <div className="asset-account-container">
         <div className="asset-change-container">

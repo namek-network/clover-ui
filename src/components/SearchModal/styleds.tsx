@@ -31,6 +31,11 @@ export const MenuItem = styled(RowBetween)`
   grid-gap: 16px;
   cursor: ${({ disabled }) => !disabled && 'pointer'};
   pointer-events: ${({ disabled }) => disabled && 'none'};
+  :hover {
+    background-color: ${({ disabled }) => !disabled && '#FCF0DC'};
+    // border-radius: ${({ disabled }) => !disabled && '8px'};
+    // border: ${({ disabled }) => !disabled && '1px solid #FF8212'};
+  }
   opacity: ${({ disabled, selected }) => (disabled || selected ? 0.5 : 1)};
 `
 
@@ -44,10 +49,7 @@ export const SearchInput = styled.input`
   background: none;
   border: none;
   outline: none;
-  border-radius: 20px;
   color: #000000;
-  border-style: solid;
-  border: 1px solid #EDEEF2;
   -webkit-appearance: none;
 
   font-size: 18px;
@@ -56,10 +58,6 @@ export const SearchInput = styled.input`
     color: #888D9B;
   }
   transition: border 100ms;
-  :focus {
-    border: 1px solid #ff007a;
-    outline: none;
-  }
 `
 export const Separator = styled.div`
   width: 100%;

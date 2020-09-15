@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import ReactGA from 'react-ga'
-import { Token } from '../../state/token/types'
+import { TokenType } from '../../state/token/types'
 import useLast from '../../hooks/useLast'
 import Modal from '../Modal'
 import { CurrencySearch } from './CurrencySearch'
@@ -8,8 +8,8 @@ import { CurrencySearch } from './CurrencySearch'
 interface CurrencySearchModalProps {
   isOpen: boolean
   onDismiss: () => void
-  selectedCurrency?: Token | null,
-  onCurrencySelect: (currency: Token) => void
+  selectedCurrency?: TokenType | null,
+  onCurrencySelect: (currency: TokenType) => void
 }
 
 export default function CurrencySearchModal({
@@ -28,7 +28,7 @@ export default function CurrencySearchModal({
   }, [isOpen, lastOpen])
 
   const handleCurrencySelect = useCallback(
-    (currency: Token) => {
+    (currency: TokenType) => {
       onCurrencySelect(currency)
       onDismiss()
     },

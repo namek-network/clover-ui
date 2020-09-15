@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Token } from '../../state/token/types';
+import { TokenType } from '../../state/token/types';
 
 import Logo from '../Logo'
 
@@ -14,11 +14,11 @@ export default function CurrencyLogo({
   size = '24px',
   style
 }: {
-  currency?: Token
+  currency?: TokenType
   size?: string
   style?: React.CSSProperties
 }) {
-  const srcs: string[] = currency == null ? [] : [currency.logo];
+  const srcs: string[] = (currency == null || currency.logo == null) ? [] : [currency.logo];
 
-  return <StyledLogo size={size} srcs={srcs} alt={`${currency?.symbol ?? 'token'} logo`} style={style} />
+  return <StyledLogo size={size} srcs={srcs} alt={`${currency?.name ?? 'token'} logo`} style={style} />
 }

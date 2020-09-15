@@ -5,10 +5,10 @@ import styled from 'styled-components'
 import Column from '../Column'
 import CurrencyLogo from '../CurrencyLogo'
 import { MenuItem } from './styleds'
-import { Token } from '../../state/token/types'
+import { TokenType } from '../../state/token/types'
 
-function currencyKey(currency: Token): string {
-  return currency.symbol;
+function currencyKey(currency: TokenType): number {
+  return currency.id;
 }
 
 const StyledBalanceText = styled(Text)`
@@ -44,7 +44,7 @@ function CurrencyRow({
   otherSelected,
   style
 }: {
-  currency: Token
+  currency: TokenType
   onSelect: () => void
   isSelected: boolean
   otherSelected: boolean
@@ -63,8 +63,8 @@ function CurrencyRow({
     >
       <CurrencyLogo currency={currency} size={'24px'} />
       <Column>
-        <Text title={currency.symbol} fontWeight={500}>
-          {currency.symbol}
+        <Text title={currency.name} fontWeight={500}>
+          {currency.name}
         </Text>
       </Column>
     </MenuItem>
@@ -81,10 +81,10 @@ export default function CurrencyList({
   showDot
 }: {
   height: number
-  currencies: Token[]
-  selectedCurrency?: Token | null
-  onCurrencySelect: (currency: Token) => void
-  otherCurrency?: Token | null
+  currencies: TokenType[]
+  selectedCurrency?: TokenType | null
+  onCurrencySelect: (currency: TokenType) => void
+  otherCurrency?: TokenType | null
   fixedListRef?: MutableRefObject<FixedSizeList | undefined>
   showDot: boolean
 }) {
@@ -93,7 +93,7 @@ export default function CurrencyList({
 
   const Row = useCallback(
     ({ data, index, style }) => {
-      const currency: Token = data[index]
+      const currency: TokenType = data[index]
       const isSelected = Boolean(selectedCurrency && (selectedCurrency == currency))
       const otherSelected = Boolean(otherCurrency && (otherCurrency == currency))
       const handleSelect = () => onCurrencySelect(currency)

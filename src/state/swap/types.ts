@@ -1,9 +1,9 @@
-import { Token } from '../token/types';
+import { TokenType } from '../token/types';
 
 export type SwapState = {
-  fromToken?: Token,
+  fromToken?: TokenType,
   fromTokenAmount?: number,
 
-  toToken?: Token,
+  toToken?: TokenType,
   toTokenAmount?: number
 }

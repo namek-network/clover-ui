@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react'
 import styled from 'styled-components'
 import { darken } from 'polished'
 import { Text } from 'rebass'
-import { Token } from '../../state/token/types';
+import { TokenType } from '../../state/token/types';
 import CurrencySearchModal from '../SearchModal/CurrencySearchModal'
 import CurrencyLogo from '../CurrencyLogo'
 import { ReactComponent as DropDown }  from '../../assets/images/dropdown.svg';
@@ -57,7 +57,6 @@ const Aligner = styled.span`
   flex-direction: row;
   align-items: center;
   justify-content: flex-start;
-  // min-width: 135px;
 `
 
 const StyledTokenName = styled.span<{ active?: boolean }>`
@@ -76,7 +75,6 @@ const StyledDropDown = styled(DropDown)`
 `
 
 const NumericalInput = styled.input`
-  // color: #E2E4EA;
   width: 0;
   height: 40px;
   line-height: 40px;
@@ -116,8 +114,8 @@ interface CurrencyInputPanelProps {
   id: string,
   value: string
   onUserInput: (value: string) => void,
-  currency?: Token | null,
-  onCurrencySelect: (currency: Token) => void
+  currency?: TokenType | null,
+  onCurrencySelect: (currency: TokenType) => void
 }
 
 export default function CurrencyInputPanel({
@@ -148,12 +146,12 @@ export default function CurrencyInputPanel({
               {currency ? (
                 <CurrencyLogo currency={currency} size={'24px'} />
               ) : null}
-              <StyledTokenName className="token-symbol-container" active={Boolean(currency && currency.symbol)}>
-                  {(currency && currency.symbol && currency.symbol.length > 20
-                    ? currency.symbol.slice(0, 4) +
+              <StyledTokenName className="token-symbol-container" active={Boolean(currency && currency.name)}>
+                  {(currency && currency.name && currency.name.length > 20
+                    ? currency.name.slice(0, 4) +
                       '...' +
-                      currency.symbol.slice(currency.symbol.length - 5, currency.symbol.length)
-                    : currency?.symbol) || 'Select a token'}
+                      currency.name.slice(currency.name.length - 5, currency.name.length)
+                    : currency?.name) || 'Select a token'}
               </StyledTokenName>
               <StyledDropDown  />
             </Aligner>

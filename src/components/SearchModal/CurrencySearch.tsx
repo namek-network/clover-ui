@@ -8,20 +8,22 @@ import Column from '../Column'
 import QuestionHelper from '../QuestionHelper'
 import Row, { RowBetween } from '../Row'
 import CurrencyList from './CurrencyList'
-import { Token } from '../../state/token/types'
+import { filterTokens } from './filtering'
+import { TokenType } from '../../state/token/types'
 import { PaddedColumn, SearchInput, Separator } from './styleds'
 import AutoSizer from 'react-virtualized-auto-sizer'
-import { useTokens } from '../../state/token/hooks';
+import { useTokenTypes } from '../../state/token/hooks';
 
 const CloseIcon = styled(X)<{ onClick: () => void }>`
   cursor: pointer;
+  color: #CCCCCC;
 `
 
 interface CurrencySearchProps {
   isOpen: boolean
   onDismiss: () => void
-  selectedCurrency?: Token | null,
-  onCurrencySelect: (currency: Token) => void
+  selectedCurrency?: TokenType | null,
+  onCurrencySelect: (currency: TokenType) => void
 }
 
 export function CurrencySearch({
@@ -30,13 +32,17 @@ export function CurrencySearch({
   onDismiss,
   isOpen
 }: CurrencySearchProps) {
-  const currencyList = useTokens();
+  const allTokens = useTokenTypes();
 
   const fixedList = useRef<FixedSizeList>()
   const [searchQuery, setSearchQuery] = useState<string>('')
 
+  const filteredTokens: TokenType[] = useMemo(() => {
+    return filterTokens(Object.values(allTokens), searchQuery)
+  }, [allTokens, searchQuery])
+
   const handleCurrencySelect = useCallback(
-    (currency: Token) => {
+    (currency: TokenType) => {
       onCurrencySelect(currency)
       onDismiss()
     },
@@ -50,20 +56,20 @@ export function CurrencySearch({
 
   // manage focus on modal show
   const inputRef = useRef<HTMLInputElement>()
-  const handleInput = useCallback(event => {
+  const handleInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     const input = event.target.value
     setSearchQuery(input)
     fixedList.current?.scrollTo(0)
-  }, [])
+  }
 
   return (
     <Column style={{ width: '100%', flex: '1 1' }}>
       <PaddedColumn gap="14px">
         <RowBetween>
-          <Text fontWeight={500} fontSize={16}>
+          <Text fontWeight={500} fontSize={16} color='#777777'>
             Select a token
-            <QuestionHelper text="Find a token by searching for its name or symbol or by pasting its address below." />
           </Text>
+          <QuestionHelper text="Find a token by searching for its name or symbol." />
           <CloseIcon onClick={onDismiss} />
         </RowBetween>
         <SearchInput
@@ -72,14 +78,9 @@ export function CurrencySearch({
           placeholder='Search token name'
           value={searchQuery}
           ref={inputRef as RefObject<HTMLInputElement>}
-          onChange={() => {}}
+          onChange={handleInput}
           onKeyDown={() => {}}
         />
-        <RowBetween>
-          <Text fontSize={14} fontWeight={500}>
-            Token Name
-          </Text>
-        </RowBetween>
       </PaddedColumn>
 
       <Separator />
@@ -89,7 +90,7 @@ export function CurrencySearch({
           {({ height }) => (
             <CurrencyList
               height={height}
-              currencies={currencyList}
+              currencies={filteredTokens}
               selectedCurrency={selectedCurrency}
               onCurrencySelect={handleCurrencySelect}
               otherCurrency={null}

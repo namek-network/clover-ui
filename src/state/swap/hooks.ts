@@ -1,11 +1,11 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { useCallback } from 'react';
 import { setFromToken, setFromTokenAmount, setToToken, setToTokenAmount, switchFromToTokens } from './actions';
-import { Token } from '../token/types';
+import { TokenType } from '../token/types';
 
 import { AppState } from '../index';
 
-export function useFromToken(): Token | undefined {
+export function useFromToken(): TokenType | undefined {
   return useSelector((state: AppState) => state.swap.fromToken);
 }
 
@@ -13,7 +13,7 @@ export function useFromTokenAmount(): number | undefined {
   return useSelector((state: AppState) => state.swap.fromTokenAmount);
 }
 
-export function useToToken(): Token | undefined {
+export function useToToken(): TokenType | undefined {
   return useSelector((state: AppState) => state.swap.toToken);
 }
 
@@ -21,14 +21,14 @@ export function useToTokenAmount(): number | undefined {
   return useSelector((state: AppState) => state.swap.toTokenAmount);
 }
 
-export function useSetFromToken(): (token: Token) => void {
+export function useSetFromToken(): (token: TokenType) => void {
   const dispatch = useDispatch();
-  return useCallback((token: Token) => dispatch(setFromToken({token})), [dispatch]);
+  return useCallback((token: TokenType) => dispatch(setFromToken({token})), [dispatch]);
 }
 
-export function useSetToToken(): (token: Token) => void {
+export function useSetToToken(): (token: TokenType) => void {
   const dispatch = useDispatch();
-  return useCallback((token: Token) => dispatch(setToToken({token})), [dispatch]);
+  return useCallback((token: TokenType) => dispatch(setToToken({token})), [dispatch]);
 }
 
 export function useSwitchFromToTokens(): () => void {

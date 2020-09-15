@@ -1,14 +1,16 @@
 import _ from 'lodash';
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
+import { darken } from 'polished'
 import { ArrowDown } from 'react-feather';
 import { AutoColumn } from '../../components/Column';
 import { AutoRow, RowBetween } from '../../components/Row';
 import { SwapPoolTabs } from '../../components/NavigationTabs';
 import CurrencyInputPanel from '../../components/CurrencyInputPanel';
-import { Wrapper, ArrowWrapper } from '../../components/Swap/styleds';
-import { Token } from '../../state/token/types';
-import { useTokens } from '../../state/token/hooks';
+import { Wrapper, ArrowWrapper, BottomGrouping } from '../../components/Swap/styleds';
+import { Button as RebassButton, ButtonProps } from 'rebass/styled-components'
+import { TokenType } from '../../state/token/types';
+import { useTokenTypes } from '../../state/token/hooks';
 import { useFromToken, useFromTokenAmount, useToToken, useToTokenAmount, useSetFromToken, useSetToToken, useSwitchFromToTokens } from '../../state/swap/hooks';
 
 const BodyWrapper = styled.div`
@@ -32,6 +34,60 @@ const ArrowCircle = styled.div`
   align-items: center;
 `;
 
+const ConnectWallet = styled(RebassButton)`
+  padding: 18px;
+  height: 49px;
+  width: 100%;
+  text-align: center;
+  border-radius: 8px;
+  outline: none;
+  border: 1px solid transparent;
+  text-decoration: none;
+  background: #FF6E12;
+  color: #FFFFFF;
+  font-size: 18px;
+  font-weight: 500;
+  font-family: Helvetica;
+
+  display: flex;
+  justify-content: center;
+  flex-wrap: nowrap;
+  align-items: center;
+
+  cursor: pointer;
+  position: relative;
+  z-index: 1;
+  &:disabled {
+    cursor: auto;
+  }
+
+  > * {
+    user-select: none;
+  }
+
+  &:focus {
+    // box-shadow: 0 0 0 1pt ${({ disabled }) => !disabled && darken(0.03, '#FF6E12')};
+    background-color: ${({ disabled }) => !disabled && darken(0.08, '#FF6E12')};
+  }
+  &:hover {
+    background-color: ${({ disabled }) => !disabled && darken(0.08, '#FF6E12')};
+  }
+  &:active {
+    // box-shadow: 0 0 0 1pt ${({ disabled }) => !disabled && darken(0.05, '#FF6E12')};
+    background-color: ${({ disabled }) => !disabled && darken(0.05, '#FF6E12')};
+  }
+  :disabled {
+    opacity: 0.4;
+    :hover {
+      cursor: auto;
+      background-color: #FDEAF1;
+      box-shadow: none;
+      border: 1px solid transparent;
+      outline: none;
+    }
+  }
+`
+
 export default function Swap() {
 
   const fromToken = useFromToken();
@@ -39,10 +95,10 @@ export default function Swap() {
 
 
   const setFromToken = useSetFromToken();
-  const handleFromTokenSelect = (selectedToken: Token) => setFromToken(selectedToken);
+  const handleFromTokenSelect = (selectedToken: TokenType) => setFromToken(selectedToken);
 
   const setToToken = useSetToToken();
-  const handleToTokenSelect = (toToken: Token) => setToToken(toToken);
+  const handleToTokenSelect = (toToken: TokenType) => setToToken(toToken);
 
   const switchFromToToken = useSwitchFromToTokens();
 
@@ -83,6 +139,9 @@ export default function Swap() {
             onCurrencySelect={handleToTokenSelect}
           />
         </AutoColumn>
+        <BottomGrouping>
+          <ConnectWallet onClick={() => {}}>Connect Wallet</ConnectWallet>
+        </BottomGrouping>
       </Wrapper>
     </BodyWrapper>
   );

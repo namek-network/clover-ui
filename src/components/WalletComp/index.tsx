@@ -111,13 +111,13 @@ export default function WalletComp() {
     const ret = await getTokenAmount(addr)
     
     const types =  _.map(ret.result, (arr) => {
-      const t = _.find(myTokenTypes, (tokenType) => tokenType.name === arr[0])
+      const [type, amount] = arr
       return {
-        tokenType: t ?? {
+        tokenType: _.find(myTokenTypes, (tokenType) => tokenType.name === type) ?? {
           id: -1,
           name: ''
         },
-        amount: arr[1]
+        amount
       }
     })
 
@@ -155,7 +155,7 @@ export default function WalletComp() {
     setSelectedAccount(mathAccounts[0])
     setAccountAddress(getAddress(mathAccounts[0].address))
 
-    // let api = await getApi()
+    let api = await getApi()
 
     const tokenAmounts = await loadAllTokenAmount(mathAccounts[0].address)
     const info = {

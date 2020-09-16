@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import Dialog from '@material-ui/core/Dialog';
 import {getAddress, tokenTypes} from './utils'
 import _ from 'lodash'
 import { TokenAmount } from '../../state/wallet/types'
-import {format} from '../../utils/balanceUtils'
-import { formatBalance } from '@polkadot/util';
+import { convertToShow } from '../../utils/balanceUtils'
 
 import './index.css'
 
@@ -13,8 +12,6 @@ const accountTypes = ['Math Wallet', 'ImToken Wallet', 'Lunie Wallet'];
 
 export default function AssetDialog(props: any) {
   const { account, assets, wallet, transactions, onClose, open } = props;
-
-  const assetListTemp = _.map(tokenTypes, (tt: any) => {return {...tt, amount: '1.132'}})
 
   const { tokenAmounts } = account
 
@@ -62,7 +59,7 @@ export default function AssetDialog(props: any) {
                     </div>
                   </div>
                 </div>
-                <div className="asset-amount-text">{tokenAmount.amount}</div>
+                <div className="asset-amount-text">{convertToShow(tokenAmount.amount)}</div>
               </div>
             ))
             }

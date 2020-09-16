@@ -152,10 +152,12 @@
   background: #FCF0DC;
   border-radius: 4px;
   color: #FF8212;
-  padding: 4px;
+  padding: 0 4px;
   font-size: 14px;
   margin-left: 105px;
   cursor: pointer;
+  height: 24px;
+  line-height: 24px;
 }
 
 .asset-copy {

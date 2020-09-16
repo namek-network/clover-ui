@@ -20,11 +20,11 @@ const InputPanel = styled.div`
   padding-bottom: 8px;
 `
 
-const InputRow = styled.div<{ selected: boolean }>`
+const InputRow = styled.div`
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  padding: ${({ selected }) => (selected ? '0.75rem 0.5rem 0.75rem 1rem' : '0.75rem 0.75rem 0.75rem 1rem')};
+  padding: 0.75rem 0.95rem 0.75rem 1rem;
 `;
 
 const CurrencySelect = styled.button<{ selected: boolean }>`
@@ -127,15 +127,28 @@ const StyledBalanceMax = styled.button`
   }
 `;
 
-const Separator = styled.div`
+const Separator = styled.div<{insufficientBalance: boolean}>`
   height: 1px;
-  background-color: #858B9C;
-  margin: 0px 25px;
+  background-color: ${({insufficientBalance}) => (insufficientBalance ? 'red' : '#858B9C')};
+  margin: 0px 20px;
+`;
+
+const BalanceRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin: 10px 20px;
+`;
+
+const InsufficientBalance = styled.span`
+  font-size: 14px;
+  font-family: Roboto-Regular, Roboto;
+  font-weight: 400;
+  color: #FA5050;
 `;
 
 const Balance = styled.span`
-  align-self: flex-end;
-  margin: 10px 25px 10px 0px;
   font-size: 14px;
   font-family: Roboto-Regular, Roboto;
   font-weight: 400;
@@ -151,7 +164,8 @@ interface CurrencyInputPanelProps {
   balance?: string | null,
   showBalance?: boolean | null,
   showMaxButton: boolean,
-  onMax?: () => void
+  onMax?: () => void,
+  insufficientBalance?: boolean | null
 }
 
 export default function CurrencyInputPanel({
@@ -163,7 +177,8 @@ export default function CurrencyInputPanel({
   balance,
   showBalance,
   showMaxButton,
-  onMax
+  onMax,
+  insufficientBalance
 }: CurrencyInputPanelProps) {
 
   const [modalOpen, setModalOpen] = useState(false)
@@ -174,7 +189,7 @@ export default function CurrencyInputPanel({
 
   return (
     <InputPanel id={id}>
-      <InputRow selected={false}>
+      <InputRow>
         <CurrencySelect
           selected={!!currency}
           className="open-currency-select-button"
@@ -222,11 +237,18 @@ export default function CurrencyInputPanel({
         )}
       </InputRow>
 
-      <Separator />
+      <Separator insufficientBalance={insufficientBalance || false} />
 
-      {showBalance && (
-        <Balance>Balance: {balance}</Balance>
-      )}
+      <BalanceRow>
+        <div>
+          {insufficientBalance && (
+            <InsufficientBalance>Insufficient Balance</InsufficientBalance> 
+          )}
+        </div>
+        {showBalance && (
+          <Balance>Balance: {balance}</Balance>
+        )}
+      </BalanceRow>
 
       <CurrencySearchModal
           isOpen={modalOpen}

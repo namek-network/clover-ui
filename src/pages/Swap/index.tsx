@@ -155,6 +155,8 @@ export default function Swap() {
 
   const handleSetMaxFromTokenAmount = () => setFromTokenAmount(fromTokenBalance);
 
+  const insufficientBalance = _.toNumber(fromTokenAmount) > _.toNumber(fromTokenBalance);
+
   return (
     <BodyWrapper>
       <SwapPoolTabs active={'swap'} />
@@ -170,6 +172,7 @@ export default function Swap() {
               showBalance={walletConnected}
               showMaxButton={walletConnected}
               onMax={handleSetMaxFromTokenAmount}
+              insufficientBalance={insufficientBalance}
             />
           <AutoColumn justify="space-between">
             <AutoRow justify='center' style={{ padding: '0 1rem' }}>
@@ -197,6 +200,7 @@ export default function Swap() {
             balance={convertToShow(toTokenBalance)}
             showBalance={walletConnected}
             showMaxButton={false}
+            insufficientBalance={false}
           />
         </AutoColumn>
         <BottomGrouping>

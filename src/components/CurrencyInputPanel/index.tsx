@@ -1,26 +1,23 @@
 import React, { useState, useCallback } from 'react'
 import styled from 'styled-components'
 import { darken } from 'polished'
-import { Text } from 'rebass'
 import { TokenType } from '../../state/token/types';
 import CurrencySearchModal from '../SearchModal/CurrencySearchModal'
 import CurrencyLogo from '../CurrencyLogo'
 import { ReactComponent as DropDown }  from '../../assets/images/dropdown.svg';
 import { escapeRegExp } from '../../utils'
 
-const InputPanel = styled.div<{ hideInput?: boolean }>`
+const InputPanel = styled.div`
   display: flex;
   flex-flow: column nowrap;
   position: relative;
-  border-radius: ${({ hideInput }) => (hideInput ? '8px' : '20px')};
-  background-color: #F7F8FA;
   z-index: 1;
-`
 
-const Container = styled.div<{ hideInput: boolean }>`
-  border-radius: ${({ hideInput }) => (hideInput ? '8px' : '20px')};
-  border: 1px solid #F7F8FA;
+  border-radius: 16px;
   background-color: #FFFFFF;
+  box-shadow: 0px 2px 20px 0px rgba(0, 0, 0, 0.1);
+  padding-top: 8px;
+  padding-bottom: 8px;
 `
 
 const InputRow = styled.div<{ selected: boolean }>`
@@ -50,6 +47,7 @@ const CurrencySelect = styled.button<{ selected: boolean }>`
   :focus,
   :hover {
     background-color: ${({ selected }) => (selected ? '#F7F8FA': darken(0.05, '#ff007a'))};
+    outline: none;
   }
 `
 
@@ -114,12 +112,46 @@ const NumericalInput = styled.input`
   }
 `;
 
+const StyledBalanceMax = styled.button`
+  font-size: 14px;
+  font-weight: 400;
+  cursor: pointer;
+  color: #FF8212;
+  border: none;
+  background: none;
+  :hover {
+    color: ${darken(0.08, '#FF8212')}
+  }
+  :focus {
+    outline: none;
+  }
+`;
+
+const Separator = styled.div`
+  height: 1px;
+  background-color: #858B9C;
+  margin: 0px 25px;
+`;
+
+const Balance = styled.span`
+  align-self: flex-end;
+  margin: 10px 25px 10px 0px;
+  font-size: 14px;
+  font-family: Roboto-Regular, Roboto;
+  font-weight: 400;
+  color: #666F83;
+`;
+
 interface CurrencyInputPanelProps {
   id: string,
   value: string
   onUserInput: (value: string) => void,
   currency?: TokenType | null,
   onCurrencySelect: (currency: TokenType) => void,
+  balance?: string | null,
+  showBalance?: boolean | null,
+  showMaxButton: boolean,
+  onMax?: () => void
 }
 
 export default function CurrencyInputPanel({
@@ -127,7 +159,11 @@ export default function CurrencyInputPanel({
   value,
   onUserInput,
   currency,
-  onCurrencySelect
+  onCurrencySelect,
+  balance,
+  showBalance,
+  showMaxButton,
+  onMax
 }: CurrencyInputPanelProps) {
 
   const [modalOpen, setModalOpen] = useState(false)
@@ -138,53 +174,59 @@ export default function CurrencyInputPanel({
 
   return (
     <InputPanel id={id}>
-      <Container hideInput={false}>
-        <InputRow selected={false}>
+      <InputRow selected={false}>
+        <CurrencySelect
+          selected={!!currency}
+          className="open-currency-select-button"
+          onClick={() => { setModalOpen(true) }}
+        >
+          <Aligner>
+            {currency ? (
+              <CurrencyLogo currency={currency} size={'24px'} />
+            ) : null}
+            <StyledTokenName className="token-symbol-container" active={Boolean(currency && currency.name)}>
+                {(currency && currency.name && currency.name.length > 20
+                  ? currency.name.slice(0, 4) +
+                    '...' +
+                    currency.name.slice(currency.name.length - 5, currency.name.length)
+                  : currency?.name) || 'Select a token'}
+            </StyledTokenName>
+            <StyledDropDown  />
+          </Aligner>
+        </CurrencySelect>
 
-          <CurrencySelect
-            selected={!!currency}
-            className="open-currency-select-button"
-            onClick={() => { setModalOpen(true) }}
-          >
-            <Aligner>
-              {currency ? (
-                <CurrencyLogo currency={currency} size={'24px'} />
-              ) : null}
-              <StyledTokenName className="token-symbol-container" active={Boolean(currency && currency.name)}>
-                  {(currency && currency.name && currency.name.length > 20
-                    ? currency.name.slice(0, 4) +
-                      '...' +
-                      currency.name.slice(currency.name.length - 5, currency.name.length)
-                    : currency?.name) || 'Select a token'}
-              </StyledTokenName>
-              <StyledDropDown  />
-            </Aligner>
-          </CurrencySelect>
+        <NumericalInput
+          inputMode="decimal"
+          title="Token Amount"
+          autoComplete="off"
+          autoCorrect="on"
+          type="text"
+          pattern="^[0-9]*[.,]?[0-9]*$"
+          placeholder='0.0'
+          minLength={1}
+          maxLength={79}
+          spellCheck="false"
+          value={value}
+          onChange={event => {
+            // replace commas with periods, because bithumb exclusively uses period as the decimal separator
+            const nextUserInput = event.target.value.replace(/,/g, '.');
+            const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`) // match escaped "." characters via in a non-capturing group
+            if (nextUserInput === '' || inputRegex.test(escapeRegExp(nextUserInput))) {
+              onUserInput(nextUserInput)
+            }
+          }}
+        />
 
-          <NumericalInput
-            inputMode="decimal"
-            title="Token Amount"
-            autoComplete="off"
-            autoCorrect="on"
-            type="text"
-            pattern="^[0-9]*[.,]?[0-9]*$"
-            placeholder='0.0'
-            minLength={1}
-            maxLength={79}
-            spellCheck="false"
-            value={value}
-            onChange={event => {
-              // replace commas with periods, because bithumb exclusively uses period as the decimal separator
-              const nextUserInput = event.target.value.replace(/,/g, '.');
-              const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`) // match escaped "." characters via in a non-capturing group
-              if (nextUserInput === '' || inputRegex.test(escapeRegExp(nextUserInput))) {
-                onUserInput(nextUserInput)
-              }
-            }}
-          />
+        {showMaxButton && (
+          <StyledBalanceMax onClick={onMax}>MAX</StyledBalanceMax>
+        )}
+      </InputRow>
 
-        </InputRow>
-      </Container>
+      <Separator />
+
+      {showBalance && (
+        <Balance>Balance: {balance}</Balance>
+      )}
 
       <CurrencySearchModal
           isOpen={modalOpen}

@@ -7,6 +7,7 @@ export type TokenAmount = {
 
 export type AccountInfo = {
   address: string,
+  name: string,
   walletName: string,
   tokenAmounts: TokenAmount[]
 }

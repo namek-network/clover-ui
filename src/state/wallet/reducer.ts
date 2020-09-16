@@ -1,6 +1,7 @@
 import { createReducer } from '@reduxjs/toolkit';
+import { createAccountInfo } from '../../components/WalletComp/utils';
 import { accountInfo } from './actions';
-import { AccountInfo, TokenAmount } from './types';
+import { AccountInfo } from './types';
 
 
 export interface WalletState {
@@ -8,11 +9,7 @@ export interface WalletState {
 }
 
 const initialState: WalletState = {
-  accountInfo: {
-    address: '',
-    walletName: '',
-    tokenAmounts: []
-  }
+  accountInfo: createAccountInfo('', '', '', [])
 }
 
 export default createReducer(initialState, builder =>

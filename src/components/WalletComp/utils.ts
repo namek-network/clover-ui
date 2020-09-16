@@ -1,8 +1,5 @@
 import _ from 'lodash';
-import BxbIcon from '../../assets/images/icon-bxb.svg';
-import BethIcon from '../../assets/images/icon-beth.svg';
-import BusdIcon from '../../assets/images/icon-busd.svg';
-import BdotIcon from '../../assets/images/icon-dot.svg';
+import { TokenAmount } from '../../state/wallet/types';
 
 export function getAddress (addr: string) {
     if (_.size(addr) < 17) {
@@ -15,18 +12,12 @@ export function getAddress (addr: string) {
     return `${prefix}..${suffix}`
   }
 
-export const tokenTypes = [
-    {
-      name: 'BXB',
-      icon: BxbIcon
-    }, {
-      name: 'BUSD',
-      icon: BusdIcon
-    }, {
-      name: 'DOT',
-      icon: BdotIcon
-    }, {
-      name: 'BETH',
-      icon: BethIcon
-    }
-  ];
+export function createAccountInfo(address: string, name: string, walletName: string, tokenAmounts: TokenAmount[]) {
+  return {
+    address, name, walletName, tokenAmounts
+  }
+}
+
+export function createEmptyAccountInfo() {
+  return createAccountInfo('', '', '', [])
+}

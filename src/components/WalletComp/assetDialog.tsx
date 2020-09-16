@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import Dialog from '@material-ui/core/Dialog';
-import {getAddress, tokenTypes} from './utils'
+import {getAddress} from './utils'
 import _ from 'lodash'
 import { TokenAmount } from '../../state/wallet/types'
 import { convertToShow } from '../../utils/balanceUtils'
 
 import './index.css'
-
-const accountTypes = ['Math Wallet', 'ImToken Wallet', 'Lunie Wallet'];
 
 export default function AssetDialog(props: any) {
   const { account, assets, wallet, transactions, onClose, open } = props;

@@ -17,7 +17,6 @@ class PApi {
   }
 
   getAccountWithType(addr: string, type: number, func: (param: any)=> void) {
-    console.log(this.api.rpc)
     return this.api.rpc.currencies.get_balance(addr, func)
   }
 

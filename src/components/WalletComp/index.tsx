@@ -15,8 +15,7 @@ import BdotIcon from '../../assets/images/icon-dot.svg';
 import { ToastContainer, toast, Slide } from 'react-toastify';
 import { InjectedAccountWithMeta, InjectedExtension } from '@polkadot/extension-inject/types';
 import 'react-toastify/dist/ReactToastify.css';
-import {getAddress} from './utils'
-import {getApi} from './pApi'
+import {getAddress, createAccountInfo, createEmptyAccountInfo} from './utils'
 import { useAccountInfo, useAccountInfoUpdate } from '../../state/wallet/hooks';
 import { useTranslation } from 'react-i18next'
 import { getTokenTypes, getTokenAmount } from '../../utils/httpServices';
@@ -52,10 +51,6 @@ export default function WalletComp() {
 
   const [selectedWallet, setSelectedWallet] = useState({});
 
-  const [accountAddress, setAccountAddress] = useState('');
-  const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([])
-  const [selectedAccount, setSelectedAccount] = useState<any>({})
-
   const myInfo = useAccountInfo()
   const updateAccountInfo = useAccountInfoUpdate()
 
@@ -81,6 +76,7 @@ export default function WalletComp() {
   }
 
   useEffect(() => {
+    updateAccountInfo(createEmptyAccountInfo())
     loadTokenTypes()
   }, []);
 
@@ -98,13 +94,12 @@ export default function WalletComp() {
       }
 
       if (!_.isEqual(tokenAmounts, myInfo.tokenAmounts)) {
-        console.log('listen update')
         const info = {
           address: myInfo.address,
           walletName: myInfo.walletName,
           tokenAmounts: tokenAmounts ?? []
         }
-        updateAccountInfo(info)
+        updateAccountInfo(createAccountInfo(myInfo.address, myInfo.name, myInfo.walletName, tokenAmounts ?? []))
       }
     }
 
@@ -129,7 +124,6 @@ export default function WalletComp() {
   };
 
   const handleAssetOpen = () => {
-    console.log(myInfo)
     setAssetOpen(true)
   }
 
@@ -185,22 +179,16 @@ export default function WalletComp() {
       return;
     }
 
-    setAccounts(mathAccounts)
-    setSelectedAccount(mathAccounts[0])
-    setAccountAddress(getAddress(mathAccounts[0].address))
-
-    let api = await getApi()
-
     const tokenAmounts = await loadAllTokenAmount(mathAccounts[0].address)
     if (tokenAmounts === null) {
       return
     }
 
-    const info = {
-      address: allAccounts[0].address,
-      walletName: '' + _.get(wallet, 'name', ''),
-      tokenAmounts: tokenAmounts ?? []
-    }
+    const info = createAccountInfo(mathAccounts[0].address, 
+      mathAccounts[0].meta?.name ?? '', 
+      '' + _.get(wallet, 'name', ''), 
+      tokenAmounts ?? [])
+      
     updateAccountInfo(info)
   }
 
@@ -221,9 +209,9 @@ export default function WalletComp() {
     return (
       <div>
         {
-          accountAddress === '' ? <button className="btn-custom" onClick={handleClickOpen}>
+          myInfo.address === '' ? <button className="btn-custom" onClick={handleClickOpen}>
           {t('connectToWallet')}</button> : <div className="addr-container" onClick={handleAssetOpen}>
-              <span>{accountAddress}</span>
+              <span>{getAddress(myInfo.address)}</span>
               <img src={_.get(selectedWallet, 'icon', accountTypes[0].icon)}></img>
             </div>
         }

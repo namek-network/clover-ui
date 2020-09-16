@@ -22,7 +22,6 @@ import { useTranslation } from 'react-i18next'
 import { getTokenTypes, getTokenAmount } from '../../utils/httpServices';
 import { TokenType } from '../../state/token/types'
 import { useTokenTypes, useTokenTypesUpdate } from '../../state/token/hooks'
-import { TypePredicateKind } from 'typescript';
 
 const accountTypes = [
   {
@@ -85,6 +84,37 @@ export default function WalletComp() {
     loadTokenTypes()
   }, []);
 
+  
+  useEffect(() => {
+    const listenToBalance = async () => {
+      if (_.isEmpty(myInfo.address)) {
+        return
+      }
+
+      const tokenAmounts = await loadAllTokenAmount(myInfo.address)
+
+      if (_.isEmpty(tokenAmounts)) {
+        return
+      }
+
+      if (!_.isEqual(tokenAmounts, myInfo.tokenAmounts)) {
+        console.log('listen update')
+        const info = {
+          address: myInfo.address,
+          walletName: myInfo.walletName,
+          tokenAmounts: tokenAmounts ?? []
+        }
+        updateAccountInfo(info)
+      }
+    }
+
+    const unsub = setInterval(listenToBalance, 3000)
+
+    return () => {
+      clearInterval(unsub)
+    }
+  }, [myInfo, myTokenTypes])
+
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -108,7 +138,11 @@ export default function WalletComp() {
   }
 
   async function loadAllTokenAmount(addr: string) {
-    const ret = await getTokenAmount(addr)
+    const ret = await getTokenAmount(addr).catch(e => null)
+
+    if (_.isEmpty(ret)) {
+      return null
+    }
     
     const types =  _.map(ret.result, (arr) => {
       const [type, amount] = arr
@@ -158,10 +192,14 @@ export default function WalletComp() {
     let api = await getApi()
 
     const tokenAmounts = await loadAllTokenAmount(mathAccounts[0].address)
+    if (tokenAmounts === null) {
+      return
+    }
+
     const info = {
       address: allAccounts[0].address,
       walletName: '' + _.get(wallet, 'name', ''),
-      tokenAmounts
+      tokenAmounts: tokenAmounts ?? []
     }
     updateAccountInfo(info)
   }

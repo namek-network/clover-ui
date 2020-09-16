@@ -75,7 +75,7 @@ function test() {
   })
 }
 
-test()
+// test()
 
 
 // function format (value: Compact<any> | BN | string, withCurrency = true, withSi?: boolean, _isShort?: boolean, labelPost?: string): React.ReactNode {

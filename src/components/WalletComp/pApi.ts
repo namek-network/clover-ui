@@ -12,10 +12,23 @@ class PApi {
     return !_.isEmpty(this.api)
   }
 
-  getAccount(addr: string) {
-    return this.api.query.system.account(addr).then((data: any)=> {
-      return data
-    })
+  getAccount(addr: string, func: (param: any)=> void) {
+    return this.api.query.system.account(addr, func)
+  }
+
+  getAccountWithType(addr: string, type: number, func: (param: any)=> void) {
+    console.log(this.api.rpc)
+    return this.api.rpc.currencies.get_balance(addr, func)
+  }
+
+  test(addr: string) {
+    return Promise.all([
+      this.api.query.system.account(addr)
+    ]).then(data => {
+      _.forEach(data, (d) => {
+        console.log(d)
+      })
+    } );
   }
 }
 

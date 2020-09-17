@@ -9,6 +9,7 @@ import { AutoRow, RowBetween, RowFixed } from '../../components/Row';
 import { SwapPoolTabs } from '../../components/NavigationTabs';
 import CurrencyInputPanel from '../../components/CurrencyInputPanel';
 import { Wrapper, ArrowWrapper, BottomGrouping } from '../../components/Swap/styleds';
+import SwapConfirmhModal from './SwapConfirmModal';
 import { convertToShow } from '../../utils/balanceUtils'
 import { TokenType } from '../../state/token/types';
 import { useTokenTypes } from '../../state/token/hooks';
@@ -196,6 +197,10 @@ export default function Swap() {
   const showPrice = fromToken && toToken && fromToken.id != toToken.id;
   const showTransactionInfo = showPrice && _.toNumber(fromTokenAmount) > 0 && _.toNumber(toTokenAmount) > 0;
 
+  const swapEnabled = walletConnected && fromToken != null && toToken != null && _.toNumber(fromTokenAmount) > 0 && !insufficientBalance;
+
+  const [swapConfirmModalOpen, setSwapConfirmModalOpen] = useState(false);
+
   return (
     <BodyWrapper>
       <SwapPoolTabs active={'swap'} />
@@ -203,17 +208,17 @@ export default function Swap() {
       <Wrapper id="swap-page">
         <AutoColumn gap={'md'}>
           <CurrencyInputPanel
-              id="swap-currency-input"
-              value={fromTokenAmount || ''}
-              onUserInput={handleSetFromTokenAmount}
-              currency={fromToken}
-              onCurrencySelect={handleFromTokenSelect}
-              balance={convertToShow(fromTokenBalance)}
-              showBalance={walletConnected}
-              showMaxButton={walletConnected}
-              onMax={handleSetMaxFromTokenAmount}
-              insufficientBalance={insufficientBalance}
-            />
+            id="swap-currency-input"
+            value={fromTokenAmount || ''}
+            onUserInput={handleSetFromTokenAmount}
+            currency={fromToken}
+            onCurrencySelect={handleFromTokenSelect}
+            balance={convertToShow(fromTokenBalance)}
+            showBalance={walletConnected}
+            showMaxButton={walletConnected}
+            onMax={handleSetMaxFromTokenAmount}
+            insufficientBalance={insufficientBalance}
+          />
 
           <AutoRow justify='center' style={{ padding: '0 1rem' }}>
             <ArrowWrapper clickable>
@@ -249,8 +254,8 @@ export default function Swap() {
           {!walletConnected &&
             <ConnectWalletButton onClick={() => {}}>Connect Wallet</ConnectWalletButton>
           }
-          {walletConnected &&
-            <SwapButton onClick={() => {}}>Swap</SwapButton>
+          {swapEnabled &&
+            <SwapButton onClick={() => setSwapConfirmModalOpen(true)}>Swap</SwapButton>
           }
         </BottomGrouping>
 
@@ -338,12 +343,23 @@ export default function Swap() {
                 </>
               )}
 
-
             </AutoColumn>
           </TransactionInfoPanel>
         )}
 
       </Wrapper>
+
+      {swapEnabled && (
+        <SwapConfirmhModal
+          isOpen={swapConfirmModalOpen}
+          onDismiss={() => setSwapConfirmModalOpen(false)}
+          onConfirmSwap={() => setSwapConfirmModalOpen(false)}
+          fromToken={fromToken}
+          fromTokenAmount={fromTokenAmount}
+          toToken={toToken}
+        />
+      )}
+
     </BodyWrapper>
   );
 }

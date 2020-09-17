@@ -2,10 +2,10 @@ import _ from 'lodash';
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { darken } from 'polished';
-import { ArrowDown } from 'react-feather';
+import { ArrowDown, RefreshCw, Info } from 'react-feather';
 import { Button as RebassButton, ButtonProps } from 'rebass/styled-components'
 import { AutoColumn } from '../../components/Column';
-import { AutoRow, RowBetween } from '../../components/Row';
+import { AutoRow, RowBetween, RowFixed } from '../../components/Row';
 import { SwapPoolTabs } from '../../components/NavigationTabs';
 import CurrencyInputPanel from '../../components/CurrencyInputPanel';
 import { Wrapper, ArrowWrapper, BottomGrouping } from '../../components/Swap/styleds';
@@ -125,6 +125,42 @@ const SwapButton = styled(RebassButton)`
   }
 `
 
+const TransactionInfoPanel = styled(BottomGrouping)`
+  padding: 0px 15px;
+`;
+
+const TransactionInfoLabel = styled.span`
+  font-size: 14px;
+  font-family: Helvetica;
+  color: #858B9C;
+  margin-right: 5px;
+`;
+
+const TransactionInfo = styled.span`
+  font-size: 14px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: #41485D;
+`;
+
+const TransactionPriceRefreshWapper = styled.div`
+  margin-left: 10px;
+  width: 15px;
+  height: 15px;
+  background: #F3F4F7;
+  border-radius: 2px;
+
+  cursor: pointer;
+  :hover {
+    cursor: pointer;
+    opacity: 0.8;
+  }
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
 export default function Swap() {
 
   const fromToken = useFromToken();
@@ -155,11 +191,15 @@ export default function Swap() {
 
   const handleSetMaxFromTokenAmount = () => setFromTokenAmount(fromTokenBalance);
 
-  const insufficientBalance = _.toNumber(fromTokenAmount) > _.toNumber(fromTokenBalance);
+  const insufficientBalance =  walletConnected && (_.toNumber(fromTokenAmount) > _.toNumber(fromTokenBalance));
+
+  const showPrice = fromToken && toToken && fromToken.id != toToken.id;
+  const showTransactionInfo = showPrice && _.toNumber(fromTokenAmount) > 0 && _.toNumber(toTokenAmount) > 0;
 
   return (
     <BodyWrapper>
       <SwapPoolTabs active={'swap'} />
+
       <Wrapper id="swap-page">
         <AutoColumn gap={'md'}>
           <CurrencyInputPanel
@@ -174,23 +214,23 @@ export default function Swap() {
               onMax={handleSetMaxFromTokenAmount}
               insufficientBalance={insufficientBalance}
             />
-          <AutoColumn justify="space-between">
-            <AutoRow justify='center' style={{ padding: '0 1rem' }}>
-              <ArrowWrapper clickable>
-                <ArrowCircle>
-                  <ArrowDown
-                    width='20px'
-                    height='18px'
-                    line-height='20px'
-                    fontSize='8px'
-                    fontFamily='fontoed'
-                    color='#F99E3C'
-                    onClick={() => switchFromToToken()}
-                  />
-                </ArrowCircle>
-              </ArrowWrapper>
-            </AutoRow>
-          </AutoColumn>
+
+          <AutoRow justify='center' style={{ padding: '0 1rem' }}>
+            <ArrowWrapper clickable>
+              <ArrowCircle>
+                <ArrowDown
+                  width='20px'
+                  height='18px'
+                  line-height='20px'
+                  fontSize='8px'
+                  fontFamily='fontoed'
+                  color='#F99E3C'
+                  onClick={() => switchFromToToken()}
+                />
+              </ArrowCircle>
+            </ArrowWrapper>
+          </AutoRow>
+          
           <CurrencyInputPanel
             id="swap-currency-output"
             value={toTokenAmount || ''}
@@ -202,7 +242,9 @@ export default function Swap() {
             showMaxButton={false}
             insufficientBalance={false}
           />
+
         </AutoColumn>
+
         <BottomGrouping>
           {!walletConnected &&
             <ConnectWalletButton onClick={() => {}}>Connect Wallet</ConnectWalletButton>
@@ -211,6 +253,96 @@ export default function Swap() {
             <SwapButton onClick={() => {}}>Swap</SwapButton>
           }
         </BottomGrouping>
+
+        {(showPrice || showTransactionInfo) && (
+          <TransactionInfoPanel>
+            <AutoColumn gap={'sm'}>
+              {showPrice && (
+                <AutoRow justify='space-between'>
+                  <TransactionInfoLabel>Price:</TransactionInfoLabel>
+                  <RowFixed>
+                    <TransactionInfo>0.0125 {toToken?.name} per {fromToken?.name}</TransactionInfo>
+                    <TransactionPriceRefreshWapper>
+                      <RefreshCw
+                        width='10px'
+                        height='10px'
+                        line-height='10px'
+                        fontSize='10px'
+                        fontFamily='fontoed'
+                        color='#858B9C'
+                        onClick={() => {}}
+                      />
+                    </TransactionPriceRefreshWapper>
+                  </RowFixed>
+                </AutoRow>
+              )}
+
+              {showTransactionInfo && (
+                <>
+                  <AutoRow justify='space-between'>
+                    <RowFixed>
+                      <TransactionInfoLabel>Minimum Received:</TransactionInfoLabel>
+                      <Info
+                          width='16px'
+                          height='16px'
+                          line-height='16px'
+                          fontSize='16px'
+                          fontFamily='fontoed'
+                          color='#F5A623'
+                          cursor='pointer'
+                          onClick={() => {}}
+                        />
+                    </RowFixed>
+                    <TransactionInfo>2.99967 {toToken?.name}</TransactionInfo>
+                  </AutoRow>
+
+                  <AutoRow justify='space-between'>
+                    <RowFixed>
+                      <TransactionInfoLabel>Price Impact:</TransactionInfoLabel>
+                      <Info
+                          width='16px'
+                          height='16px'
+                          line-height='16px'
+                          fontSize='16px'
+                          fontFamily='fontoed'
+                          color='#F5A623'
+                          cursor='pointer'
+                          onClick={() => {}}
+                        />
+                    </RowFixed>
+                    <TransactionInfo>5.27%</TransactionInfo>
+                  </AutoRow>
+
+                  <AutoRow justify='space-between'>
+                    <RowFixed>
+                      <TransactionInfoLabel>Liquility Provder Fee:</TransactionInfoLabel>
+                      <Info
+                          width='16px'
+                          height='16px'
+                          line-height='16px'
+                          fontSize='16px'
+                          fontFamily='fontoed'
+                          color='#F5A623'
+                          cursor='pointer'
+                          onClick={() => {}}
+                        />
+                    </RowFixed>
+                    <TransactionInfo>0.003 ETH</TransactionInfo>
+                  </AutoRow>
+
+                  <AutoRow justify='space-between'>
+                    <TransactionInfoLabel>Route:</TransactionInfoLabel>
+                    <TransactionInfo>{fromToken?.name} &gt; {toToken?.name}</TransactionInfo>
+                  </AutoRow>
+
+                </>
+              )}
+
+
+            </AutoColumn>
+          </TransactionInfoPanel>
+        )}
+
       </Wrapper>
     </BodyWrapper>
   );

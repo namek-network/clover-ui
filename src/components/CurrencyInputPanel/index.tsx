@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react'
-import styled from 'styled-components'
+import styled, { css }  from 'styled-components'
 import { darken } from 'polished'
 import { TokenType } from '../../state/token/types';
 import CurrencySearchModal from '../SearchModal/CurrencySearchModal'
@@ -7,17 +7,17 @@ import CurrencyLogo from '../CurrencyLogo'
 import { ReactComponent as DropDown }  from '../../assets/images/dropdown.svg';
 import { escapeRegExp } from '../../utils'
 
-const InputPanel = styled.div`
+const InputPanel = styled.div<{ customStyle: string|undefined }>`
   display: flex;
   flex-flow: column nowrap;
   position: relative;
   z-index: 1;
-
   border-radius: 16px;
   background-color: #FFFFFF;
   box-shadow: 0px 2px 20px 0px rgba(0, 0, 0, 0.1);
   padding-top: 8px;
   padding-bottom: 8px;
+  ${({ customStyle }) => customStyle && css`${customStyle}`}
 `
 
 const InputRow = styled.div`
@@ -166,6 +166,7 @@ interface CurrencyInputPanelProps {
   showMaxButton: boolean,
   onMax?: () => void,
   insufficientBalance?: boolean | null
+  customStyle?: string
 }
 
 export default function CurrencyInputPanel({
@@ -178,7 +179,8 @@ export default function CurrencyInputPanel({
   showBalance,
   showMaxButton,
   onMax,
-  insufficientBalance
+  insufficientBalance,
+  customStyle
 }: CurrencyInputPanelProps) {
 
   const [modalOpen, setModalOpen] = useState(false)
@@ -188,7 +190,7 @@ export default function CurrencyInputPanel({
   }, [setModalOpen])
 
   return (
-    <InputPanel id={id}>
+    <InputPanel id={id} customStyle={customStyle}>
       <InputRow>
         <CurrencySelect
           selected={!!currency}

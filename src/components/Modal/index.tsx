@@ -41,7 +41,7 @@ const StyledDialogOverlay = styled(AnimatedDialogOverlay)`
     background-color: rgba(0,0,0,0.3);
   }
 `
-
+const customStyle = 'position: relative; overflow: visible;'
 const AnimatedDialogContent = animated(DialogContent)
 // destructure to not pass custom props to Dialog DOM element
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -74,6 +74,8 @@ const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpen, ...r
       `}
     display: flex;
     border-radius: 20px;
+
+    ${({ customStyle }) => customStyle && css`${customStyle}`}
     ${({  }) => mediaWidthTemplates.upToMedium`
       width: 65vw;
       margin: 0;
@@ -98,6 +100,7 @@ interface ModalProps {
   maxHeight?: number
   initialFocusRef?: React.RefObject<any>
   children?: React.ReactNode
+  customStyle?: string
 }
 
 export default function Modal({
@@ -105,6 +108,7 @@ export default function Modal({
   onDismiss,
   minHeight = false,
   maxHeight = 50,
+  customStyle = undefined,
   initialFocusRef,
   children
 }: ModalProps) {
@@ -143,6 +147,7 @@ export default function Modal({
                 aria-label="dialog content"
                 minHeight={minHeight}
                 maxHeight={maxHeight}
+                customStyle={customStyle}
                 mobile={isMobile}
               >
                 {/* prevents the automatic focusing of inputs on mobile by the reach dialog */}

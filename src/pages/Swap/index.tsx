@@ -15,7 +15,11 @@ import { TokenType } from '../../state/token/types';
 import { useTokenTypes } from '../../state/token/hooks';
 import { useFromToken, useFromTokenAmount, useToToken, useToTokenAmount, useSetFromToken, useSetToToken, useSetFromTokenAmount, useSetToTokenAmount, useSwitchFromToTokens } from '../../state/swap/hooks';
 import { AccountInfo } from '../../state/wallet/types';
-import { useAccountInfo } from '../../state/wallet/hooks';
+import { useAccountInfo, useAccountInfoUpdate } from '../../state/wallet/hooks';
+import WalletSelectDialog from '../../components/WalletComp/walletSelectDialog'
+import { supportedWalletTypes, loadAccount } from '../../utils/AccountUtils'
+import { ToastContainer, toast, Slide } from 'react-toastify';
+import { useTranslation } from 'react-i18next'
 
 const BodyWrapper = styled.div`
   position: relative;
@@ -184,7 +188,9 @@ export default function Swap() {
   const switchFromToToken = useSwitchFromToTokens();
 
   const accountInfo = useAccountInfo();
-  const walletConnected = !_.isEmpty(_.get(accountInfo, 'address', ''));
+  const updateAccountInfo = useAccountInfoUpdate()
+
+  const [walletConnected, setWalletConnected] = useState(!_.isEmpty(_.get(accountInfo, 'address', '')))
 
   const tokenAmounts = _.get(accountInfo, 'tokenAmounts', []);
   const fromTokenBalance = _.get(_.find(tokenAmounts, t => t.tokenType.id == fromToken?.id), 'amount', '');
@@ -200,6 +206,31 @@ export default function Swap() {
   const swapEnabled = walletConnected && fromToken != null && toToken != null && _.toNumber(fromTokenAmount) > 0 && !insufficientBalance;
 
   const [swapConfirmModalOpen, setSwapConfirmModalOpen] = useState(false);
+
+  const [walletSelectorOpen, setWalletSelectorOpen] = useState(false);
+
+  const myTokenTypes = useTokenTypes()
+  const { t } = useTranslation()
+
+  const handleClose = (value: any) => {
+    setWalletSelectorOpen(false)
+    if (_.isEmpty(value)) {
+      return
+    }
+
+    async function getAcount() {
+      const msg = await loadAccount(value, myTokenTypes, updateAccountInfo);
+      if (msg !== 'ok') {
+        toast(t(msg))
+      }
+    }
+
+    getAcount()
+  };
+
+  useEffect(() => {
+    setWalletConnected(!_.isEmpty(_.get(accountInfo, 'address', '')))
+  }, [accountInfo])
 
   return (
     <BodyWrapper>
@@ -252,7 +283,7 @@ export default function Swap() {
 
         <BottomGrouping>
           {!walletConnected &&
-            <ConnectWalletButton onClick={() => {}}>Connect Wallet</ConnectWalletButton>
+            <ConnectWalletButton onClick={() => {setWalletSelectorOpen(true)}}>Connect Wallet</ConnectWalletButton>
           }
           {swapEnabled &&
             <SwapButton onClick={() => setSwapConfirmModalOpen(true)}>Swap</SwapButton>
@@ -359,6 +390,11 @@ export default function Swap() {
           toToken={toToken}
         />
       )}
+
+      <WalletSelectDialog 
+          accountTypes={supportedWalletTypes} 
+          open={walletSelectorOpen} 
+          onClose={handleClose}></WalletSelectDialog>
 
     </BodyWrapper>
   );

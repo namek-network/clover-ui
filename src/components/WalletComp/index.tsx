@@ -1,48 +1,19 @@
-import React, { Component, useEffect, useState } from 'react';
-import { web3Accounts, web3Enable, web3FromAddress } from '@polkadot/extension-dapp';
-
-import './index.css'
+import React, { Component, useEffect, useState } from 'react'
 import _ from 'lodash'
 import WalletSelectDialog from './walletSelectDialog'
 import AssetDialog from './assetDialog'
-import MathIcon from '../../assets/images/icon-math.svg'
-import LunieIcon from '../../assets/images/icon-lunie.svg'
-import ImTokenIcon from '../../assets/images/icon-imtoken.svg'
-import BxbIcon from '../../assets/images/icon-bxb.svg';
-import BethIcon from '../../assets/images/icon-beth.svg';
-import BusdIcon from '../../assets/images/icon-busd.svg';
-import BdotIcon from '../../assets/images/icon-dot.svg';
 import { ToastContainer, toast, Slide } from 'react-toastify';
-import { InjectedAccountWithMeta, InjectedExtension } from '@polkadot/extension-inject/types';
-import 'react-toastify/dist/ReactToastify.css';
 import {getAddress, createAccountInfo, createEmptyAccountInfo} from './utils'
 import { useAccountInfo, useAccountInfoUpdate } from '../../state/wallet/hooks';
 import { useTranslation } from 'react-i18next'
 import { getTokenTypes, getTokenAmount } from '../../utils/httpServices';
 import { TokenType } from '../../state/token/types'
 import { useTokenTypes, useTokenTypesUpdate } from '../../state/token/hooks'
+import { loadAccount, supportedWalletTypes, loadAllTokenAmount } from '../../utils/AccountUtils'
+import tokens from '../../state/token/tokens'
 
-const accountTypes = [
-  {
-    name: 'Math Wallet',
-    showName: 'Math',
-    icon: MathIcon
-  }, {
-    name: 'ImToken Wallet',
-    showName: 'ImToken',
-    icon: ImTokenIcon
-  }, {
-    name: 'Lunie Wallet',
-    showName: 'Lunie',
-    icon: LunieIcon
-  }];
-const tokenTypes = {
-    BXB: BxbIcon,
-    BUSD: BusdIcon,
-    DOT: BdotIcon,
-    BETH: BethIcon
-  };
-
+import './index.css'
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function WalletComp() {
   const [open, setOpen] = useState(false);
@@ -68,7 +39,8 @@ export default function WalletComp() {
 
     ret.result = ret.result || []
     const tokenTypeList = _.map(ret.result, (tokenType: TokenType) => {
-      tokenType.logo = _.get(tokenTypes, tokenType.name, '')
+      const tk = _.find(tokens, (token: TokenType) => token.name === tokenType.name)
+      tokenType.logo = tk?.logo ?? ''
       return tokenType
     })
 
@@ -80,6 +52,18 @@ export default function WalletComp() {
     loadTokenTypes()
   }, []);
 
+  useEffect(() => {
+    if (_.isEmpty(myInfo.walletName)) {
+      return
+    }
+
+    const wallet = _.find(supportedWalletTypes, (w) => w.name === myInfo.walletName)
+    if (_.isEmpty(wallet)) {
+      return
+    }
+
+    setSelectedWallet(wallet ?? {id: -1, showName: '', icon: ''})
+  }, [myInfo])
   
   useEffect(() => {
     const listenToBalance = async () => {
@@ -87,7 +71,7 @@ export default function WalletComp() {
         return
       }
 
-      const tokenAmounts = await loadAllTokenAmount(myInfo.address)
+      const tokenAmounts = await loadAllTokenAmount(myInfo.address, myTokenTypes)
 
       if (_.isEmpty(tokenAmounts)) {
         return
@@ -120,7 +104,14 @@ export default function WalletComp() {
       return
     }
     setSelectedWallet(value);
-    loadAccount(value);
+    async function getAcount() {
+      const msg = await loadAccount(value, myTokenTypes, updateAccountInfo);
+      if (msg !== 'ok') {
+        toast(t(msg))
+      }
+    }
+
+    getAcount()
   };
 
   const handleAssetOpen = () => {
@@ -131,88 +122,13 @@ export default function WalletComp() {
     setAssetOpen(false)
   }
 
-  async function loadAllTokenAmount(addr: string) {
-    const ret = await getTokenAmount(addr).catch(e => null)
-
-    if (_.isEmpty(ret)) {
-      return null
-    }
-    
-    const types =  _.map(ret.result, (arr) => {
-      const [type, amount] = arr
-      return {
-        tokenType: _.find(myTokenTypes, (tokenType) => tokenType.name === type) ?? {
-          id: -1,
-          name: ''
-        },
-        amount
-      }
-    })
-
-    return _.filter(types, (t) => t.tokenType.id >= 0)
-  }
-  
-  async function loadAccount(wallet: any) {
-    const injected = await web3Enable('bxb');
-
-    if (!injected.length) {
-      toast(t("notFoundWallet"));
-      return;
-    }
-
-    const mathWallet = _.find(injected, (w: any) => w.isMathWallet === true)
-    if (_.isEmpty(mathWallet)) {
-      toast(t("notFoundWallet"));
-      return;
-    }
-
-    const allAccounts = await web3Accounts();
-
-    if (!allAccounts.length) {
-      toast(t("addWallet"));
-      return;
-    }
-
-    const mathAccounts: any = await findMathAccount(allAccounts)
-    if (_.isEmpty(mathAccounts)) {
-      toast(t("addWallet"));
-      return;
-    }
-
-    const tokenAmounts = await loadAllTokenAmount(mathAccounts[0].address)
-    if (tokenAmounts === null) {
-      return
-    }
-
-    const info = createAccountInfo(mathAccounts[0].address, 
-      mathAccounts[0].meta?.name ?? '', 
-      '' + _.get(wallet, 'name', ''), 
-      tokenAmounts ?? [])
-      
-    updateAccountInfo(info)
-  }
-
-  async function findMathAccount(allAccounts: InjectedAccountWithMeta[]) {
-    return Promise.all(_.map(allAccounts, async (acc) => {
-      return await web3FromAddress(acc.address)
-    })).then((wallets: InjectedExtension[]) => {
-      return _.filter(_.zipWith(allAccounts, wallets, (a: InjectedAccountWithMeta, w: any) => {
-        if (w && w.isMathWallet) {
-          return a
-        } else {
-          return {}
-        }
-      }), (x) => !_.isEmpty(x))
-    })
-  }
-
     return (
       <div>
         {
           myInfo.address === '' ? <button className="btn-custom" onClick={handleClickOpen}>
           {t('connectToWallet')}</button> : <div className="addr-container" onClick={handleAssetOpen}>
               <span>{getAddress(myInfo.address)}</span>
-              <img src={_.get(selectedWallet, 'icon', accountTypes[0].icon)}></img>
+              <img src={_.get(selectedWallet, 'icon', supportedWalletTypes[0].icon)}></img>
             </div>
         }
         <ToastContainer 
@@ -229,7 +145,7 @@ export default function WalletComp() {
           onClose={handleAssetClose}
           open={assetOpen}></AssetDialog>
         <WalletSelectDialog 
-          accountTypes={accountTypes} 
+          accountTypes={supportedWalletTypes} 
           open={open} 
           onClose={handleClose}></WalletSelectDialog>
       </div>

@@ -10,7 +10,7 @@ import { SwapPoolTabs } from '../../components/NavigationTabs';
 import CurrencyInputPanel from '../../components/CurrencyInputPanel';
 import { Wrapper, ArrowWrapper, BottomGrouping } from '../../components/Swap/styleds';
 import SwapConfirmhModal from './SwapConfirmModal';
-import { convertToShow } from '../../utils/balanceUtils'
+import { convertToShow, convertToShowSI } from '../../utils/balanceUtils'
 import { TokenType } from '../../state/token/types';
 import { useTokenTypes } from '../../state/token/hooks';
 import { useFromToken, useFromTokenAmount, useToToken, useToTokenAmount, useSetFromToken, useSetToToken, useSetFromTokenAmount, useSetToTokenAmount, useSwitchFromToTokens } from '../../state/swap/hooks';
@@ -103,9 +103,6 @@ const SwapButton = styled(RebassButton)`
   cursor: pointer;
   position: relative;
   z-index: 1;
-  &:disabled {
-    cursor: auto;
-  }
 
   > * {
     user-select: none;
@@ -122,10 +119,6 @@ const SwapButton = styled(RebassButton)`
     opacity: 0.4;
     :hover {
       cursor: auto;
-      background-color: #FDEAF1;
-      box-shadow: none;
-      border: 1px solid transparent;
-      outline: none;
     }
   }
 `
@@ -196,7 +189,7 @@ export default function Swap() {
   const fromTokenBalance = _.get(_.find(tokenAmounts, t => t.tokenType.id == fromToken?.id), 'amount', '');
   const toTokenBalance = _.get(_.find(tokenAmounts, t => t.tokenType.id == toToken?.id), 'amount', '');
 
-  const handleSetMaxFromTokenAmount = () => setFromTokenAmount(fromTokenBalance);
+  const handleSetMaxFromTokenAmount = () => setFromTokenAmount(convertToShow(fromTokenBalance));
 
   const insufficientBalance =  walletConnected && (_.toNumber(fromTokenAmount) > _.toNumber(fromTokenBalance));
 
@@ -244,7 +237,7 @@ export default function Swap() {
             onUserInput={handleSetFromTokenAmount}
             currency={fromToken}
             onCurrencySelect={handleFromTokenSelect}
-            balance={convertToShow(fromTokenBalance)}
+            balance={convertToShowSI(fromTokenBalance)}
             showBalance={walletConnected}
             showMaxButton={walletConnected}
             onMax={handleSetMaxFromTokenAmount}
@@ -273,7 +266,7 @@ export default function Swap() {
             onUserInput={handleSetToTokenAmount}
             currency={toToken}
             onCurrencySelect={handleToTokenSelect}
-            balance={convertToShow(toTokenBalance)}
+            balance={convertToShowSI(toTokenBalance)}
             showBalance={walletConnected}
             showMaxButton={false}
             insufficientBalance={false}
@@ -285,8 +278,8 @@ export default function Swap() {
           {!walletConnected &&
             <ConnectWalletButton onClick={() => {setWalletSelectorOpen(true)}}>Connect Wallet</ConnectWalletButton>
           }
-          {swapEnabled &&
-            <SwapButton onClick={() => setSwapConfirmModalOpen(true)}>Swap</SwapButton>
+          {walletConnected &&
+            <SwapButton disabled={!swapEnabled} onClick={() => setSwapConfirmModalOpen(true)}>Swap</SwapButton>
           }
         </BottomGrouping>
 

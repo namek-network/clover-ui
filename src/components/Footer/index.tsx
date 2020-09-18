@@ -2,18 +2,33 @@ import React, { Component } from 'react';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import styled from 'styled-components';
+import { darken } from 'polished';
+
+const Link = styled.a`
+  margin: 5px 15px;
+  height: 16px;
+  font-size: 16px;
+  font-family: Roboto-Light, Roboto;
+  font-weight: 350;
+  color: #666F83;
+  line-height: 16px;
+
+  :hover {
+    color: ${darken(0.1, '#666F83')};
+    text-decoration: none;
+  }
+`;
 
 export default class Footer extends Component {
-
   render() {
     return (
       <Navbar fixed="bottom" variant="light" className="justify-content-center">
         <Nav>
-          <Nav.Link href="#/home">Home</Nav.Link>
-          <Nav.Link href="#/developers">Developers</Nav.Link>
-          <Nav.Link href="#/network">Network</Nav.Link>
-          <Nav.Link href="#/community">Community</Nav.Link>
-          <Nav.Link href="#/info">Info</Nav.Link>
+          <Link href="#/home">Home</Link>
+          <Link href="#/developers">Developers</Link>
+          <Link href="#/network">Network</Link>
+          <Link href="#/community">Community</Link>
+          <Link href="#/info">Info</Link>
         </Nav>
       </Navbar>
     );

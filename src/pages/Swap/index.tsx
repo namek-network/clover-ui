@@ -29,7 +29,7 @@ const BodyWrapper = styled.div`
 `;
 
 const ArrowCircle = styled.div`
-  width: 40px;
+  width: 42px;
   height: 40px;
   background: #FCF0DC;
   border: 2px solid #F7F8F9;
@@ -251,7 +251,7 @@ export default function Swap() {
             insufficientBalance={insufficientBalance}
           />
 
-          <AutoRow justify='center' style={{ padding: '0 1rem' }}>
+          <AutoRow justify='center' gap='-30px' style={{ padding: '0 1rem', zIndex: 2 }}>
             <ArrowWrapper clickable>
               <ArrowCircle>
                 <ArrowDown

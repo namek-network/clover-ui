@@ -20,7 +20,7 @@ const BodyWrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding-top: 60px;
+  padding-top: 20px;
   align-items: center;
 
   flex: 1;

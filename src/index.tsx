@@ -10,7 +10,7 @@ import App from './pages/App';
 import store from './state';
 import * as serviceWorker from './serviceWorker';
 
-import ImgBg from './assets/images/bg.png';
+import ImgBg from './assets/images/bg.svg';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faCog, faCheckSquare, faCoffee } from '@fortawesome/free-solid-svg-icons';
@@ -32,7 +32,7 @@ const BithumbGlobalStyle = createGlobalStyle`
     min-height: 100vh;
 
     background-image: url(${ImgBg});
-    background-size:70% 100%;
+    background-size: 90% 100%;
     background-repeat: no-repeat;
   }
 `;

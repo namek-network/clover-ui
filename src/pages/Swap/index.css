@@ -1,0 +1,30 @@
+.switch-circle {
+  width: 42px;
+  height: 40px;
+  background: #FCF0DC;
+  border: 2px solid #F7F8F9;
+  border-radius: 50%;
+
+  cursor: pointer;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.switch-icon {
+  width: 20px;
+  height: 18px;
+  font-family: fontoed;
+  color: #F99E3C;
+  line-height: 20px;
+}
+
+.switch-circle:hover .switch-icon-default,
+.switch-circle .switch-icon-onhover {
+  display: none
+}
+
+.switch-circle:hover .switch-icon-onhover {
+  display: inline
+}

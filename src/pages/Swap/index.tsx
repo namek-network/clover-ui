@@ -2,13 +2,13 @@ import _ from 'lodash';
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { darken } from 'polished';
-import { ArrowDown, RefreshCw, Info } from 'react-feather';
-import { Button as RebassButton, ButtonProps } from 'rebass/styled-components'
+import { RefreshCw, Info } from 'react-feather';
+import { Button as RebassButton } from 'rebass/styled-components'
 import { AutoColumn } from '../../components/Column';
-import { AutoRow, RowBetween, RowFixed } from '../../components/Row';
+import { AutoRow, RowFixed } from '../../components/Row';
 import { SwapPoolTabs } from '../../components/NavigationTabs';
 import CurrencyInputPanel from '../../components/CurrencyInputPanel';
-import { Wrapper, ArrowWrapper, BottomGrouping } from '../../components/Swap/styleds';
+import { Wrapper, BottomGrouping } from '../../components/Swap/styleds';
 import SwapConfirmhModal from './SwapConfirmModal';
 import { convertToShow, convertToShowSI } from '../../utils/balanceUtils'
 import { TokenType } from '../../state/token/types';
@@ -18,26 +18,16 @@ import { AccountInfo } from '../../state/wallet/types';
 import { useAccountInfo, useAccountInfoUpdate } from '../../state/wallet/hooks';
 import WalletSelectDialog from '../../components/WalletComp/walletSelectDialog'
 import { supportedWalletTypes, loadAccount } from '../../utils/AccountUtils'
-import { ToastContainer, toast, Slide } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next'
+import '../../assets/vendors/font-bxb/bxb-font.css'
+import './index.css'
 
 const BodyWrapper = styled.div`
   position: relative;
   width: 100%;
   max-width: 460px;
   padding: 1rem;
-`;
-
-const ArrowCircle = styled.div`
-  width: 42px;
-  height: 40px;
-  background: #FCF0DC;
-  border: 2px solid #F7F8F9;
-  border-radius: 50%;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
 `;
 
 const ConnectWalletButton = styled(RebassButton)`
@@ -245,19 +235,13 @@ export default function Swap() {
           />
 
           <AutoRow justify='center' gap='-30px' style={{ padding: '0 1rem', zIndex: 2 }}>
-            <ArrowWrapper clickable>
-              <ArrowCircle>
-                <ArrowDown
-                  width='20px'
-                  height='18px'
-                  line-height='20px'
-                  fontSize='8px'
-                  fontFamily='fontoed'
-                  color='#F99E3C'
-                  onClick={() => switchFromToToken()}
-                />
-              </ArrowCircle>
-            </ArrowWrapper>
+            <div className='switch-circle' onClick={() => switchFromToToken()}>
+              <span>
+                <i className='fo-arrow-down switch-icon switch-icon-default'></i>
+                {/*Todo: replace the swich-icon-onhover icon*/}
+                <i className='fo-refresh-cw switch-icon switch-icon-onhover'></i>
+              </span>
+            </div>
           </AutoRow>
           
           <CurrencyInputPanel

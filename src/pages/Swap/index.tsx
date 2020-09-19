@@ -27,7 +27,6 @@ const BodyWrapper = styled.div`
   position: relative;
   width: 100%;
   max-width: 460px;
-  padding: 1rem;
 `;
 
 const ConnectWalletButton = styled(RebassButton)`
@@ -156,19 +155,31 @@ export default function Swap() {
   const toToken = useToToken();
   const toTokenAmount = useToTokenAmount();
 
+  const switchFromToToken = useSwitchFromToTokens();
+
   const setFromToken = useSetFromToken();
-  const handleFromTokenSelect = (selectedToken: TokenType) => setFromToken(selectedToken);
+  const handleFromTokenSelect = (selectedToken: TokenType) => {
+    if (toToken != null && selectedToken.id === toToken.id) {
+      switchFromToToken();
+    } else {
+      setFromToken(selectedToken)
+    }
+  };
 
   const setFromTokenAmount = useSetFromTokenAmount();
   const handleSetFromTokenAmount = (amount: string) => setFromTokenAmount(amount);
 
   const setToToken = useSetToToken();
-  const handleToTokenSelect = (toToken: TokenType) => setToToken(toToken);
+  const handleToTokenSelect = (selectedToken: TokenType) => {
+    if (fromToken != null && selectedToken.id === fromToken.id) {
+      switchFromToToken();
+    } else {
+      setToToken(selectedToken)
+    }
+  };
 
   const setToTokenAmount = useSetToTokenAmount();
   const handleSetToTokenAmount = (amount: string) => setToTokenAmount(amount);
-
-  const switchFromToToken = useSwitchFromToTokens();
 
   const accountInfo = useAccountInfo();
   const updateAccountInfo = useAccountInfoUpdate()
@@ -176,14 +187,14 @@ export default function Swap() {
   const [walletConnected, setWalletConnected] = useState(!_.isEmpty(_.get(accountInfo, 'address', '')))
 
   const tokenAmounts = _.get(accountInfo, 'tokenAmounts', []);
-  const fromTokenBalance = _.get(_.find(tokenAmounts, t => t.tokenType.id == fromToken?.id), 'amount', '');
-  const toTokenBalance = _.get(_.find(tokenAmounts, t => t.tokenType.id == toToken?.id), 'amount', '');
+  const fromTokenBalance = _.get(_.find(tokenAmounts, t => t.tokenType.id === fromToken?.id), 'amount', '');
+  const toTokenBalance = _.get(_.find(tokenAmounts, t => t.tokenType.id === toToken?.id), 'amount', '');
 
   const handleSetMaxFromTokenAmount = () => setFromTokenAmount(convertToShow(fromTokenBalance));
 
   const insufficientBalance =  walletConnected && (_.toNumber(fromTokenAmount) > _.toNumber(fromTokenBalance));
 
-  const showPrice = fromToken && toToken && fromToken.id != toToken.id;
+  const showPrice = fromToken && toToken && fromToken.id !== toToken.id;
   const showTransactionInfo = showPrice && _.toNumber(fromTokenAmount) > 0 && _.toNumber(toTokenAmount) > 0;
 
   const swapEnabled = walletConnected && fromToken != null && toToken != null && _.toNumber(fromTokenAmount) > 0 && !insufficientBalance;
@@ -227,6 +238,7 @@ export default function Swap() {
             onUserInput={handleSetFromTokenAmount}
             currency={fromToken}
             onCurrencySelect={handleFromTokenSelect}
+            otherCurrency={toToken}
             balance={convertToShowSI(fromTokenBalance)}
             showBalance={walletConnected}
             showMaxButton={walletConnected}
@@ -250,6 +262,7 @@ export default function Swap() {
             onUserInput={handleSetToTokenAmount}
             currency={toToken}
             onCurrencySelect={handleToTokenSelect}
+            otherCurrency={fromToken}
             balance={convertToShowSI(toTokenBalance)}
             showBalance={walletConnected}
             showMaxButton={false}

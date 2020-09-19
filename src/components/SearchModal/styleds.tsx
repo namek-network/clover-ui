@@ -31,10 +31,13 @@ export const MenuItem = styled(RowBetween)`
   grid-gap: 16px;
   cursor: ${({ disabled }) => !disabled && 'pointer'};
   pointer-events: ${({ disabled }) => disabled && 'none'};
+
+  border: 1px solid transparent;
+  
   :hover {
-    background-color: ${({ disabled }) => !disabled && '#FCF0DC'};
-    // border-radius: ${({ disabled }) => !disabled && '8px'};
-    // border: ${({ disabled }) => !disabled && '1px solid #FF8212'};
+    background: ${({ disabled }) => !disabled && '#FCF0DC'};
+    border-radius: ${({ disabled }) => !disabled && '8px'};
+    border: ${({ disabled }) => !disabled && '1px solid #FF8212;'}; 
   }
   opacity: ${({ disabled, selected }) => (disabled || selected ? 0.5 : 1)};
 `

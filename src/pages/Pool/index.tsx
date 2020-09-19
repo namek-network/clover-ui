@@ -14,7 +14,6 @@ const BodyWrapper = styled.div`
   position: relative;
   width: 100%;
   max-width: 460px;
-  padding: 1rem;
 `;
 
 export const Wrapper = styled.div`

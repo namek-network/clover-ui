@@ -23,12 +23,14 @@ interface CurrencySearchProps {
   isOpen: boolean
   onDismiss: () => void
   selectedCurrency?: TokenType | null,
-  onCurrencySelect: (currency: TokenType) => void
+  onCurrencySelect: (currency: TokenType) => void,
+  otherSelectedCurrency?: TokenType | null
 }
 
 export function CurrencySearch({
   selectedCurrency,
   onCurrencySelect,
+  otherSelectedCurrency,
   onDismiss,
   isOpen
 }: CurrencySearchProps) {
@@ -93,9 +95,8 @@ export function CurrencySearch({
               currencies={filteredTokens}
               selectedCurrency={selectedCurrency}
               onCurrencySelect={handleCurrencySelect}
-              otherCurrency={null}
+              otherCurrency={otherSelectedCurrency}
               fixedListRef={fixedList}
-              showDot={false}
             />
           )}
         </AutoSizer>

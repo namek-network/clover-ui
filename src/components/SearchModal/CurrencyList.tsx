@@ -11,31 +11,9 @@ function currencyKey(currency: TokenType): number {
   return currency.id;
 }
 
-const StyledBalanceText = styled(Text)`
-  white-space: nowrap;
-  overflow: hidden;
-  max-width: 5rem;
-  text-overflow: ellipsis;
-`
-
-const Tag = styled.div`
-  background-color: ${({ theme }) => theme.bg3};
-  color: ${({ theme }) => theme.text2};
-  font-size: 14px;
-  border-radius: 4px;
-  padding: 0.25rem 0.3rem 0.25rem 0.3rem;
-  max-width: 6rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  justify-self: flex-end;
-  margin-right: 4px;
-`
-
-const TagContainer = styled.div`
-  display: flex;
-  justify-content: flex-end;
-`
+const CurrencyListWrapper = styled.div`
+  margin: 5px 25px;
+`;
 
 function CurrencyRow({
   currency,
@@ -77,8 +55,7 @@ export default function CurrencyList({
   selectedCurrency,
   onCurrencySelect,
   otherCurrency,
-  fixedListRef,
-  showDot
+  fixedListRef
 }: {
   height: number
   currencies: TokenType[]
@@ -86,16 +63,14 @@ export default function CurrencyList({
   onCurrencySelect: (currency: TokenType) => void
   otherCurrency?: TokenType | null
   fixedListRef?: MutableRefObject<FixedSizeList | undefined>
-  showDot: boolean
 }) {
-  // const itemData = useMemo(() => (showDot ? [Currency.Dot, ...currencies] : currencies), [currencies, showDot])
   const itemData = currencies;
 
   const Row = useCallback(
     ({ data, index, style }) => {
       const currency: TokenType = data[index]
-      const isSelected = Boolean(selectedCurrency && (selectedCurrency == currency))
-      const otherSelected = Boolean(otherCurrency && (otherCurrency == currency))
+      const isSelected = Boolean(selectedCurrency && (currencyKey(selectedCurrency) === currencyKey(currency)))
+      const otherSelected = Boolean(otherCurrency && (currencyKey(otherCurrency) === currencyKey(currency)))
       const handleSelect = () => onCurrencySelect(currency)
       return (
         <CurrencyRow
@@ -113,16 +88,18 @@ export default function CurrencyList({
   const itemKey = useCallback((index: number, data: any) => currencyKey(data[index]), [])
 
   return (
-    <FixedSizeList
-      height={height}
-      ref={fixedListRef as any}
-      width="100%"
-      itemData={itemData}
-      itemCount={itemData.length}
-      itemSize={56}
-      itemKey={itemKey}
-    >
-      {Row}
-    </FixedSizeList>
+    <CurrencyListWrapper>
+      <FixedSizeList
+        height={height}
+        ref={fixedListRef as any}
+        width="100%"
+        itemData={itemData}
+        itemCount={itemData.length}
+        itemSize={56}
+        itemKey={itemKey}
+      >
+        {Row}
+      </FixedSizeList>
+    </CurrencyListWrapper>
   )
 }

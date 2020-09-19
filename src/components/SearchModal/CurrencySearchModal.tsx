@@ -9,14 +9,16 @@ interface CurrencySearchModalProps {
   isOpen: boolean
   onDismiss: () => void
   selectedCurrency?: TokenType | null,
-  onCurrencySelect: (currency: TokenType) => void
+  onCurrencySelect: (currency: TokenType) => void,
+  otherSelectedCurrency?: TokenType | null
 }
 
 export default function CurrencySearchModal({
   isOpen,
   onDismiss,
   selectedCurrency,
-  onCurrencySelect
+  onCurrencySelect,
+  otherSelectedCurrency
 }: CurrencySearchModalProps) {
   const [listView, setListView] = useState<boolean>(false)
   const lastOpen = useLast(isOpen)
@@ -42,6 +44,7 @@ export default function CurrencySearchModal({
           onDismiss={onDismiss}
           selectedCurrency={selectedCurrency}
           onCurrencySelect={handleCurrencySelect}
+          otherSelectedCurrency={otherSelectedCurrency}
         />
     </Modal>
   )

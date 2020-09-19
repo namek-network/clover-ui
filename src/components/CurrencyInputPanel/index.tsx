@@ -161,6 +161,7 @@ interface CurrencyInputPanelProps {
   onUserInput: (value: string) => void,
   currency?: TokenType | null,
   onCurrencySelect: (currency: TokenType) => void,
+  otherCurrency?: TokenType | null,
   balance?: string | null,
   showBalance?: boolean | null,
   showMaxButton: boolean,
@@ -175,6 +176,7 @@ export default function CurrencyInputPanel({
   onUserInput,
   currency,
   onCurrencySelect,
+  otherCurrency,
   balance,
   showBalance,
   showMaxButton,
@@ -257,6 +259,7 @@ export default function CurrencyInputPanel({
           onDismiss={handleDismissSearch}
           selectedCurrency={currency}
           onCurrencySelect={onCurrencySelect}
+          otherSelectedCurrency={otherCurrency}
         />
 
     </InputPanel>

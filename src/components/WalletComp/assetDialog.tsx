@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import Dialog from '@material-ui/core/Dialog';
 import {getAddress} from './utils'
 import _ from 'lodash'
 import { TokenAmount } from '../../state/wallet/types'
 import { convertToShow } from '../../utils/balanceUtils'
+import Modal from '../../components/Modal'
+import Column from '../../components/Column'
 
 import './index.css'
 
@@ -21,62 +22,65 @@ export default function AssetDialog(props: any) {
     onClose();
   };
 
+  const customStyle = 'border-radius: 16px; max-width: 530px; width: 528px;'
   return (
-    <Dialog onClose={handleClose} open={open} classes={{paper: "dialog-custom"}}>
-      <div className="content-width asset-content-width">
-        <div>My account</div>
-        <div className="wallet-dia-close-btn" onClick={() => handleClose()}><i className="fa fo-x"></i></div>
-      </div>
-      <div className="asset-account-container">
-        <div className="asset-change-container">
-          <div className="asset-change-left">Conneted with {wallet.showName}</div>
-          <div className="asset-change-btn">Change</div>
+    <Modal isOpen={open} onDismiss={handleClose} maxHeight={90} customStyle={customStyle}>
+      <Column>
+        <div className="content-width asset-content-width">
+          <div>My account</div>
+          <div className="wallet-dia-close-btn" onClick={() => handleClose()}><i className="fa fo-x"></i></div>
         </div>
-        <div className="asset-addr-container">
-          <img src={_.get(wallet, 'icon')}></img>
-          <span>{getAddress(account.address)}</span>
+        <div className="asset-account-container">
+          <div className="asset-change-container">
+            <div className="asset-change-left">Conneted with {wallet.showName}</div>
+            <div className="asset-change-btn">Change</div>
+          </div>
+          <div className="asset-addr-container">
+            <img src={_.get(wallet, 'icon')}></img>
+            <span>{getAddress(account.address)}</span>
+          </div>
+          <div className="asset-change-container asset-copy">
+            <div className="asset-copy-margin">Copy Address</div>
+            <div className="asset-copy-right">View on Subscan</div>
+          </div>
         </div>
-        <div className="asset-change-container asset-copy">
-          <div className="asset-copy-margin">Copy Address</div>
-          <div className="asset-copy-right">View on Subscan</div>
-        </div>
-      </div>
-      <div className="asset-token-container">
-        <div className="asset-token-title">My assets</div>
-        <div className="asset-token-list">
-          {
-            tokenAmounts.map((tokenAmount: TokenAmount, key: any) => (
-              <div className='asset-token-amount-item' key={key}>
-                <div className="row-container">
-                  <img src={tokenAmount.tokenType.logo}></img>
-                  <div className="margin-left-9">
-                    <div className="asset-token-name">{tokenAmount.tokenType.name}</div>
-                    <div className="asset-deposit-name">
-                      <span>Deposit</span>
-                      <span className="margin-left-15">Convert to ETH</span>
+        <div className="asset-token-container">
+          <div className="asset-token-title">My assets</div>
+          <div className="asset-token-list">
+            {
+              tokenAmounts.map((tokenAmount: TokenAmount, key: any) => (
+                <div className='asset-token-amount-item' key={key}>
+                  <div className="row-container">
+                    <img src={tokenAmount.tokenType.logo}></img>
+                    <div className="margin-left-9">
+                      <div className="asset-token-name">{tokenAmount.tokenType.name}</div>
+                      <div className="asset-deposit-name">
+                        <span>Deposit</span>
+                        <span className="margin-left-15">Convert to ETH</span>
+                      </div>
                     </div>
                   </div>
+                  <div className="asset-amount-text">{convertToShow(tokenAmount.amount)}</div>
                 </div>
-                <div className="asset-amount-text">{convertToShow(tokenAmount.amount)}</div>
-              </div>
-            ))
-            }
-        </div>
+              ))
+              }
+          </div>
 
-        <div className="asset-token-title margin-top-20">Recent Transactions</div>
-        <div className="asset-token-list asset-trans-text padding-16 margin-bottom-16 ">
-          <div className='asset-trans-item'>
-            <span>Swap 14 BxETH for 12.6743553 DOT</span>
-          </div>
-          <div className='asset-trans-item margin-top-10'>
-            <span>Swap 14 BxETH for 12.6743553 DOT</span>
-          </div>
-          <div className='asset-trans-item margin-top-10'>
-            <span>Swap 14 BxETH for 12.6743553 DOT</span>
+          <div className="asset-token-title margin-top-20">Recent Transactions</div>
+          <div className="asset-token-list asset-trans-text padding-16 margin-bottom-16 ">
+            <div className='asset-trans-item'>
+              <span>Swap 14 BxETH for 12.6743553 DOT</span>
+            </div>
+            <div className='asset-trans-item margin-top-10'>
+              <span>Swap 14 BxETH for 12.6743553 DOT</span>
+            </div>
+            <div className='asset-trans-item margin-top-10'>
+              <span>Swap 14 BxETH for 12.6743553 DOT</span>
+            </div>
           </div>
         </div>
-      </div>
-    </Dialog>
+      </Column>
+    </Modal>
   );
 }
 

@@ -98,7 +98,7 @@ export default function Pool() {
                 : <PoolPaireList>
                   {
                     _.map(testData, (item) => (
-                    <PoolPairItem item={item} 
+                    <PoolPairItem item={item} key={item.id}
                       selectedItem={selectedItem} 
                       onSelectItem={setSeletedItem}></PoolPairItem>))
                   }

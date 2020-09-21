@@ -132,7 +132,7 @@ export const PairTransContent = (props: PairTransContentProps) => {
       {
         _.map(contents, ({label, amount}) => {
           return (
-            <ContentRowBetween>
+            <ContentRowBetween key={label}>
               <LabelText>
                 {label}
               </LabelText>

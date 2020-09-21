@@ -1,7 +1,7 @@
 import React, { Component, Suspense, useEffect } from 'react';
 import { HashRouter, Route, Switch } from 'react-router-dom';
 import styled from 'styled-components';
-import { initApi } from '../utils/apiUtils'
+import { api, initApi } from '../utils/apiUtils'
 import { loadCurrencyPair, loadTokenTypes } from '../utils/tokenUtils'
 import { useTokenTypesUpdate, useCurrencyPairUpdate } from '../state/token/hooks'
 

@@ -12,6 +12,10 @@ const types = {
     id: 'u32',
     name: 'CurrencyTypeEnum'
   },
+  SwapResultInfo: {
+    balance: 'String',
+    routes: 'Vec<CurrencyTypeEnum>'
+  },
   PairKey: 'u64',
   Rate: 'u128',
   Ratio: 'u128',
@@ -49,6 +53,18 @@ class ApiWrapper {
   getBalanceSubscribe(account: string, cb: (params: any) => void) {
     return this.api.rpc.get.balance(account, cb)
   }
+  
+  targetAmountAvailable(source: string, target: string, amount: string) {
+    return this.api.rpc.target.amount_available(source, target, amount)
+  }
+
+  supplyAmountNeeded(source: string, target: string, amount: string) {
+    return this.api.rpc.supply.amount_needed(source, target, amount)
+  }
+
+  getLiquidity(addr: string) {
+    return this.api.rpc.get.liquidity(addr)
+  }
 }
 
 export const api = new ApiWrapper()
@@ -81,6 +97,16 @@ export const initApi = async (onInited: () => void) => {
             }
           ],
           type: 'Vec<(CurrencyTypeEnum, String)>'
+        },
+        liquidity: {
+          description: 'get liquidity',
+          params: [
+            {
+              name: 'account',
+              type: 'String'
+            }
+          ],
+          type: 'Vec<(CurrencyTypeEnum, CurrencyTypeEnum, String, String, String, String)>'
         }
       },
       currency: {
@@ -90,7 +116,48 @@ export const initApi = async (onInited: () => void) => {
           ],
           type: 'Vec<(CurrencyTypeEnum, CurrencyTypeEnum)>'
         }
-      }
+      },
+      target: {
+        amount_available: {
+          description: 'target amount available',
+          params: [
+            {
+              name: 'tokenType',
+              type: 'CurrencyTypeEnum'
+            },
+            {
+              name: 'targetTokenType',
+              type: 'CurrencyTypeEnum'
+            },
+            {
+              name: 'amount',
+              type: 'Balance'
+            }
+          ],
+          type: 'SwapResultInfo'
+        }
+      },
+      supply: {
+        amount_needed: {
+          description: 'supply amount needed',
+          params: [
+            {
+              name: 'tokenType',
+              type: 'CurrencyTypeEnum'
+            },
+            {
+              name: 'targetTokenType',
+              type: 'CurrencyTypeEnum'
+            },
+            {
+              name: 'amount',
+              type: 'Balance'
+            }
+          ],
+          type: 'SwapResultInfo'
+        }
+      },
+
     }
   });
   api.setApi(theApi)

@@ -21,7 +21,7 @@ export default createReducer(initialState, builder =>
     })
     .addCase(setFromTokenAmount, (state, action) => {
       const { amount } = action.payload;
-      state.fromTokenAmount = (amount == null) ? BigNum.SerizableZero : amount.toSerizableBigNum();
+      state.fromTokenAmount = (amount == null) ? BigNum.SerizableZero : amount;
     })
     .addCase(setToToken, (state, action) => {
       const { token } = action.payload;
@@ -29,7 +29,7 @@ export default createReducer(initialState, builder =>
     })
     .addCase(setToTokenAmount, (state, action) => {
       const { amount } = action.payload;
-      state.toTokenAmount = (amount == null) ? BigNum.SerizableZero : amount.toSerizableBigNum();
+      state.toTokenAmount = (amount == null) ? BigNum.SerizableZero : amount;
     }).addCase(switchFromToTokens, (state, action) => {
       const { fromToken, fromTokenAmount } = state;
       state.fromToken = state.toToken;

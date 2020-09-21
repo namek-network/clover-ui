@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useCallback } from 'react';
 import { setFromToken, setFromTokenAmount, setToToken, setToTokenAmount, switchFromToTokens } from './actions';
 import { TokenType } from '../token/types';
-import BigNum from '../../types/bigNum';
+import BigNum, { SerializableBigNum } from '../../types/bigNum';
 import { AppState } from '../index';
 
 export function useFromToken(): TokenType | undefined {
@@ -27,9 +27,9 @@ export function useSetFromToken(): (token: TokenType) => void {
   return useCallback((token: TokenType) => dispatch(setFromToken({token})), [dispatch]);
 }
 
-export function useSetFromTokenAmount(): (amount: BigNum) => void {
+export function useSetFromTokenAmount(): (amount: SerializableBigNum) => void {
   const dispatch = useDispatch();
-  return useCallback((amount: BigNum) => dispatch(setFromTokenAmount({amount})), [dispatch]);
+  return useCallback((amount: SerializableBigNum) => dispatch(setFromTokenAmount({amount})), [dispatch]);
 }
 
 export function useSetToToken(): (token: TokenType) => void {
@@ -37,9 +37,9 @@ export function useSetToToken(): (token: TokenType) => void {
   return useCallback((token: TokenType) => dispatch(setToToken({token})), [dispatch]);
 }
 
-export function useSetToTokenAmount(): (amount: BigNum) => void {
+export function useSetToTokenAmount(): (amount: SerializableBigNum) => void {
   const dispatch = useDispatch();
-  return useCallback((amount: BigNum) => dispatch(setToTokenAmount({amount})), [dispatch]);
+  return useCallback((amount: SerializableBigNum) => dispatch(setToTokenAmount({amount})), [dispatch]);
 }
 
 export function useSwitchFromToTokens(): () => void {

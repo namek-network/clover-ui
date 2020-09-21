@@ -166,7 +166,7 @@ export default function Swap() {
   };
 
   const setFromTokenAmount = useSetFromTokenAmount();
-  const handleSetFromTokenAmount = (amount: string) => setFromTokenAmount(BigNum.fromRealNum(amount));
+  const handleSetFromTokenAmount = (amount: string) => setFromTokenAmount(BigNum.fromRealNum(amount).toSerizableBigNum());
 
   const setToToken = useSetToToken();
   const handleToTokenSelect = (selectedToken: TokenType) => {
@@ -178,7 +178,7 @@ export default function Swap() {
   };
 
   const setToTokenAmount = useSetToTokenAmount();
-  const handleSetToTokenAmount = (amount: string) => setToTokenAmount(BigNum.fromRealNum(amount));
+  const handleSetToTokenAmount = (amount: string) => setToTokenAmount(BigNum.fromRealNum(amount).toSerizableBigNum());
 
   const accountInfo = useAccountInfo();
   const updateAccountInfo = useAccountInfoUpdate()
@@ -189,7 +189,7 @@ export default function Swap() {
   const fromTokenBalance: BigNum = BigNum.fromSerizableBigNum(_.get(_.find(tokenAmounts, t => t.tokenType.id === fromToken?.id), 'amountBN', BigNum.SerizableZero));
   const toTokenBalance: BigNum = BigNum.fromSerizableBigNum(_.get(_.find(tokenAmounts, t => t.tokenType.id === toToken?.id), 'amountBN', BigNum.SerizableZero));
 
-  const handleSetMaxFromTokenAmount = () => setFromTokenAmount(fromTokenBalance);
+  const handleSetMaxFromTokenAmount = () => setFromTokenAmount(fromTokenBalance.toSerizableBigNum());
 
   const insufficientBalance =  walletConnected && (fromTokenAmount.gt(fromTokenBalance));
 
@@ -233,7 +233,7 @@ export default function Swap() {
         <AutoColumn gap={'md'}>
           <CurrencyInputPanel
             id="swap-currency-input"
-            value={fromTokenAmount.realNum}
+            value={fromTokenAmount.eq(BigNum.Zero) ? '' : fromTokenAmount.realNum}
             onUserInput={handleSetFromTokenAmount}
             currency={fromToken}
             onCurrencySelect={handleFromTokenSelect}
@@ -256,7 +256,7 @@ export default function Swap() {
           
           <CurrencyInputPanel
             id="swap-currency-output"
-            value={toTokenAmount.realNum}
+            value={toTokenAmount.eq(BigNum.Zero) ? '' : toTokenAmount.realNum}
             onUserInput={handleSetToTokenAmount}
             currency={toToken}
             onCurrencySelect={handleToTokenSelect}

@@ -1,24 +1,25 @@
+import _ from 'lodash';
 import { useSelector, useDispatch } from 'react-redux';
 import { useCallback } from 'react';
 import { setFromToken, setFromTokenAmount, setToToken, setToTokenAmount, switchFromToTokens } from './actions';
 import { TokenType } from '../token/types';
-
+import BigNum from '../../types/bigNum';
 import { AppState } from '../index';
 
 export function useFromToken(): TokenType | undefined {
   return useSelector((state: AppState) => state.swap.fromToken);
 }
 
-export function useFromTokenAmount(): string | undefined {
-  return useSelector((state: AppState) => state.swap.fromTokenAmount);
+export function useFromTokenAmount(): BigNum {
+  return useSelector((state: AppState) => _.isEmpty(state.swap.fromTokenAmount) ? BigNum.Zero : BigNum.fromSerizableBigNum(state.swap.fromTokenAmount));
 }
 
 export function useToToken(): TokenType | undefined {
   return useSelector((state: AppState) => state.swap.toToken);
 }
 
-export function useToTokenAmount(): string | undefined {
-  return useSelector((state: AppState) => state.swap.toTokenAmount);
+export function useToTokenAmount(): BigNum {
+  return useSelector((state: AppState) => _.isEmpty(state.swap.toTokenAmount) ? BigNum.Zero : BigNum.fromSerizableBigNum(state.swap.toTokenAmount));
 }
 
 export function useSetFromToken(): (token: TokenType) => void {
@@ -26,9 +27,9 @@ export function useSetFromToken(): (token: TokenType) => void {
   return useCallback((token: TokenType) => dispatch(setFromToken({token})), [dispatch]);
 }
 
-export function useSetFromTokenAmount(): (amount: string) => void {
+export function useSetFromTokenAmount(): (amount: BigNum) => void {
   const dispatch = useDispatch();
-  return useCallback((amount: string) => dispatch(setFromTokenAmount({amount})), [dispatch]);
+  return useCallback((amount: BigNum) => dispatch(setFromTokenAmount({amount})), [dispatch]);
 }
 
 export function useSetToToken(): (token: TokenType) => void {
@@ -36,9 +37,9 @@ export function useSetToToken(): (token: TokenType) => void {
   return useCallback((token: TokenType) => dispatch(setToToken({token})), [dispatch]);
 }
 
-export function useSetToTokenAmount(): (amount: string) => void {
+export function useSetToTokenAmount(): (amount: BigNum) => void {
   const dispatch = useDispatch();
-  return useCallback((amount: string) => dispatch(setToTokenAmount({amount})), [dispatch]);
+  return useCallback((amount: BigNum) => dispatch(setToTokenAmount({amount})), [dispatch]);
 }
 
 export function useSwitchFromToTokens(): () => void {

@@ -59,7 +59,7 @@ export async function loadAllTokenAmount(addr: string, tokenTypes: TokenType[]) 
         name: ''
       },
       amount: amount.toString(),
-      amountBN: BigNum.fromBigNum(amount)
+      amountBN: BigNum.fromBigNum(amount).toSerizableBigNum()
     }
   })
 

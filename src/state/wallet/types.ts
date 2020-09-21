@@ -1,10 +1,10 @@
 import { TokenType } from '../token/types'
-import BigNum from '../../types/bigNum'
+import { SerializableBigNum } from '../../types/bigNum'
 
 export type TokenAmount = {
   tokenType: TokenType,
-  amount: string, // TODO: remove this and use amountBN instead
-  amountBN: BigNum
+  amount: string, // TODO: remove and use amountBN instead
+  amountBN: SerializableBigNum
 }
 
 export type AccountInfo = {

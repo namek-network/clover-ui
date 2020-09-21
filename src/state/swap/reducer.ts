@@ -1,13 +1,16 @@
+import _ from 'lodash';
 import { createReducer } from '@reduxjs/toolkit';
 import { setFromToken, setFromTokenAmount, setToToken, setToTokenAmount, switchFromToTokens } from './actions';
 import { SwapState } from './types';
 import BuiltInTokens from '../token/tokens';
+import BigNum from '../../types/bigNum';
 
 const initialState: SwapState = {
   fromToken: BuiltInTokens[0],
   toToken: BuiltInTokens[1],
-  fromTokenAmount: '',
-  toTokenAmount: ''
+  
+  fromTokenAmount: BigNum.SerizableZero,
+  toTokenAmount: BigNum.SerizableZero
 }
   
 export default createReducer(initialState, builder =>
@@ -18,7 +21,7 @@ export default createReducer(initialState, builder =>
     })
     .addCase(setFromTokenAmount, (state, action) => {
       const { amount } = action.payload;
-      state.fromTokenAmount = amount;
+      state.fromTokenAmount = (amount == null) ? BigNum.SerizableZero : amount.toSerizableBigNum();
     })
     .addCase(setToToken, (state, action) => {
       const { token } = action.payload;
@@ -26,7 +29,7 @@ export default createReducer(initialState, builder =>
     })
     .addCase(setToTokenAmount, (state, action) => {
       const { amount } = action.payload;
-      state.toTokenAmount = amount;
+      state.toTokenAmount = (amount == null) ? BigNum.SerizableZero : amount.toSerizableBigNum();
     }).addCase(switchFromToTokens, (state, action) => {
       const { fromToken, fromTokenAmount } = state;
       state.fromToken = state.toToken;

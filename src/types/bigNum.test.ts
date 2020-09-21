@@ -3,6 +3,13 @@ import BigNum, { defaultBase } from './bigNum';
 describe('BigNum test suites', () => {
 
   test('BigNum test cases', () => {
+    expect(BigNum.Zero.realNum).toEqual('0');
+    expect(BigNum.Zero.bigNum).toEqual('0');
+
+    expect(BigNum.fromRealNum('')).toBe(BigNum.Zero);
+    expect(BigNum.fromRealNum('  ')).toBe(BigNum.Zero);
+    expect(BigNum.fromRealNum('abc')).toBe(BigNum.Zero);
+
     expect(BigNum.fromRealNum('1').bigNum).toEqual('1000000000000');
     expect(BigNum.fromBigNum('1000000000000').realNum).toEqual('1');
 

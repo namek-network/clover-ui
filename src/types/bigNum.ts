@@ -38,7 +38,7 @@ export default class BigNum {
   static SerizableZero: SerializableBigNum = BigNum.Zero.toSerizableBigNum();
 
   static fromRealNum(realNum: string, base: string = defaultBase): BigNum {
-    if (!isNum(realNum) || !isNum(base)) {
+    if (!isNum(realNum) || !isNum(base) || realNum.trim() == '.') {
       return BigNum.Zero;
     }
 
@@ -49,7 +49,7 @@ export default class BigNum {
   }
 
   static fromBigNum(bigNum: string, base: string = defaultBase): BigNum {
-    if (!isNum(bigNum) || !isNum(base)) {
+    if (!isNum(bigNum) || !isNum(base) || bigNum.trim() == '.') {
       return BigNum.Zero;
     }
 

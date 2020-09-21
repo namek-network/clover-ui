@@ -1,10 +1,9 @@
 import { TokenType } from '../token/types';
-import { SerializableBigNum } from '../../types/bigNum';
 
 export type SwapState = {
   fromToken?: TokenType,
-  fromTokenAmount: SerializableBigNum,
+  fromTokenAmount?: string,
 
   toToken?: TokenType,
-  toTokenAmount: SerializableBigNum
+  toTokenAmount?: string
 }

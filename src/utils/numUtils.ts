@@ -5,5 +5,9 @@ export function isNum(num: string): boolean {
     return false;
   }
 
+  if (num.trim() == '.') {
+    return true;
+  }
+
   return !_.isNaN(_.toNumber(num));
 }

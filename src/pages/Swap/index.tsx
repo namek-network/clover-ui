@@ -150,9 +150,9 @@ const TransactionPriceRefreshWapper = styled.div`
 export default function Swap() {
 
   const fromToken = useFromToken();
-  const fromTokenAmount: BigNum = useFromTokenAmount();
+  const fromTokenAmount = useFromTokenAmount();
   const toToken = useToToken();
-  const toTokenAmount: BigNum = useToTokenAmount();
+  const toTokenAmount = useToTokenAmount();
 
   const switchFromToToken = useSwitchFromToTokens();
 
@@ -166,7 +166,7 @@ export default function Swap() {
   };
 
   const setFromTokenAmount = useSetFromTokenAmount();
-  const handleSetFromTokenAmount = (amount: string) => setFromTokenAmount(BigNum.fromRealNum(amount).toSerizableBigNum());
+  const handleSetFromTokenAmount = (amount: string) => setFromTokenAmount(amount);
 
   const setToToken = useSetToToken();
   const handleToTokenSelect = (selectedToken: TokenType) => {
@@ -178,7 +178,7 @@ export default function Swap() {
   };
 
   const setToTokenAmount = useSetToTokenAmount();
-  const handleSetToTokenAmount = (amount: string) => setToTokenAmount(BigNum.fromRealNum(amount).toSerizableBigNum());
+  const handleSetToTokenAmount = (amount: string) => setToTokenAmount(amount);
 
   const accountInfo = useAccountInfo();
   const updateAccountInfo = useAccountInfoUpdate()
@@ -189,9 +189,9 @@ export default function Swap() {
   const fromTokenBalance: BigNum = BigNum.fromSerizableBigNum(_.get(_.find(tokenAmounts, t => t.tokenType.id === fromToken?.id), 'amountBN', BigNum.SerizableZero));
   const toTokenBalance: BigNum = BigNum.fromSerizableBigNum(_.get(_.find(tokenAmounts, t => t.tokenType.id === toToken?.id), 'amountBN', BigNum.SerizableZero));
 
-  const handleSetMaxFromTokenAmount = () => setFromTokenAmount(fromTokenBalance.toSerizableBigNum());
+  const handleSetMaxFromTokenAmount = () => setFromTokenAmount(fromTokenBalance.realNum);
 
-  const insufficientBalance =  walletConnected && (fromTokenAmount.gt(fromTokenBalance));
+  const insufficientBalance =  walletConnected && (BigNum.fromRealNum(fromTokenAmount ?? '').gt(fromTokenBalance));
 
   const showPrice = fromToken && toToken && fromToken.id !== toToken.id;
   const showTransactionInfo = showPrice && _.toNumber(fromTokenAmount) > 0 && _.toNumber(toTokenAmount) > 0;
@@ -233,7 +233,7 @@ export default function Swap() {
         <AutoColumn gap={'md'}>
           <CurrencyInputPanel
             id="swap-currency-input"
-            value={fromTokenAmount.eq(BigNum.Zero) ? '' : fromTokenAmount.realNum}
+            value={fromTokenAmount ?? ''}
             onUserInput={handleSetFromTokenAmount}
             currency={fromToken}
             onCurrencySelect={handleFromTokenSelect}
@@ -256,7 +256,7 @@ export default function Swap() {
           
           <CurrencyInputPanel
             id="swap-currency-output"
-            value={toTokenAmount.eq(BigNum.Zero) ? '' : toTokenAmount.realNum}
+            value={toTokenAmount || ''}
             onUserInput={handleSetToTokenAmount}
             currency={toToken}
             onCurrencySelect={handleToTokenSelect}
@@ -374,7 +374,7 @@ export default function Swap() {
           onDismiss={() => setSwapConfirmModalOpen(false)}
           onConfirmSwap={() => setSwapConfirmModalOpen(false)}
           fromToken={fromToken}
-          fromTokenAmount={fromTokenAmount?.realNum}
+          fromTokenAmount={fromTokenAmount}
           toToken={toToken}
         />
       )}

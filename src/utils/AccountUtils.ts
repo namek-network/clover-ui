@@ -3,6 +3,7 @@ import {getTokenAmount} from './httpServices'
 import { TokenType } from '../state/token/types'
 import { InjectedAccountWithMeta, InjectedExtension } from '@polkadot/extension-inject/types';
 import { AccountInfo, TokenAmount } from '../state/wallet/types';
+import BigNum from '../types/bigNum'
 import _ from 'lodash'
 
 export const supportedWalletTypes = [
@@ -55,7 +56,8 @@ export async function loadAllTokenAmount(addr: string, tokenTypes: TokenType[]) 
         id: -1,
         name: ''
       },
-      amount
+      amount,
+      amountBN: BigNum.fromBigNum(amount)
     }
   })
 

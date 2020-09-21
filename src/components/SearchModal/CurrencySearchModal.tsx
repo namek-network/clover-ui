@@ -1,7 +1,5 @@
-import React, { useCallback, useEffect, useState } from 'react'
-import ReactGA from 'react-ga'
+import React, { useCallback } from 'react'
 import { TokenType } from '../../state/token/types'
-import useLast from '../../hooks/useLast'
 import Modal from '../Modal'
 import { CurrencySearch } from './CurrencySearch'
 
@@ -20,14 +18,6 @@ export default function CurrencySearchModal({
   onCurrencySelect,
   otherSelectedCurrency
 }: CurrencySearchModalProps) {
-  const [listView, setListView] = useState<boolean>(false)
-  const lastOpen = useLast(isOpen)
-
-  useEffect(() => {
-    if (isOpen && !lastOpen) {
-      setListView(false)
-    }
-  }, [isOpen, lastOpen])
 
   const handleCurrencySelect = useCallback(
     (currency: TokenType) => {

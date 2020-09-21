@@ -1,7 +1,6 @@
-import _ from 'lodash';
 import { createReducer } from '@reduxjs/toolkit';
 import { tokenTypes, clearTokenTypes } from './actions';
-import { TokenState, TokenType } from './types';
+import { TokenState } from './types';
 import BuiltInTokens from './tokens';
 
 const initialState: TokenState = {

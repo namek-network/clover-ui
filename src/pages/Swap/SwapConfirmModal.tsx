@@ -1,6 +1,5 @@
-import React, { useCallback, useEffect, useState } from 'react'
-import ReactGA from 'react-ga'
-import styled, { keyframes } from 'styled-components'
+import React from 'react'
+import styled from 'styled-components'
 import { Button as RebassButton } from 'rebass/styled-components'
 import { darken } from 'polished';
 import { TokenType } from '../../state/token/types'

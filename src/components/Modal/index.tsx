@@ -41,7 +41,6 @@ const StyledDialogOverlay = styled(AnimatedDialogOverlay)`
     background-color: rgba(0,0,0,0.3);
   }
 `
-const customStyle = 'position: relative; overflow: visible;'
 const AnimatedDialogContent = animated(DialogContent)
 // destructure to not pass custom props to Dialog DOM element
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

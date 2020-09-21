@@ -14,7 +14,6 @@ import { convertToShow, convertToShowSI } from '../../utils/balanceUtils'
 import { TokenType } from '../../state/token/types';
 import { useTokenTypes } from '../../state/token/hooks';
 import { useFromToken, useFromTokenAmount, useToToken, useToTokenAmount, useSetFromToken, useSetToToken, useSetFromTokenAmount, useSetToTokenAmount, useSwitchFromToTokens } from '../../state/swap/hooks';
-import { AccountInfo } from '../../state/wallet/types';
 import { useAccountInfo, useAccountInfoUpdate } from '../../state/wallet/hooks';
 import WalletSelectDialog from '../../components/WalletComp/walletSelectDialog'
 import { supportedWalletTypes, loadAccount } from '../../utils/AccountUtils'
@@ -250,8 +249,7 @@ export default function Swap() {
             <div className='switch-circle' onClick={() => switchFromToToken()}>
               <span>
                 <i className='fo-arrow-down switch-icon switch-icon-default'></i>
-                {/*Todo: replace the swich-icon-onhover icon*/}
-                <i className='fo-refresh-cw switch-icon switch-icon-onhover'></i>
+                <i className='fo-repeat switch-icon switch-icon-onhover'></i>
               </span>
             </div>
           </AutoRow>

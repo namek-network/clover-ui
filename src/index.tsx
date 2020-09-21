@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import ReactGA from 'react-ga';
 import { Provider } from 'react-redux';
 import { isMobile } from 'react-device-detect';
-import styled, { createGlobalStyle } from 'styled-components';
+import { createGlobalStyle } from 'styled-components';
 import { defaultFontSizeParagraph, defaultFontFamilyEn } from './styles';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import App from './pages/App';

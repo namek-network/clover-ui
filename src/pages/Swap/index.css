@@ -1,6 +1,6 @@
 .switch-circle {
   width: 42px;
-  height: 40px;
+  height: 42px;
   background: #FCF0DC;
   border: 2px solid #F7F8F9;
   border-radius: 50%;
@@ -10,6 +10,14 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.switch-circle:hover {
+  -ms-transform: rotate(90deg);
+  -webkit-transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
+  -o-transform: rotate(90deg);
+  transform: rotate(90deg);
 }
 
 .switch-icon {
@@ -26,5 +34,5 @@
 }
 
 .switch-circle:hover .switch-icon-onhover {
-  display: inline
+  display: inline;
 }

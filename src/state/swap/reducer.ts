@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { createReducer } from '@reduxjs/toolkit';
 import { setFromToken, setFromTokenAmount, setToToken, setToTokenAmount, switchFromToTokens } from './actions';
 import { SwapState } from './types';

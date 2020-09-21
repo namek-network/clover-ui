@@ -4,6 +4,14 @@ export type TokenType = {
   logo?: string
 }
 
-export type TokenState = {
-  tokenTypes: TokenType[]
+export type CurrencyPair = {
+  a: string,
+  b: string
 }
+
+
+export type TokenState = {
+  tokenTypes: TokenType[],
+  currencyPairs: CurrencyPair[]
+}
+

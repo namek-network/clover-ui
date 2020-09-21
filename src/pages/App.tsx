@@ -1,6 +1,12 @@
-import React, { Component, Suspense } from 'react';
+import React, { Component, Suspense, useEffect } from 'react';
 import { HashRouter, Route, Switch } from 'react-router-dom';
 import styled from 'styled-components';
+import { initApi } from '../utils/apiUtils'
+import { loadCurrencyPair, loadTokenTypes } from '../utils/tokenUtils'
+import { useTokenTypesUpdate, useCurrencyPairUpdate } from '../state/token/hooks'
+
+import {useApiInited, useApiReadyUpdate, useApiConnectedUpdate, 
+  useApiInitedUpdate, useApiConnected, useApiReady} from '../state/api/hooks'
 
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -29,25 +35,50 @@ const BodyWrapper = styled.div`
   z-index: 1;
 `;
 
-export default class App extends Component {
-  render() {
-    return (
-      <Suspense fallback={null}>
-        <HashRouter>
-          <AppWrapper>
-            <Header />
-            <BodyWrapper>
-              <Switch>
-                <Route exact strict path="/" component={Swap} />
-                <Route exact strict path="/swap" component={Swap} />
-                <Route exact strict path="/pool" component={Pool} />
-                <Route exact strict path="/lending" component={Lending} />
-              </Switch>
-            </BodyWrapper>
-            <Footer />
-          </AppWrapper>
-        </HashRouter>
-      </Suspense>
-    );
+export default function App() {
+  const apiInited = useApiInited()
+  const apiInitedUpdate = useApiInitedUpdate()
+
+  const onApiInited = () => {
+    apiInitedUpdate(true)
   }
+
+  const updateTokenTypeList = useTokenTypesUpdate()
+  const updateCurrencyPair = useCurrencyPairUpdate()
+
+  const initPolkaApi = async () => {
+    await initApi(onApiInited)
+  }
+
+  useEffect(() => {
+    initPolkaApi()
+  }, [])
+
+  useEffect(() => {
+    if (!apiInited) {
+      return
+    }
+
+    loadTokenTypes(updateTokenTypeList)
+    loadCurrencyPair(updateCurrencyPair)
+  }, [apiInited])
+  
+  return (
+    <Suspense fallback={null}>
+      <HashRouter>
+        <AppWrapper>
+          <Header />
+          <BodyWrapper>
+            <Switch>
+              <Route exact strict path="/" component={Swap} />
+              <Route exact strict path="/swap" component={Swap} />
+              <Route exact strict path="/pool" component={Pool} />
+              <Route exact strict path="/lending" component={Lending} />
+            </Switch>
+          </BodyWrapper>
+          <Footer />
+        </AppWrapper>
+      </HashRouter>
+    </Suspense>
+  );
 }

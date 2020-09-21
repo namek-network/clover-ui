@@ -6,6 +6,7 @@ import settings from './settings/reducer';
 import token from './token/reducer';
 import swap from './swap/reducer';
 import wallet from './wallet/reducer';
+import api from './api/reducer'
 
 const PERSISTED_KEYS: string[] = [];
 
@@ -15,10 +16,10 @@ const store = configureStore({
     settings,
     token,
     swap,
-    wallet
+    wallet,
+    api
   },
-  middleware: [...getDefaultMiddleware({ thunk: false }), save({ states: PERSISTED_KEYS })],
-  preloadedState: load({ states: PERSISTED_KEYS })
+  middleware: [...getDefaultMiddleware({ thunk: false }), save({ states: PERSISTED_KEYS })]
 });
 
 export default store;

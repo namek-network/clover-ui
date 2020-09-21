@@ -6,14 +6,15 @@ import { ToastContainer, toast, Slide } from 'react-toastify';
 import {getAddress, createAccountInfo, createEmptyAccountInfo} from './utils'
 import { useAccountInfo, useAccountInfoUpdate } from '../../state/wallet/hooks';
 import { useTranslation } from 'react-i18next'
-import { getTokenTypes, getTokenAmount } from '../../utils/httpServices';
+import { getTokenTypes } from '../../utils/httpServices';
 import { TokenType } from '../../state/token/types'
 import { useTokenTypes, useTokenTypesUpdate } from '../../state/token/hooks'
 import { loadAccount, supportedWalletTypes, loadAllTokenAmount } from '../../utils/AccountUtils'
-import tokens from '../../state/token/tokens'
+import { api } from '../../utils/apiUtils'
 
 import './index.css'
 import 'react-toastify/dist/ReactToastify.css';
+import { useApiInited } from '../../state/api/hooks';
 
 export default function WalletComp() {
   const [open, setOpen] = useState(false);
@@ -28,28 +29,12 @@ export default function WalletComp() {
   const myTokenTypes = useTokenTypes()
   const updateTokenTypeList = useTokenTypesUpdate()
 
+  const apiInited = useApiInited()
+
   const { t } = useTranslation()
-
-  async function loadTokenTypes() {
-    const ret = await getTokenTypes()
-
-    if (_.isEmpty(ret)) {
-      return
-    }
-
-    ret.result = ret.result || []
-    const tokenTypeList = _.map(ret.result, (tokenType: TokenType) => {
-      const tk = _.find(tokens, (token: TokenType) => token.name === tokenType.name)
-      tokenType.logo = tk?.logo ?? ''
-      return tokenType
-    })
-
-    updateTokenTypeList(tokenTypeList)
-  }
 
   useEffect(() => {
     updateAccountInfo(createEmptyAccountInfo())
-    loadTokenTypes()
   }, []);
 
   useEffect(() => {
@@ -65,6 +50,25 @@ export default function WalletComp() {
     setSelectedWallet(wallet ?? {id: -1, showName: '', icon: ''})
   }, [myInfo])
   
+  // useEffect(() => {
+  //   if (!apiInited || _.isEmpty(myInfo.address)) {
+  //     return
+  //   }
+
+  //   const subscribeBalance = async (addr: string, callback: (params: any) => void) => {
+  //     return await api.getBalanceSubscribe(addr, callback)
+  //   }
+
+  //   const unsubscribe = subscribeBalance(myInfo.address, (params: any) => {
+  //     console.log(`p:${params}`)
+  //   })
+
+  //   return () => {
+  //     unsubscribe.then((f) => {
+  //       f()
+  //     });
+  //   }
+  // }, [myInfo, myTokenTypes, apiInited])
   useEffect(() => {
     const listenToBalance = async () => {
       if (_.isEmpty(myInfo.address)) {
@@ -72,6 +76,7 @@ export default function WalletComp() {
       }
 
       const tokenAmounts = await loadAllTokenAmount(myInfo.address, myTokenTypes)
+      // const tokenAmounts = await api.getBalance(myInfo.address)
 
       if (_.isEmpty(tokenAmounts)) {
         return

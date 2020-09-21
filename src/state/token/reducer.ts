@@ -1,10 +1,11 @@
 import { createReducer } from '@reduxjs/toolkit';
-import { tokenTypes, clearTokenTypes } from './actions';
+import { tokenTypes, clearTokenTypes, currencyPairs } from './actions';
 import { TokenState } from './types';
 import BuiltInTokens from './tokens';
 
 const initialState: TokenState = {
-  tokenTypes: BuiltInTokens
+  tokenTypes: BuiltInTokens,
+  currencyPairs: []
 }
   
 export default createReducer(initialState, builder =>
@@ -15,6 +16,10 @@ export default createReducer(initialState, builder =>
     })
     .addCase(clearTokenTypes, (state, action) => {
       state.tokenTypes = [];
+    })
+    .addCase(currencyPairs, (state, action) => {
+      const { pairs} = action.payload
+      state.currencyPairs = pairs
     })
 );
   

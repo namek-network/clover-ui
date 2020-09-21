@@ -4,6 +4,7 @@ import { TokenType } from '../state/token/types'
 import { InjectedAccountWithMeta, InjectedExtension } from '@polkadot/extension-inject/types';
 import { AccountInfo, TokenAmount } from '../state/wallet/types';
 import BigNum from '../types/bigNum'
+import { api } from './apiUtils'
 import _ from 'lodash'
 
 export const supportedWalletTypes = [
@@ -43,20 +44,21 @@ export function createEmptyAccountInfo() {
 }
 
 export async function loadAllTokenAmount(addr: string, tokenTypes: TokenType[]) {
-  const ret = await getTokenAmount(addr).catch(e => null)
+  // const ret = await getTokenAmount(addr).catch(e => null)
+  const ret = await api.getBalance(addr)
 
   if (_.isEmpty(ret)) {
     return null
   }
   
-  const types =  _.map(ret.result, (arr) => {
+  const types =  _.map(ret, (arr) => {
     const [type, amount] = arr
     return {
-      tokenType: _.find(tokenTypes, (tokenType) => tokenType.name === type) ?? {
+      tokenType: _.find(tokenTypes, (tokenType) => tokenType.name === type.toString()) ?? {
         id: -1,
         name: ''
       },
-      amount,
+      amount: amount.toString(),
       amountBN: BigNum.fromBigNum(amount)
     }
   })

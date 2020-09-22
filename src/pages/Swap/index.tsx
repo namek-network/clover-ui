@@ -13,9 +13,11 @@ import SwapConfirmhModal from './SwapConfirmModal';
 import { TokenType } from '../../state/token/types';
 import { useTokenTypes } from '../../state/token/hooks';
 import { useAccountInfo, useAccountInfoUpdate } from '../../state/wallet/hooks';
+import { useApiInited } from '../../state/api/hooks';
 import BigNum  from '../../types/bigNum';
 import WalletSelectDialog from '../../components/WalletComp/walletSelectDialog'
 import { supportedWalletTypes, loadAccount } from '../../utils/AccountUtils'
+import { api } from '../../utils/apiUtils';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next'
 import '../../assets/vendors/font-bxb/bxb-font.css'
@@ -147,6 +149,7 @@ const TransactionPriceRefreshWapper = styled.div`
 `;
 
 export default function Swap() {
+  const apiInited = useApiInited();
 
   const [fromToken, setFromToken] = useState<TokenType | null>(null);
   const [fromTokenAmount, setFromTokenAmount] = useState<string>('');
@@ -179,6 +182,7 @@ export default function Swap() {
     } else {
       setFromToken(selectedToken);
     }
+    setPriceReverse(false);
   };
   
   const handleToTokenSelect = (selectedToken: TokenType) => {
@@ -187,8 +191,8 @@ export default function Swap() {
     } else {
       setToToken(selectedToken);
     }
+    setPriceReverse(false);
   };
-
   
   const accountInfo = useAccountInfo();
   const updateAccountInfo = useAccountInfoUpdate()
@@ -203,14 +207,33 @@ export default function Swap() {
 
   const insufficientBalance =  walletConnected && (BigNum.fromRealNum(fromTokenAmount ?? '').gt(fromTokenBalance));
 
+  const [priceReverse, setPriceReverse] = useState<boolean>(false);
+  const [priceInfo, setPriceInfo] = useState('');
   const showPrice = fromToken && toToken && fromToken.id !== toToken.id;
-  const showTransactionInfo = showPrice && _.toNumber(fromTokenAmount) > 0 && _.toNumber(toTokenAmount) > 0;
   useEffect(() => {
-    if (!showPrice) {
+    if (!apiInited || fromToken == null || toToken == null || fromToken.id === toToken.id) {
+      setPriceInfo('');
       return;
     }
 
-  }, [fromToken, toToken]);
+    async function fetchPrice() {
+      const sourceToken = priceReverse ? (toToken as TokenType).name : (fromToken as TokenType).name;
+      const targetToken = priceReverse ? (fromToken as TokenType).name : (toToken as TokenType).name
+      /**
+       * sample result:
+       * "result": {
+            "balance": "7242",
+            "routes": ["BUSD", "DOT"]
+        },
+       */
+      const { balance: balance, routes: routes } = await api.targetAmountAvailable(sourceToken, targetToken, '1');
+      setPriceInfo(`${balance.toString()} ${targetToken} per ${sourceToken}`);
+    }
+
+    fetchPrice();
+  }, [apiInited, fromToken, toToken, priceReverse]);
+
+  const showTransactionInfo = showPrice && _.toNumber(fromTokenAmount) > 0 && _.toNumber(toTokenAmount) > 0;
 
   const swapEnabled = walletConnected && fromToken != null && toToken != null && _.toNumber(fromTokenAmount) > 0 && !insufficientBalance;
 
@@ -301,8 +324,8 @@ export default function Swap() {
                 <AutoRow justify='space-between'>
                   <TransactionInfoLabel>Price:</TransactionInfoLabel>
                   <RowFixed>
-                    <TransactionInfo>0.0125 {toToken?.name} per {fromToken?.name}</TransactionInfo>
-                    <TransactionPriceRefreshWapper onClick={() => {}}>
+                    <TransactionInfo>{priceInfo}</TransactionInfo>
+                    <TransactionPriceRefreshWapper onClick={() => setPriceReverse(!priceReverse)}>
                         <i className='fo-repeat refresh-price' />
                     </TransactionPriceRefreshWapper>
                   </RowFixed>

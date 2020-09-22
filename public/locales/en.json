@@ -3,5 +3,7 @@
   "pool": "Pool",
   "connectToWallet": "Connect to a wallet",
   "notFoundWallet": "Not Found Wallet, please install math wallet!",
-  "addWallet": "Not Found Wallet, please create a wallet!"
+  "addWallet": "Not Found Wallet, please create a wallet!",
+  "addLiquidity": "Add Liquidity",
+  "noLiquidity": "No liquidity found. You can provide liquidity by click Add Liquidity button below."
 }

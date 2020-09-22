@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { SwapPoolTabs } from '../../components/NavigationTabs'
 import Column from '../../components/Column'
@@ -9,6 +9,15 @@ import _ from 'lodash'
 import AddLiquidModal from './addLiquidModal'
 import LiquidAddConfirmModal from './liquidAddConfirmModal'
 import RemoveLiquidModal from './removeLiquidModal';
+import { useAccountInfo, useAccountInfoUpdate } from '../../state/wallet/hooks'
+import { api } from '../../utils/apiUtils'
+import { useApiInited } from '../../state/api/hooks'
+import { useTranslation } from 'react-i18next'
+import WalletSelectDialog from '../../components/WalletComp/walletSelectDialog'
+import { supportedWalletTypes, loadAccount } from '../../utils/AccountUtils'
+import { toast } from 'react-toastify';
+import { useTokenTypes } from '../../state/token/hooks';
+import WalletConnectComp from '../../components/WalletComp/walletConnectComp'
 
 const BodyWrapper = styled.div`
   position: relative;
@@ -19,7 +28,7 @@ const BodyWrapper = styled.div`
 export const Wrapper = styled.div`
   position: relative;
   background: white;
-  box-shadow: 0px 2px 20px 0px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 0px 20px 0px rgba(17, 26, 52, 0.1);
   border-radius: 1rem;
   padding: 17px 24px;
 `;
@@ -53,16 +62,16 @@ export const Button = styled(RebassButton)`
 }`
 
 const StyledButton = styled(Button)`
-  margin-top: 8px;
+  margin-top: 12px;
+  width: 100%;
 `
 
 const NoLiquidFount = styled.div`
-  text-align: center;
   background: #F9FAFB;
   border-radius: 16px;
-  padding: 24px 0;
+  padding: 16px;
   color: #858B9C;
-  margin: 8px 0;
+  margin: 8px 0 112px 0;
 `
 
 const PoolPaireList = styled.div`
@@ -74,12 +83,37 @@ const testData = [
   {id: 1}, {id:2},{id: 3}, {id: 4}, {id: 5}
 ]
 
-// const testData: any = []
-
 export default function Pool() {
   const [selectedItem, setSeletedItem] = useState({})
   const [isOpen, setOpen] = useState(false)
   const [disabled, setDisabled] = useState(false)
+  const [poolItems, setPoolItems] = useState([])
+  const [chainPoolItems, setChainPoolItems] = useState([])
+
+  const { t } = useTranslation()
+
+  const myInfo = useAccountInfo()
+  const apiInited = useApiInited()
+
+  useEffect(() => {
+    if (!apiInited) {
+      return
+    }
+
+    if (_.isEmpty(myInfo.address)) {
+      return
+    }
+
+    const loadPoolItems = async () => {
+      const items = await api.getLiquidity(myInfo.address)
+      console.log(`item: ${items}`)
+      setPoolItems(items)
+      const chainItems = await api.getLiquidity()
+      setChainPoolItems(chainItems)
+    }
+
+    loadPoolItems()
+  }, [myInfo, apiInited])
 
   const handleClick = () => {
     setOpen(true)
@@ -94,7 +128,7 @@ export default function Pool() {
               My Liquidity List
             </Title>
             {
-              _.isEmpty(testData) ? <NoLiquidFount>You have no Liquid</NoLiquidFount> 
+              _.isEmpty(poolItems) ? <NoLiquidFount>{t('noLiquidity')}</NoLiquidFount> 
                 : <PoolPaireList>
                   {
                     _.map(testData, (item) => (
@@ -104,9 +138,13 @@ export default function Pool() {
                   }
                 </PoolPaireList>
             }
-            <StyledButton onClick={handleClick}disabled={disabled}>Add Liquidity</StyledButton>
           </Column>
         </Wrapper>
+        {
+          _.isEmpty(myInfo.address) ? <WalletConnectComp></WalletConnectComp> 
+          : <StyledButton onClick={handleClick} disabled={disabled}>{t('addLiquidity')}</StyledButton>
+        }
+        
         <AddLiquidModal isOpen={isOpen} onDismiss={() => {}} onClose={() => setOpen(false)}></AddLiquidModal>
         <LiquidAddConfirmModal isOpen={false} onDismiss={() => {}} onClose={() => setOpen(false)}></LiquidAddConfirmModal>
         <RemoveLiquidModal isOpen={false} onDismiss={() => {}} onClose={() => setOpen(false)}></RemoveLiquidModal>

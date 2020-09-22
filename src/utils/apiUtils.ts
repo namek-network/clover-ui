@@ -35,34 +35,37 @@ class ApiWrapper {
   }
 
   getTokenTypes() {
-    return this.api.rpc.get.currencies()
+    return this.api.rpc.bitdex.get_currencies()
   }
 
   getCurrencyPair() {
-    return this.api.rpc.currency.pair()
+    return this.api.rpc.bitdex.currency_pair()
   }
 
   getBalance(account: string, currencyType?: string) {
     if (_.isEmpty(currencyType)) {
-      return this.api.rpc.get.balance(account)
+      return this.api.rpc.bitdex.get_balance(account)
     }
 
-    return this.api.rpc.get.balance(account, currencyType)
+    return this.api.rpc.bitdex.get_balance(account, currencyType)
   }
 
   getBalanceSubscribe(account: string, cb: (params: any) => void) {
-    return this.api.rpc.get.balance(account, cb)
+    return this.api.rpc.bitdex.get_balance(account, cb)
   }
   
   targetAmountAvailable(source: string, target: string, amount: string) {
-    return this.api.rpc.target.amount_available(source, target, amount)
+    return this.api.rpc.bitdex.target_amount_available(source, target, amount)
   }
 
   supplyAmountNeeded(source: string, target: string, amount: string) {
-    return this.api.rpc.supply.amount_needed(source, target, amount)
+    return this.api.rpc.bitdex.supply_amount_needed(source, target, amount)
   }
 
-  getLiquidity(addr: string) {
+  getLiquidity(addr?: string) {
+    if (_.isEmpty(addr)) {
+      return this.api.rpc.get.liquidity()
+    }
     return this.api.rpc.get.liquidity(addr)
   }
 }
@@ -76,14 +79,14 @@ export const initApi = async (onInited: () => void) => {
 
   const wsProvider = new WsProvider('wss://api.ownstack.cn');
   const theApi = await ApiPromise.create({ provider: wsProvider, types, rpc: {
-      get: {
-        currencies: {
+    bitdex: {
+        get_currencies: {
           description: 'get currencies',
           params: [
           ],
           type: 'Vec<CurrencyInfo>'
         },
-        balance: {
+        get_balance: {
           description: 'get balance',
           params: [
             {
@@ -98,27 +101,24 @@ export const initApi = async (onInited: () => void) => {
           ],
           type: 'Vec<(CurrencyTypeEnum, String)>'
         },
-        liquidity: {
+        get_liquidity: {
           description: 'get liquidity',
           params: [
             {
               name: 'account',
-              type: 'String'
+              type: 'String',
+              isOptional: true
             }
           ],
           type: 'Vec<(CurrencyTypeEnum, CurrencyTypeEnum, String, String, String, String)>'
-        }
-      },
-      currency: {
-        pair: {
+        },
+        currency_pair: {
           description: 'currency pairs',
           params: [
           ],
           type: 'Vec<(CurrencyTypeEnum, CurrencyTypeEnum)>'
-        }
-      },
-      target: {
-        amount_available: {
+        },
+        target_amount_available: {
           description: 'target amount available',
           params: [
             {
@@ -135,10 +135,8 @@ export const initApi = async (onInited: () => void) => {
             }
           ],
           type: 'SwapResultInfo'
-        }
-      },
-      supply: {
-        amount_needed: {
+        },
+        supply_amount_needed: {
           description: 'supply amount needed',
           params: [
             {
@@ -156,8 +154,7 @@ export const initApi = async (onInited: () => void) => {
           ],
           type: 'SwapResultInfo'
         }
-      },
-
+      }
     }
   });
   api.setApi(theApi)

@@ -4,7 +4,6 @@ import { save, load } from 'redux-localstorage-simple';
 import application from './application/reducer';
 import settings from './settings/reducer';
 import token from './token/reducer';
-import swap from './swap/reducer';
 import wallet from './wallet/reducer';
 import api from './api/reducer'
 
@@ -15,7 +14,6 @@ const store = configureStore({
     application,
     settings,
     token,
-    swap,
     wallet,
     api
   },

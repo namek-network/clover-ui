@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { darken } from 'polished';
-import { RefreshCw, Info } from 'react-feather';
+import { Info } from 'react-feather';
 import { Button as RebassButton } from 'rebass/styled-components'
 import { AutoColumn } from '../../components/Column';
 import { AutoRow, RowFixed } from '../../components/Row';
@@ -12,7 +12,6 @@ import { Wrapper, BottomGrouping } from '../../components/Swap/styleds';
 import SwapConfirmhModal from './SwapConfirmModal';
 import { TokenType } from '../../state/token/types';
 import { useTokenTypes } from '../../state/token/hooks';
-import { useFromToken, useFromTokenAmount, useToToken, useToTokenAmount, useSetFromToken, useSetToToken, useSetFromTokenAmount, useSetToTokenAmount, useSwitchFromToTokens } from '../../state/swap/hooks';
 import { useAccountInfo, useAccountInfoUpdate } from '../../state/wallet/hooks';
 import BigNum  from '../../types/bigNum';
 import WalletSelectDialog from '../../components/WalletComp/walletSelectDialog'
@@ -149,37 +148,48 @@ const TransactionPriceRefreshWapper = styled.div`
 
 export default function Swap() {
 
-  const fromToken = useFromToken();
-  const fromTokenAmount = useFromTokenAmount();
-  const toToken = useToToken();
-  const toTokenAmount = useToTokenAmount();
+  const [fromToken, setFromToken] = useState<TokenType | null>(null);
+  const [fromTokenAmount, setFromTokenAmount] = useState<string>('');
 
-  const switchFromToToken = useSwitchFromToTokens();
+  const [toToken, setToToken] = useState<TokenType | null>(null);
+  const [toTokenAmount, setToTokenAmount] = useState('');
 
-  const setFromToken = useSetFromToken();
+  const handleSetFromTokenAmount = (amount: string) => {
+    if (_.isEmpty(amount)) { return; }
+    setFromTokenAmount(amount);
+    setToTokenAmount('');
+  }
+
+  const handleSetToTokenAmount = (amount: string) => {
+    if (_.isEmpty(amount)) { return; }
+    setToTokenAmount(amount);
+    setFromTokenAmount('');
+  }
+
+  const handleSwitchFromToToken = () => {
+    setFromToken(toToken);
+    setFromTokenAmount(toTokenAmount);
+    setToToken(fromToken)
+    setToTokenAmount(fromTokenAmount);
+  }
+
   const handleFromTokenSelect = (selectedToken: TokenType) => {
     if (toToken != null && selectedToken.id === toToken.id) {
-      switchFromToToken();
+      handleSwitchFromToToken();
     } else {
-      setFromToken(selectedToken)
+      setFromToken(selectedToken);
     }
   };
-
-  const setFromTokenAmount = useSetFromTokenAmount();
-  const handleSetFromTokenAmount = (amount: string) => setFromTokenAmount(amount);
-
-  const setToToken = useSetToToken();
+  
   const handleToTokenSelect = (selectedToken: TokenType) => {
     if (fromToken != null && selectedToken.id === fromToken.id) {
-      switchFromToToken();
+      handleSwitchFromToToken();
     } else {
-      setToToken(selectedToken)
+      setToToken(selectedToken);
     }
   };
 
-  const setToTokenAmount = useSetToTokenAmount();
-  const handleSetToTokenAmount = (amount: string) => setToTokenAmount(amount);
-
+  
   const accountInfo = useAccountInfo();
   const updateAccountInfo = useAccountInfoUpdate()
 
@@ -195,6 +205,12 @@ export default function Swap() {
 
   const showPrice = fromToken && toToken && fromToken.id !== toToken.id;
   const showTransactionInfo = showPrice && _.toNumber(fromTokenAmount) > 0 && _.toNumber(toTokenAmount) > 0;
+  useEffect(() => {
+    if (!showPrice) {
+      return;
+    }
+
+  }, [fromToken, toToken]);
 
   const swapEnabled = walletConnected && fromToken != null && toToken != null && _.toNumber(fromTokenAmount) > 0 && !insufficientBalance;
 
@@ -246,7 +262,7 @@ export default function Swap() {
           />
 
           <AutoRow justify='center' gap='-30px' style={{ padding: '0 1rem', zIndex: 2 }}>
-            <div className='switch-circle' onClick={() => switchFromToToken()}>
+            <div className='switch-circle' onClick={() => handleSwitchFromToToken()}>
               <span>
                 <i className='fo-arrow-down switch-icon switch-icon-default'></i>
                 <i className='fo-repeat switch-icon switch-icon-onhover'></i>
@@ -286,16 +302,8 @@ export default function Swap() {
                   <TransactionInfoLabel>Price:</TransactionInfoLabel>
                   <RowFixed>
                     <TransactionInfo>0.0125 {toToken?.name} per {fromToken?.name}</TransactionInfo>
-                    <TransactionPriceRefreshWapper>
-                      <RefreshCw
-                        width='10px'
-                        height='10px'
-                        line-height='10px'
-                        fontSize='10px'
-                        fontFamily='fontoed'
-                        color='#858B9C'
-                        onClick={() => {}}
-                      />
+                    <TransactionPriceRefreshWapper onClick={() => {}}>
+                        <i className='fo-repeat refresh-price' />
                     </TransactionPriceRefreshWapper>
                   </RowFixed>
                 </AutoRow>
@@ -373,9 +381,9 @@ export default function Swap() {
           isOpen={swapConfirmModalOpen}
           onDismiss={() => setSwapConfirmModalOpen(false)}
           onConfirmSwap={() => setSwapConfirmModalOpen(false)}
-          fromToken={fromToken}
+          fromToken={fromToken == null ? undefined : fromToken}
           fromTokenAmount={fromTokenAmount}
-          toToken={toToken}
+          toToken={toToken == null ? undefined : toToken}
         />
       )}
 

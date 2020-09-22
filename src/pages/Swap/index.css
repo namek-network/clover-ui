@@ -36,3 +36,9 @@
 .switch-circle:hover .switch-icon-onhover {
   display: inline;
 }
+
+.refresh-price {
+  font-size: 10px;
+  font-family: fontoed;
+  color: #858B9C;
+}

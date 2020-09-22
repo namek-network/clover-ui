@@ -226,8 +226,9 @@ export default function Swap() {
             "routes": ["BUSD", "DOT"]
         },
        */
-      const { balance: balance, routes: routes } = await api.targetAmountAvailable(sourceToken, targetToken, '1');
-      setPriceInfo(`${balance.toString()} ${targetToken} per ${sourceToken}`);
+      const { balance: balance, routes: routes } = await api.targetAmountAvailable(sourceToken, targetToken, BigNum.fromRealNum('1').bigNum);
+      const price = BigNum.fromBigNum(balance.toString()).realNum;
+      setPriceInfo(`${price} ${targetToken} per ${sourceToken}`);
     }
 
     fetchPrice();

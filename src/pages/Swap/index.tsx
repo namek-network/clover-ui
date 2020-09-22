@@ -2,7 +2,6 @@ import _ from 'lodash';
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { darken } from 'polished';
-import { Info } from 'react-feather';
 import { Button as RebassButton } from 'rebass/styled-components'
 import { AutoColumn } from '../../components/Column';
 import { AutoRow, RowFixed } from '../../components/Row';
@@ -338,16 +337,7 @@ export default function Swap() {
                   <AutoRow justify='space-between'>
                     <RowFixed>
                       <TransactionInfoLabel>Minimum Received:</TransactionInfoLabel>
-                      <Info
-                          width='16px'
-                          height='16px'
-                          line-height='16px'
-                          fontSize='16px'
-                          fontFamily='fontoed'
-                          color='#F5A623'
-                          cursor='pointer'
-                          onClick={() => {}}
-                        />
+                      <i className='fo-info clover-info' onClick={() => {}}></i>
                     </RowFixed>
                     <TransactionInfo>2.99967 {toToken?.name}</TransactionInfo>
                   </AutoRow>
@@ -355,16 +345,7 @@ export default function Swap() {
                   <AutoRow justify='space-between'>
                     <RowFixed>
                       <TransactionInfoLabel>Price Impact:</TransactionInfoLabel>
-                      <Info
-                          width='16px'
-                          height='16px'
-                          line-height='16px'
-                          fontSize='16px'
-                          fontFamily='fontoed'
-                          color='#F5A623'
-                          cursor='pointer'
-                          onClick={() => {}}
-                        />
+                      <i className='fo-info clover-info' onClick={() => {}}></i>
                     </RowFixed>
                     <TransactionInfo>5.27%</TransactionInfo>
                   </AutoRow>
@@ -372,16 +353,7 @@ export default function Swap() {
                   <AutoRow justify='space-between'>
                     <RowFixed>
                       <TransactionInfoLabel>Liquility Provder Fee:</TransactionInfoLabel>
-                      <Info
-                          width='16px'
-                          height='16px'
-                          line-height='16px'
-                          fontSize='16px'
-                          fontFamily='fontoed'
-                          color='#F5A623'
-                          cursor='pointer'
-                          onClick={() => {}}
-                        />
+                      <i className='fo-info clover-info' onClick={() => {}}></i>
                     </RowFixed>
                     <TransactionInfo>0.003 ETH</TransactionInfo>
                   </AutoRow>

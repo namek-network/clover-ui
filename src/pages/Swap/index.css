@@ -42,3 +42,11 @@
   font-family: fontoed;
   color: #858B9C;
 }
+
+.clover-info {
+  font-size: 16px;
+  font-family: fontoed;
+  color: #F5A623;
+
+  cursor: pointer;
+}

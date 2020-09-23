@@ -1,4 +1,4 @@
-import React, { Children, useState } from 'react';
+import React, { Children, useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import Column from '../../components/Column'
@@ -9,6 +9,9 @@ import BusdIcon from '../../assets/images/icon-busd.svg';
 import BdotIcon from '../../assets/images/icon-dot.svg';
 import './index.css'
 import _ from 'lodash'
+import { PoolPairItem as PoolPairItemType, defaultPoolPairItem } from '../../state/pool/types';
+import { showTextType } from './types'
+import BigNum  from '../../types/bigNum';
 
 const ImageLeft = styled.img`
 `
@@ -147,23 +150,46 @@ export const PairTransContent = (props: PairTransContentProps) => {
 }
 
 export interface PoolPairItemProps {
-  item: any,
-  selectedItem: any,
-  onSelectItem: (item: any) => void
+  item: PoolPairItemType,
+  selectedItem: PoolPairItemType,
+  onSelectItem: (item: PoolPairItemType) => void
+  onAddClick: () => void
+  onRemoveClick: () => void
 }
 
-export default function PoolPairItem({item, selectedItem, onSelectItem}: PoolPairItemProps) {
-    const handleItemClick = () => {
-      if (item === selectedItem) {
-        onSelectItem({})
-      } else {
-        onSelectItem(item)
-      }
-    }
+export default function PoolPairItem({item, selectedItem, onSelectItem, onAddClick, onRemoveClick}: PoolPairItemProps) {
+    const [showData, setShowData] = useState<showTextType[]>([])
+
+    useEffect(() => {
+      setShowData([
+        {
+          label: `Pooled ${item.fromToken.name}`,
+          amount: `${BigNum.fromBigNum(item.fromAmount).realNum} ${item.fromToken.name}`
+        },
+        {
+          label: `Pooled ${item.toToken.name}`,
+          amount: `${BigNum.fromBigNum(item.toAmount).realNum} ${item.toToken.name}`
+        },
+        {
+          label: `My pool tokens:`,
+          amount: `${BigNum.fromBigNum(item.userShare).realNum}`
+        },
+        {
+          label: `My pool share:`,
+          amount: `${BigNum.div(item.userShare, item.totalShare, true)}%`
+        }
+      ])
+    }, [item])
     return (
         <ItemWrapper isOpen={item === selectedItem}>
-          <StyledRowBetween onClick={handleItemClick}>
-            <PairIconTitle left={BxbIcon} right={BethIcon} title={'DOT/BxETH'}></PairIconTitle>
+          <StyledRowBetween onClick={() => {
+            if (item === selectedItem) {
+              onSelectItem(defaultPoolPairItem)
+            } else {
+              onSelectItem(item)
+            }
+          }}>
+            <PairIconTitle left={item.fromToken.logo ?? ''} right={item.toToken.logo ?? ''} title={`${item.fromToken.name}/${item.toToken.name}`}></PairIconTitle>
             <Toggler>
               {
                 item === selectedItem ? <i className="fa fo-chevron-up"></i> : <i className="fa fo-chevron-down"></i>
@@ -173,10 +199,10 @@ export default function PoolPairItem({item, selectedItem, onSelectItem}: PoolPai
           {
             item === selectedItem && 
             <ContentWrapper>
-              <PairTransContent contents={testData}></PairTransContent>
+              <PairTransContent contents={showData}></PairTransContent>
               <ButtonWrapper>
-                <Button>Add</Button>
-                <Button>Remove</Button>
+                <Button onClick={onAddClick}>Add</Button>
+                <Button onClick={onRemoveClick}>Remove</Button>
               </ButtonWrapper>
 
             </ContentWrapper>

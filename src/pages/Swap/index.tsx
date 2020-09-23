@@ -1,5 +1,5 @@
 import _, { reverse } from 'lodash';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import { darken } from 'polished';
 import { Button as RebassButton } from 'rebass/styled-components'
@@ -307,9 +307,10 @@ export default function Swap() {
   const [walletSelectorOpen, setWalletSelectorOpen] = useState(false);
 
   const myTokenTypes = useTokenTypes()
+
   const { t } = useTranslation()
 
-  const handleClose = (value: any) => {
+  const handleClose = useCallback((value: any) => {
     setWalletSelectorOpen(false)
     if (_.isEmpty(value)) {
       return
@@ -323,7 +324,7 @@ export default function Swap() {
     }
 
     getAcount()
-  };
+  }, [apiInited, myTokenTypes]);
 
   useEffect(() => {
     setWalletConnected(!_.isEmpty(_.get(accountInfo, 'address', '')))

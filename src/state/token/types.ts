@@ -4,6 +4,10 @@ export type TokenType = {
   logo?: string
 }
 
+export const defaultTokenType = {
+  id: -1, name: ''
+}
+
 export type CurrencyPair = {
   a: string,
   b: string

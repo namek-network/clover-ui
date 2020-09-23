@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import { BigNumber as BN } from "bignumber.js";
 import { isNum } from '../utils/numUtils';
+import { trimEnd0 } from '../utils/balanceUtils'
 
 export const defaultBase: string = '1000000000000';
 
@@ -31,6 +32,10 @@ export default class BigNum {
 
   get bigNum(): string {
     return this._bigNum.toString(10);
+  }
+
+  getBigNumBase16(): string {
+    return this._bigNum.toString(16);
   }
 
   static Zero: BigNum = BigNum.fromRealNum('0');
@@ -111,5 +116,23 @@ export default class BigNum {
       return this._bigNum.gte(other._bigNum);
     }
     return this._realNum.gte(other._realNum);
+  }
+
+  static times(bigNum1: string, bigNum2: string): string {
+    const bn1 = new BN(bigNum1, 10);
+    const bn2 = new BN(bigNum2, 10);
+
+    return bn1.times(bn2).toFixed()
+  }
+  
+  static div(bigNum1: string, bigNum2: string, usePercentage: boolean = false): string {
+    const bigNum1BN = new BN(bigNum1, 10);
+    const bigNum2BN = new BN(bigNum2, 10);
+
+    if (usePercentage) {
+      return trimEnd0(bigNum1BN.div(bigNum2BN).times(new BN(100, 10)).toFixed(11))
+    }
+
+    return trimEnd0(bigNum1BN.div(bigNum2BN).toFixed(11))
   }
 }

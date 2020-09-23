@@ -18,6 +18,10 @@ import { supportedWalletTypes, loadAccount } from '../../utils/AccountUtils'
 import { toast } from 'react-toastify';
 import { useTokenTypes } from '../../state/token/hooks';
 import WalletConnectComp from '../../components/WalletComp/walletConnectComp'
+import { useUserPoolPairItems, useChainPoolPairItems, useUserPoolPairItemsUpdate, useChainPairItemsUpdate } from '../../state/pool/hooks';
+import { TokenType, defaultTokenType } from '../../state/token/types';
+import BigNum  from '../../types/bigNum';
+import { PoolPairItem as PoolPairItemType, defaultPoolPairItem } from '../../state/pool/types';
 
 const BodyWrapper = styled.div`
   position: relative;
@@ -83,17 +87,42 @@ const testData = [
   {id: 1}, {id:2},{id: 3}, {id: 4}, {id: 5}
 ]
 
+export interface DataFromAddLiquid {
+  fromToken: TokenType,
+  toToken: TokenType,
+  fromAmount: BigNum,
+  toAmount: BigNum
+}
+
+const defaultDataFromAddLiquid = {
+  fromToken: defaultTokenType,
+  toToken: defaultTokenType,
+  fromAmount: BigNum.fromRealNum(''),
+  toAmount: BigNum.fromRealNum('')
+}
+
 export default function Pool() {
-  const [selectedItem, setSeletedItem] = useState({})
+  const [selectedItem, setSeletedItem] = useState<PoolPairItemType>(defaultPoolPairItem)
   const [isOpen, setOpen] = useState(false)
+  const [addLiquidModalOpen, setAddLiquidModalOpen] = useState(false)
+  const [removeLiquidModalOpen, setRemoveLiquidModalOpen] = useState(false)
+  const [liquidAddConfirmModalOpen, setLiquidAddConfirmModalOpen] = useState(false)
   const [disabled, setDisabled] = useState(false)
-  const [poolItems, setPoolItems] = useState([])
-  const [chainPoolItems, setChainPoolItems] = useState([])
+
+  const [dataFromAddLiquid, setDataFromAddLiquid] = useState<DataFromAddLiquid>(defaultDataFromAddLiquid)
+
+  const userPoolItems = useUserPoolPairItems()
+  const chainPoolItems = useChainPoolPairItems()
+
+  const userPoolItemsUpdate = useUserPoolPairItemsUpdate()
+  const chainPoolItemsUpdate = useChainPairItemsUpdate()
 
   const { t } = useTranslation()
 
   const myInfo = useAccountInfo()
   const apiInited = useApiInited()
+
+  const tokenTypes = useTokenTypes()
 
   useEffect(() => {
     if (!apiInited) {
@@ -107,18 +136,52 @@ export default function Pool() {
     const loadPoolItems = async () => {
       const items = await api.getLiquidity(myInfo.address)
       console.log(`item: ${items}`)
-      setPoolItems(items)
+      
+
+      userPoolItemsUpdate(_.map(items, ([fromTokenName, toTokenName, fromAmount, toAmount, userShare, totalShare]) => {
+        return {
+          fromToken: _.find(tokenTypes, (tt) => tt.name === fromTokenName.toString()) ?? defaultTokenType,
+          toToken: _.find(tokenTypes, (tt) => tt.name === toTokenName.toString()) ?? defaultTokenType,
+          fromAmount: fromAmount.toString(), 
+          toAmount: toAmount.toString(), 
+          userShare: userShare.toString(), 
+          totalShare: totalShare.toString()
+        }
+      }))
+
       const chainItems = await api.getLiquidity()
-      setChainPoolItems(chainItems)
+      console.log(`chain item: ${chainItems}`)
+      chainPoolItemsUpdate(_.map(chainItems, ([fromTokenName, toTokenName, fromAmount, toAmount, userShare, totalShare]) => {
+        return {
+          fromToken: _.find(tokenTypes, (tt) => tt.name === fromTokenName.toString()) ?? defaultTokenType,
+          toToken: _.find(tokenTypes, (tt) => tt.name === toTokenName.toString()) ?? defaultTokenType,
+          fromAmount: fromAmount.toString(), 
+          toAmount: toAmount.toString(), 
+          userShare: userShare.toString(), 
+          totalShare: totalShare.toString()
+        }
+      }))
     }
 
     loadPoolItems()
-  }, [myInfo, apiInited])
+  }, [myInfo, apiInited, tokenTypes])
 
   const handleClick = () => {
-    setOpen(true)
+    setAddLiquidModalOpen(true)
   }
 
+  const handleRemoveClick = () => {
+    setRemoveLiquidModalOpen(true)
+  }
+
+  const onAddLiquidModalClose = (state: string, data?: DataFromAddLiquid) => {
+    setAddLiquidModalOpen(false)
+
+    if (state !== 'close' && !_.isEmpty(data)) {
+      setLiquidAddConfirmModalOpen(true)
+      setDataFromAddLiquid(data ?? defaultDataFromAddLiquid)
+    }
+  }
     return (
       <BodyWrapper>
         <SwapPoolTabs active={'pool'} />
@@ -128,11 +191,13 @@ export default function Pool() {
               My Liquidity List
             </Title>
             {
-              _.isEmpty(poolItems) ? <NoLiquidFount>{t('noLiquidity')}</NoLiquidFount> 
+              _.isEmpty(userPoolItems) ? <NoLiquidFount>{t('noLiquidity')}</NoLiquidFount> 
                 : <PoolPaireList>
                   {
-                    _.map(testData, (item) => (
-                    <PoolPairItem item={item} key={item.id}
+                    _.map(userPoolItems, (item) => (
+                    <PoolPairItem item={item} key={item.fromToken.name + item.toToken.name}
+                      onAddClick={handleClick}
+                      onRemoveClick={handleRemoveClick}
                       selectedItem={selectedItem} 
                       onSelectItem={setSeletedItem}></PoolPairItem>))
                   }
@@ -145,8 +210,19 @@ export default function Pool() {
           : <StyledButton onClick={handleClick} disabled={disabled}>{t('addLiquidity')}</StyledButton>
         }
         
-        <AddLiquidModal isOpen={isOpen} onDismiss={() => {}} onClose={() => setOpen(false)}></AddLiquidModal>
-        <LiquidAddConfirmModal isOpen={false} onDismiss={() => {}} onClose={() => setOpen(false)}></LiquidAddConfirmModal>
+        <AddLiquidModal isOpen={addLiquidModalOpen} 
+          onDismiss={() => {}} 
+          fromTokenType={selectedItem.fromToken.id < 0 ? undefined : selectedItem.fromToken}
+          toTokenType={selectedItem.toToken.id < 0 ? undefined : selectedItem.toToken}
+          onClose={onAddLiquidModalClose}></AddLiquidModal>
+        <LiquidAddConfirmModal 
+          isOpen={liquidAddConfirmModalOpen} 
+          onDismiss={() => {}} 
+          fromToken={dataFromAddLiquid.fromToken}
+          toToken={dataFromAddLiquid.toToken}
+          fromAmount={dataFromAddLiquid.fromAmount}
+          toAmount={dataFromAddLiquid.toAmount}
+          onClose={() => setLiquidAddConfirmModalOpen(false)}></LiquidAddConfirmModal>
         <RemoveLiquidModal isOpen={false} onDismiss={() => {}} onClose={() => setOpen(false)}></RemoveLiquidModal>
       </BodyWrapper>
     );

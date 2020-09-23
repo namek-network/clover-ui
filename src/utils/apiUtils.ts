@@ -64,9 +64,13 @@ class ApiWrapper {
 
   getLiquidity(addr?: string) {
     if (_.isEmpty(addr)) {
-      return this.api.rpc.get.liquidity()
+      return this.api.rpc.bitdex.get_liquidity()
     }
-    return this.api.rpc.get.liquidity(addr)
+    return this.api.rpc.bitdex.get_liquidity(addr)
+  }
+
+  toAddLiquidity(from: string, to: string, amountFrom: string, amountTo: string) {
+    return this.api.rpc.bitdex.to_add_liquidity(from, to, amountFrom, amountTo)
   }
 }
 
@@ -153,11 +157,42 @@ export const initApi = async (onInited: () => void) => {
             }
           ],
           type: 'SwapResultInfo'
+        },
+        to_add_liquidity: {
+          description: 'to add liquidity',
+          params: [
+            {
+              name: 'fromTokenType',
+              type: 'CurrencyTypeEnum'
+            },
+            {
+              name: 'toTokenType',
+              type: 'CurrencyTypeEnum'
+            },
+            {
+              name: 'amountFrom',
+              type: 'Balance'
+            },
+            {
+              name: 'amountTo',
+              type: 'Balance'
+            }
+          ],
+          type: 'Vec<String>'
         }
       }
     }
   });
   api.setApi(theApi)
+  theApi.on('connected', () => {
+    console.log('connected')
+  })
+  theApi.on('disconnected', () => {
+    console.log('disconnected')
+  })
+  theApi.on('ready', () => {
+    console.log('ready')
+  })
 
   onInited()
 }

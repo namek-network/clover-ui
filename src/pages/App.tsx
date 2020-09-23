@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { api, initApi } from '../utils/apiUtils'
 import { loadCurrencyPair, loadTokenTypes } from '../utils/tokenUtils'
 import { useTokenTypesUpdate, useCurrencyPairUpdate } from '../state/token/hooks'
+import { ToastContainer, toast, Slide } from 'react-toastify';
 
 import {useApiInited, useApiReadyUpdate, useApiConnectedUpdate, 
   useApiInitedUpdate, useApiConnected, useApiReady} from '../state/api/hooks'
@@ -77,6 +78,12 @@ export default function App() {
             </Switch>
           </BodyWrapper>
           <Footer />
+          <ToastContainer 
+            position="top-center"
+            autoClose={3000}
+            transition={Slide}
+            React-toastify
+            hideProgressBar={true}/>
         </AppWrapper>
       </HashRouter>
     </Suspense>

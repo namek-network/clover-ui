@@ -11,3 +11,8 @@
 .margin-top-8 {
   margin-top: 8px;
 }
+
+.tip-icon {
+  height: 32px;
+  line-height: 32px;
+}

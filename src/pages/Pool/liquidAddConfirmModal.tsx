@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import styled from 'styled-components';
 import { SwapPoolTabs } from '../../components/NavigationTabs'
 import Column, {ColumnCenter} from '../../components/Column'
@@ -8,13 +8,13 @@ import Row, {RowBetween} from '../../components/Row'
 import PoolPairItem, { PairTransContent, PairIconTitle } from './poolPairItem'
 import _ from 'lodash'
 import Modal from '../../components/Modal'
-import CurrencyInputPanel from '../../components/CurrencyInputPanel';
-import BxbIcon from '../../assets/images/icon-bxb.svg';
-import BethIcon from '../../assets/images/icon-beth.svg';
-import BusdIcon from '../../assets/images/icon-busd.svg';
-import BdotIcon from '../../assets/images/icon-dot.svg';
-
-import Types from '../../state/token/tokens'
+import BigNum from '../../types/bigNum';
+import { TokenType } from '../../state/token/types';
+import { showTextType } from './types'
+import {selectedPairExists, findPairItem} from './utils'
+import { useUserPoolPairItems, useChainPoolPairItems, useUserPoolPairItemsUpdate, useChainPairItemsUpdate } from '../../state/pool/hooks';
+import { api } from '../../utils/apiUtils'
+import { useApiInited } from '../../state/api/hooks';
 
 
 const customStyle = "position: relative; \
@@ -97,21 +97,57 @@ const TipText = styled.div`
   margin-left: 20px;
   margin-top: 24px;
 `
-
-const testData = [
-  {label:'Pooled DOT:', amount: '3.357 DOT'},
-  {label:'Pooled BxETH:', amount: '2.99967 BxETH'},
-  {label:'My pool share:', amount: '0.01%'}
-]
-
 interface AddLiquidModalProps {
   isOpen: boolean
   onDismiss: () => void
   onClose: () => void
+  fromToken: TokenType,
+  toToken: TokenType,
+  fromAmount: BigNum,
+  toAmount: BigNum
 }
 
-export default function LiquidAddConfirmModal({isOpen, onDismiss, onClose}: AddLiquidModalProps) {
-    
+export default function LiquidAddConfirmModal({isOpen, onDismiss, onClose, fromToken, toToken, fromAmount, toAmount}: AddLiquidModalProps) {
+  const [showData, setShowData] = useState<showTextType[]>([])
+  const chainPoolItems = useChainPoolPairItems()
+  const [shareAmount, setShareAmount] = useState('')
+
+  const inited = useApiInited()
+  
+  useEffect(() => {
+    const existedPair = findPairItem(chainPoolItems, fromToken, toToken)
+
+    const loadShareFromServer = async (inited: boolean, fromToken: TokenType, toToken: TokenType, fromAmount: BigNum, toAmount: BigNum) => {
+      if (!inited || _.isEmpty(fromToken.name) || _.isEmpty(toToken.name)) {
+        return
+      }
+      
+      const ret = await api.toAddLiquidity(fromToken.name, toToken.name, fromAmount.bigNum, toAmount.bigNum)
+      setShareAmount(BigNum.fromBigNum(ret[0]).realNum)
+
+      setShowData([
+        {
+          label: `${fromToken.name} Deposited:`,
+          amount: `${fromAmount.realNum}`
+        },
+        {
+          label: `${toToken.name} Deposited:`,
+          amount: `${toAmount.realNum}`
+        },
+        {
+          label: `Rates:`,
+          amount: `${BigNum.div(fromAmount.bigNum.toString(), toAmount.bigNum.toString())} ${fromToken.name}/${toToken.name}`
+        },
+        {
+          label: `Share of pool:`,
+          amount: `${BigNum.div(ret[0], ret[1], true)}%`
+        },
+      ])
+    }
+
+    loadShareFromServer(inited, fromToken, toToken, fromAmount, toAmount)
+  }, [fromToken, toToken, fromAmount, toAmount, chainPoolItems, inited])
+
     return (
       <Modal isOpen={isOpen} onDismiss={() => {}} maxHeight={90} customStyle={customStyle}>
         <BodyWrapper>
@@ -120,15 +156,15 @@ export default function LiquidAddConfirmModal({isOpen, onDismiss, onClose}: AddL
             <CloseButton onClick={() => onClose()}><i className="fa fo-x"></i></CloseButton>
           </Head>
           <Wrapper>
-            <PairIconTitle left={BxbIcon} right={BethIcon} title={''} size={'40px'}></PairIconTitle>
-            <AmountText>0.00000620758</AmountText>
-            <PairText>DOT/BxETH Tokens</PairText>
+            <PairIconTitle left={fromToken.logo ?? ''} right={toToken.logo ?? ''} title={''} size={'40px'}></PairIconTitle>
+            <AmountText>{shareAmount}</AmountText>
+            <PairText>{`${fromToken.name}/${toToken.name} Tokens`}</PairText>
             <TipText>Output is estimated. If the price changes by more than 0.5%. your transaction will revert.</TipText>
           </Wrapper>
           
           <Wrapper>
             <PairContentWrapper>
-              <PairTransContent contents={testData}></PairTransContent>
+              <PairTransContent contents={showData}></PairTransContent>
             </PairContentWrapper>
             <Button onClick={() => {}}>Confirm Supply</Button>
           </Wrapper>

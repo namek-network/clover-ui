@@ -1,4 +1,4 @@
-import React, { Component, useEffect, useState } from 'react'
+import React, { Component, useCallback, useEffect, useState } from 'react'
 import _ from 'lodash'
 import WalletSelectDialog from './walletSelectDialog'
 import AssetDialog from './assetDialog'
@@ -71,7 +71,7 @@ export default function WalletComp() {
   // }, [myInfo, myTokenTypes, apiInited])
   useEffect(() => {
     const listenToBalance = async () => {
-      if (_.isEmpty(myInfo.address)) {
+      if (!apiInited || _.isEmpty(myInfo.address)) {
         return
       }
 
@@ -97,19 +97,23 @@ export default function WalletComp() {
     return () => {
       clearInterval(unsub)
     }
-  }, [myInfo, myTokenTypes])
+  }, [apiInited, myInfo, myTokenTypes])
 
   const handleClickOpen = () => {
     setOpen(true);
   };
 
-  const handleClose = (value: any) => {
+  const handleClose = useCallback((value: any) => {
     setOpen(false);
     if (_.isEmpty(value)) {
       return
     }
     setSelectedWallet(value);
     async function getAcount() {
+      if (!apiInited) {
+        toast('Api is not ready, please try later!')
+        return 
+      }
       const msg = await loadAccount(value, myTokenTypes, updateAccountInfo);
       if (msg !== 'ok') {
         toast(t(msg))
@@ -117,7 +121,7 @@ export default function WalletComp() {
     }
 
     getAcount()
-  };
+  }, [apiInited]);
 
   const handleAssetOpen = () => {
     setAssetOpen(true)
@@ -136,12 +140,6 @@ export default function WalletComp() {
               <img src={_.get(selectedWallet, 'icon', supportedWalletTypes[0].icon)}></img>
             </div>
         }
-        <ToastContainer 
-          position="top-center"
-          autoClose={3000}
-          transition={Slide}
-          React-toastify
-          hideProgressBar={true}/>
         <AssetDialog 
           account={myInfo} 
           assets={[]}

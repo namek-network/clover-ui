@@ -18,6 +18,12 @@ describe('BigNum test suites', () => {
     
     expect(BigNum.fromRealNum('52.0033').bigNum).toEqual('52003300000000');
     expect(BigNum.fromBigNum('52003300000000').realNum).toEqual('52.0033');
+
+    expect(BigNum.div('6666', '2000000006666')).toEqual('0.00000000333');
+    expect(BigNum.div('6666', '2000000006666', true)).toEqual('0.0000003333');
+    expect(BigNum.div('1', '2')).toEqual('0.5');
+    expect(BigNum.div('10000', '2')).toEqual('5000.0');
+    expect(BigNum.fromBigNum("16").getBigNumBase16()).toEqual('1');
   });
 
 });

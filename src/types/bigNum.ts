@@ -70,6 +70,10 @@ export default class BigNum {
     };
   }
 
+  times = (other: BigNum): BigNum => {
+    return BigNum.fromRealNum(this._realNum.times(other._realNum).toString(10));
+  }
+
   lt = (other: BigNum): boolean => {
     if (this._base.eq(other._base)) {
       return this._bigNum.lt(other._bigNum);

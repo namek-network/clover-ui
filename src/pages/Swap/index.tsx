@@ -17,6 +17,7 @@ import BigNum  from '../../types/bigNum';
 import WalletSelectDialog from '../../components/WalletComp/walletSelectDialog'
 import { supportedWalletTypes, loadAccount } from '../../utils/AccountUtils'
 import { api } from '../../utils/apiUtils';
+import numUtils from '../../utils/numUtils';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next'
 import '../../assets/vendors/font-bxb/bxb-font.css'
@@ -147,6 +148,11 @@ const TransactionPriceRefreshWapper = styled.div`
   align-items: center;
 `;
 
+enum AutoCalAmount {
+  FromTokenAmount,
+  ToTokenAmount
+}
+
 export default function Swap() {
   const apiInited = useApiInited();
 
@@ -156,23 +162,24 @@ export default function Swap() {
   const [toToken, setToToken] = useState<TokenType | null>(null);
   const [toTokenAmount, setToTokenAmount] = useState('');
 
+  const [autoCalAmount, setAutoCalAmount] = useState<AutoCalAmount>(AutoCalAmount.ToTokenAmount);
+
   const handleSetFromTokenAmount = (amount: string) => {
-    if (_.isEmpty(amount)) { return; }
     setFromTokenAmount(amount);
     setToTokenAmount('');
+    setAutoCalAmount(AutoCalAmount.ToTokenAmount);
   }
 
   const handleSetToTokenAmount = (amount: string) => {
-    if (_.isEmpty(amount)) { return; }
     setToTokenAmount(amount);
     setFromTokenAmount('');
+    setAutoCalAmount(AutoCalAmount.FromTokenAmount);
   }
 
   const handleSwitchFromToToken = () => {
     setFromToken(toToken);
-    setFromTokenAmount(toTokenAmount);
     setToToken(fromToken)
-    setToTokenAmount(fromTokenAmount);
+    handleSetFromTokenAmount(toTokenAmount);
   }
 
   const handleFromTokenSelect = (selectedToken: TokenType) => {
@@ -181,7 +188,7 @@ export default function Swap() {
     } else {
       setFromToken(selectedToken);
     }
-    setPriceReverse(false);
+    setPriceInfoReverse(false);
   };
   
   const handleToTokenSelect = (selectedToken: TokenType) => {
@@ -190,7 +197,7 @@ export default function Swap() {
     } else {
       setToToken(selectedToken);
     }
-    setPriceReverse(false);
+    setPriceInfoReverse(false);
   };
   
   const accountInfo = useAccountInfo();
@@ -202,22 +209,24 @@ export default function Swap() {
   const fromTokenBalance: BigNum = BigNum.fromSerizableBigNum(_.get(_.find(tokenAmounts, t => t.tokenType.id === fromToken?.id), 'amountBN', BigNum.SerizableZero));
   const toTokenBalance: BigNum = BigNum.fromSerizableBigNum(_.get(_.find(tokenAmounts, t => t.tokenType.id === toToken?.id), 'amountBN', BigNum.SerizableZero));
 
-  const handleSetMaxFromTokenAmount = () => setFromTokenAmount(fromTokenBalance.realNum);
+  const handleSetMaxFromTokenAmount = () => handleSetFromTokenAmount(fromTokenBalance.realNum);
 
   const insufficientBalance =  walletConnected && (BigNum.fromRealNum(fromTokenAmount ?? '').gt(fromTokenBalance));
 
-  const [priceReverse, setPriceReverse] = useState<boolean>(false);
+  const [price, setPrice] = useState<BigNum | null>(null);
+  const [priceReverse, setPriceReverse] = useState<BigNum | null>(null);
+
   const [priceInfo, setPriceInfo] = useState('');
+  const [priceInfoReverse, setPriceInfoReverse] = useState<boolean>(false);
   const showPrice = fromToken && toToken && fromToken.id !== toToken.id;
+
+  // fetch price and reversed price
   useEffect(() => {
     if (!apiInited || fromToken == null || toToken == null || fromToken.id === toToken.id) {
-      setPriceInfo('');
       return;
     }
 
     async function fetchPrice() {
-      const sourceToken = priceReverse ? (toToken as TokenType).name : (fromToken as TokenType).name;
-      const targetToken = priceReverse ? (fromToken as TokenType).name : (toToken as TokenType).name
       /**
        * sample result:
        * "result": {
@@ -225,15 +234,46 @@ export default function Swap() {
             "routes": ["BUSD", "DOT"]
         },
        */
-      const { balance: balance, routes: routes } = await api.targetAmountAvailable(sourceToken, targetToken, BigNum.fromRealNum('1').bigNum);
-      const price = BigNum.fromBigNum(balance.toString()).realNum;
-      setPriceInfo(`${price} ${targetToken} per ${sourceToken}`);
+      const { balance: balance, routes: routes } = await api.targetAmountAvailable((fromToken as TokenType).name, (toToken as TokenType).name, BigNum.fromRealNum('1').bigNum);
+      setPrice(BigNum.fromBigNum(balance.toString()));
+
+      const { balance: balanceReverse, routes: routesReverse } = await api.targetAmountAvailable((toToken as TokenType).name, (fromToken as TokenType).name, BigNum.fromRealNum('1').bigNum);
+      setPriceReverse(BigNum.fromBigNum(balanceReverse.toString()));
+    }
+    
+    fetchPrice();
+  }, [apiInited, fromToken, toToken]);
+
+  // auto set to-token-amount base on user input from-token-amount and price, and vice versa
+  useEffect(() => {
+    if (fromToken == null || toToken == null
+      || (autoCalAmount == AutoCalAmount.ToTokenAmount && (price == null || !numUtils.isNum(fromTokenAmount)))
+      || (autoCalAmount == AutoCalAmount.FromTokenAmount && (priceReverse == null || !numUtils.isNum(toTokenAmount)))) {
+      return;
     }
 
-    fetchPrice();
-  }, [apiInited, fromToken, toToken, priceReverse]);
+    if (autoCalAmount == AutoCalAmount.ToTokenAmount) {
+      setToTokenAmount(BigNum.fromRealNum(fromTokenAmount).times(price as BigNum).realNum);
+    } else if (autoCalAmount == AutoCalAmount.FromTokenAmount) {
+      setFromTokenAmount(BigNum.fromRealNum(toTokenAmount).times(priceReverse as BigNum).realNum);
+    }
+  }, [fromToken, toToken, price, priceReverse, fromTokenAmount, toTokenAmount, autoCalAmount]);
 
-  const showTransactionInfo = showPrice && _.toNumber(fromTokenAmount) > 0 && _.toNumber(toTokenAmount) > 0;
+  // update price info
+  useEffect(() => {
+    if (fromToken == null || toToken == null || (priceInfoReverse && priceReverse == null) || (!priceInfoReverse && price == null)) {
+      setPriceInfo('');
+      return;
+    }
+
+    if (priceInfoReverse) {
+      setPriceInfo(`${(priceReverse as BigNum).realNum} ${fromToken.name} per ${toToken.name}`);
+    } else {
+      setPriceInfo(`${(price as BigNum).realNum} ${toToken.name} per ${fromToken.name}`);
+    }
+  }, [fromToken, toToken, price, priceReverse, priceInfoReverse]);
+
+  const showTransactionInfo = showPrice && (_.toNumber(fromTokenAmount) > 0 || _.toNumber(toTokenAmount) > 0);
 
   const swapEnabled = walletConnected && fromToken != null && toToken != null && _.toNumber(fromTokenAmount) > 0 && !insufficientBalance;
 
@@ -325,7 +365,7 @@ export default function Swap() {
                   <TransactionInfoLabel>Price:</TransactionInfoLabel>
                   <RowFixed>
                     <TransactionInfo>{priceInfo}</TransactionInfo>
-                    <TransactionPriceRefreshWapper onClick={() => setPriceReverse(!priceReverse)}>
+                    <TransactionPriceRefreshWapper onClick={() => setPriceInfoReverse(!priceInfoReverse)}>
                         <i className='fo-repeat refresh-price' />
                     </TransactionPriceRefreshWapper>
                   </RowFixed>

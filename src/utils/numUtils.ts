@@ -5,9 +5,13 @@ export function isNum(num: string): boolean {
     return false;
   }
 
-  if (num.trim() == '.') {
+  if (num.trim() === '.') {
     return true;
   }
 
   return !_.isNaN(_.toNumber(num));
+}
+
+export default {
+  isNum
 }

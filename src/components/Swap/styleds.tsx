@@ -1,8 +1,12 @@
+import _ from 'lodash';
 import React from 'react';
 import { AlertTriangle } from 'react-feather';
 import styled, { css } from 'styled-components';
 import { Text } from 'rebass';
 import { AutoColumn } from '../Column';
+import { AutoRow } from '../Row';
+import CurrencyLogo from '../CurrencyLogo';
+import { TokenType } from '../../state/token/types';
 
 export const Wrapper = styled.div`
   position: relative;
@@ -144,3 +148,41 @@ export const SwapShowAcceptChanges = styled(AutoColumn)`
   border-radius: 12px;
   margin-top: 8px;
 `;
+
+const RouteContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const RouteSeparator = styled.span`
+  font-size: 16px;
+  font-family: fontoed;
+  color: #666F83;
+
+  margin-left: 5px;
+`
+
+export function SwapRoutes({
+  routes,
+  tokenTypesByName
+}: {
+  routes: string[],  // array of routed token names
+  tokenTypesByName: {[name: string]: TokenType}  // supported token lists keyed by name
+}) {
+
+  return (
+    <AutoRow justify='flex-start'>
+      {routes.map((route, index) => (
+        <RouteContainer>
+          {(index > 0) && (
+            <RouteSeparator>
+              <i className='fo-chevron-right' />
+            </RouteSeparator>
+          )}
+          <CurrencyLogo currency={_.get(tokenTypesByName, route)} size={'30px'} />
+        </RouteContainer>
+      ))}
+    </AutoRow>
+  );
+}

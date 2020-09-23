@@ -10,7 +10,7 @@ import { AutoColumn } from '../../components/Column';
 import { AutoRow, RowFixed } from '../../components/Row';
 import { SwapPoolTabs } from '../../components/NavigationTabs';
 import CurrencyInputPanel from '../../components/CurrencyInputPanel';
-import { Wrapper, BottomGrouping } from '../../components/Swap/styleds';
+import { Wrapper, BottomGrouping, SwapRoutes } from '../../components/Swap/styleds';
 import SwapConfirmhModal from './SwapConfirmModal';
 import { TokenType } from '../../state/token/types';
 import { useTokenTypes } from '../../state/token/hooks';
@@ -219,6 +219,7 @@ export default function Swap() {
 
   const [price, setPrice] = useState<BigNum | null>(null);
   const [priceReverse, setPriceReverse] = useState<BigNum | null>(null);
+  const [swapRoutes, setSwapRoutes] = useState<string[]>();
 
   const [priceInfo, setPriceInfo] = useState('');
   const [priceInfoReverse, setPriceInfoReverse] = useState<boolean>(false);
@@ -240,6 +241,7 @@ export default function Swap() {
        */
       const { balance: balance, routes: routes } = await api.targetAmountAvailable((fromToken as TokenType).name, (toToken as TokenType).name, BigNum.fromRealNum('1').bigNum);
       setPrice(BigNum.fromBigNum(balance.toString()));
+      setSwapRoutes(routes);
 
       const { balance: balanceReverse, routes: routesReverse } = await api.targetAmountAvailable((toToken as TokenType).name, (fromToken as TokenType).name, BigNum.fromRealNum('1').bigNum);
       setPriceReverse(BigNum.fromBigNum(balanceReverse.toString()));
@@ -380,7 +382,7 @@ export default function Swap() {
           }
         </BottomGrouping>
 
-        {(showPrice || true) && (
+        {(showPrice || showTransactionInfo) && (
           <TransactionInfoPanel>
             <AutoColumn gap={'sm'}>
               {showPrice && (
@@ -395,7 +397,7 @@ export default function Swap() {
                 </AutoRow>
               )}
 
-              {true && (
+              {showTransactionInfo && (
                 <>
                   <AutoRow justify='space-between'>
                     <RowFixed>
@@ -421,10 +423,10 @@ export default function Swap() {
                     <TransactionInfo>0.003 ETH</TransactionInfo>
                   </AutoRow>
 
-                  <AutoRow justify='space-between'>
-                    <TransactionInfoLabel>Route:</TransactionInfoLabel>
-                    <TransactionInfo>{fromToken?.name} &gt; {toToken?.name}</TransactionInfo>
-                  </AutoRow>
+                  <TransactionInfoLabel>Route:</TransactionInfoLabel>
+                  {swapRoutes && (
+                    <SwapRoutes routes={swapRoutes} tokenTypesByName={_.keyBy(myTokenTypes, 'name')} />
+                  )}
 
                 </>
               )}

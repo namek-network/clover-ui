@@ -70,6 +70,10 @@ export default class BigNum {
     };
   }
 
+  toBN = (): BN => {
+    return this._realNum;
+  }
+
   times = (other: BigNum): BigNum => {
     return BigNum.fromRealNum(this._realNum.times(other._realNum).toString(10));
   }

@@ -7,7 +7,7 @@ export interface SettingState {
 }
 
 const initialState: SettingState = {
-  slippageTol: 0,
+  slippageTol: 50, // default to 0.5%
   transDeadline: 0
 }
 

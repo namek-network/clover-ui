@@ -1,8 +1,11 @@
-import _ from 'lodash';
+import _, { reverse } from 'lodash';
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { darken } from 'polished';
 import { Button as RebassButton } from 'rebass/styled-components'
+import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next'
+import { BigNumber as BN } from "bignumber.js";
 import { AutoColumn } from '../../components/Column';
 import { AutoRow, RowFixed } from '../../components/Row';
 import { SwapPoolTabs } from '../../components/NavigationTabs';
@@ -13,13 +16,14 @@ import { TokenType } from '../../state/token/types';
 import { useTokenTypes } from '../../state/token/hooks';
 import { useAccountInfo, useAccountInfoUpdate } from '../../state/wallet/hooks';
 import { useApiInited } from '../../state/api/hooks';
+import { useSlippageTol } from '../../state/settings/hooks';
 import BigNum  from '../../types/bigNum';
 import WalletSelectDialog from '../../components/WalletComp/walletSelectDialog'
 import { supportedWalletTypes, loadAccount } from '../../utils/AccountUtils'
 import { api } from '../../utils/apiUtils';
 import numUtils from '../../utils/numUtils';
-import { toast } from 'react-toastify';
-import { useTranslation } from 'react-i18next'
+import swapUtils from '../../utils/swapUtils';
+import sysConfig from '../../configs/sysConfig';
 import '../../assets/vendors/font-bxb/bxb-font.css'
 import './index.css'
 
@@ -253,9 +257,9 @@ export default function Swap() {
     }
 
     if (autoCalAmount == AutoCalAmount.ToTokenAmount) {
-      setToTokenAmount(BigNum.fromRealNum(fromTokenAmount).times(price as BigNum).realNum);
+      setToTokenAmount(BigNum.fromRealNum(fromTokenAmount).times(price as BigNum).toBN().toFixed(sysConfig.decimalPlaces));
     } else if (autoCalAmount == AutoCalAmount.FromTokenAmount) {
-      setFromTokenAmount(BigNum.fromRealNum(toTokenAmount).times(priceReverse as BigNum).realNum);
+      setFromTokenAmount(BigNum.fromRealNum(toTokenAmount).times(priceReverse as BigNum).toBN().toFixed(sysConfig.decimalPlaces));
     }
   }, [fromToken, toToken, price, priceReverse, fromTokenAmount, toTokenAmount, autoCalAmount]);
 
@@ -267,11 +271,30 @@ export default function Swap() {
     }
 
     if (priceInfoReverse) {
-      setPriceInfo(`${(priceReverse as BigNum).realNum} ${fromToken.name} per ${toToken.name}`);
+      setPriceInfo(`${(priceReverse as BigNum).toBN().toFixed(sysConfig.decimalPlaces)} ${fromToken.name} per ${toToken.name}`);
     } else {
-      setPriceInfo(`${(price as BigNum).realNum} ${toToken.name} per ${fromToken.name}`);
+      setPriceInfo(`${(price as BigNum).toBN().toFixed(sysConfig.decimalPlaces)} ${toToken.name} per ${fromToken.name}`);
     }
   }, [fromToken, toToken, price, priceReverse, priceInfoReverse]);
+
+  const slippage = useSlippageTol();
+  const [minReceived, setMinReceived] = useState<BN | null>(null);
+  useEffect(() => {
+    if (toToken == null || !numUtils.isNum(fromTokenAmount) || priceReverse == null) {
+      setMinReceived(null);
+      return;
+    }
+    setMinReceived(swapUtils.calMinReceived(fromTokenAmount, priceReverse.toBN(), slippage / 10000));
+  }, [toToken, fromTokenAmount, priceReverse, slippage]);
+
+  const [priceImpace, setPriceImpact] = useState<BN | null>(null);
+  useEffect(() => {
+    if (price == null) {
+      setPriceImpact(null);
+      return;
+    }
+    setPriceImpact(swapUtils.calPriceImpact(price.toBN()));
+  }, [price]);
 
   const showTransactionInfo = showPrice && (_.toNumber(fromTokenAmount) > 0 || _.toNumber(toTokenAmount) > 0);
 
@@ -357,7 +380,7 @@ export default function Swap() {
           }
         </BottomGrouping>
 
-        {(showPrice || showTransactionInfo) && (
+        {(showPrice || true) && (
           <TransactionInfoPanel>
             <AutoColumn gap={'sm'}>
               {showPrice && (
@@ -372,14 +395,14 @@ export default function Swap() {
                 </AutoRow>
               )}
 
-              {showTransactionInfo && (
+              {true && (
                 <>
                   <AutoRow justify='space-between'>
                     <RowFixed>
                       <TransactionInfoLabel>Minimum Received:</TransactionInfoLabel>
                       <i className='fo-info clover-info' onClick={() => {}}></i>
                     </RowFixed>
-                    <TransactionInfo>2.99967 {toToken?.name}</TransactionInfo>
+                    <TransactionInfo>{minReceived == null ? '' : `${minReceived.toFixed(sysConfig.decimalPlaces)} ${toToken?.name}`}</TransactionInfo>
                   </AutoRow>
 
                   <AutoRow justify='space-between'>
@@ -387,7 +410,7 @@ export default function Swap() {
                       <TransactionInfoLabel>Price Impact:</TransactionInfoLabel>
                       <i className='fo-info clover-info' onClick={() => {}}></i>
                     </RowFixed>
-                    <TransactionInfo>5.27%</TransactionInfo>
+                    <TransactionInfo>{priceImpace == null ? '' : `${priceImpace.times(100).toFixed(sysConfig.decimalPlaces)}%`}</TransactionInfo>
                   </AutoRow>
 
                   <AutoRow justify='space-between'>

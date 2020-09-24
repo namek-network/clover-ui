@@ -253,14 +253,14 @@ export default function Swap() {
   // auto set to-token-amount base on user input from-token-amount and price, and vice versa
   useEffect(() => {
     if (fromToken == null || toToken == null
-      || (autoCalAmount == AutoCalAmount.ToTokenAmount && (price == null || !numUtils.isNum(fromTokenAmount)))
-      || (autoCalAmount == AutoCalAmount.FromTokenAmount && (priceReverse == null || !numUtils.isNum(toTokenAmount)))) {
+      || (autoCalAmount === AutoCalAmount.ToTokenAmount && (price === null || !numUtils.isNum(fromTokenAmount)))
+      || (autoCalAmount === AutoCalAmount.FromTokenAmount && (priceReverse === null || !numUtils.isNum(toTokenAmount)))) {
       return;
     }
 
-    if (autoCalAmount == AutoCalAmount.ToTokenAmount) {
+    if (autoCalAmount === AutoCalAmount.ToTokenAmount) {
       setToTokenAmount(BigNum.fromRealNum(fromTokenAmount).times(price as BigNum).toBN().toFixed(sysConfig.decimalPlaces));
-    } else if (autoCalAmount == AutoCalAmount.FromTokenAmount) {
+    } else if (autoCalAmount === AutoCalAmount.FromTokenAmount) {
       setFromTokenAmount(BigNum.fromRealNum(toTokenAmount).times(priceReverse as BigNum).toBN().toFixed(sysConfig.decimalPlaces));
     }
   }, [fromToken, toToken, price, priceReverse, fromTokenAmount, toTokenAmount, autoCalAmount]);
@@ -289,7 +289,7 @@ export default function Swap() {
     setMinReceived(swapUtils.calMinReceived(fromTokenAmount, priceReverse.toBN(), slippage / 10000));
   }, [toToken, fromTokenAmount, priceReverse, slippage]);
 
-  const [priceImpace, setPriceImpact] = useState<BN | null>(null);
+  const [priceImpact, setPriceImpact] = useState<BN | null>(null);
   useEffect(() => {
     if (price == null) {
       setPriceImpact(null);
@@ -297,6 +297,8 @@ export default function Swap() {
     }
     setPriceImpact(swapUtils.calPriceImpact(price.toBN()));
   }, [price]);
+
+  const liquidityProviderFee = new BN(fromTokenAmount).times(sysConfig.liquidityProviderFeeRatio);
 
   const showTransactionInfo = showPrice && (_.toNumber(fromTokenAmount) > 0 || _.toNumber(toTokenAmount) > 0);
 
@@ -413,20 +415,20 @@ export default function Swap() {
                       <TransactionInfoLabel>Price Impact:</TransactionInfoLabel>
                       <i className='fo-info clover-info' onClick={() => {}}></i>
                     </RowFixed>
-                    <TransactionInfo>{priceImpace == null ? '' : `${priceImpace.times(100).toFixed(sysConfig.decimalPlaces)}%`}</TransactionInfo>
+                    <TransactionInfo>{priceImpact == null ? '' : `${priceImpact.times(100).toFixed(sysConfig.decimalPlaces)}%`}</TransactionInfo>
                   </AutoRow>
 
                   <AutoRow justify='space-between'>
                     <RowFixed>
-                      <TransactionInfoLabel>Liquility Provder Fee:</TransactionInfoLabel>
+                      <TransactionInfoLabel>Liquidity Provder Fee:</TransactionInfoLabel>
                       <i className='fo-info clover-info' onClick={() => {}}></i>
                     </RowFixed>
-                    <TransactionInfo>0.003 ETH</TransactionInfo>
+                    <TransactionInfo>{liquidityProviderFee.toFixed(sysConfig.decimalPlaces)} {fromToken?.name}</TransactionInfo>
                   </AutoRow>
 
                   <TransactionInfoLabel>Route:</TransactionInfoLabel>
                   {swapRoutes && (
-                    <SwapRoutes routes={swapRoutes} tokenTypesByName={_.keyBy(myTokenTypes, 'name')} />
+                    <SwapRoutes routes={fromToken == null ? swapRoutes : [fromToken.name, ...swapRoutes]} tokenTypesByName={_.keyBy(myTokenTypes, 'name')} />
                   )}
 
                 </>
@@ -443,9 +445,15 @@ export default function Swap() {
           isOpen={swapConfirmModalOpen}
           onDismiss={() => setSwapConfirmModalOpen(false)}
           onConfirmSwap={() => setSwapConfirmModalOpen(false)}
-          fromToken={fromToken == null ? undefined : fromToken}
+          fromToken={fromToken as TokenType}
           fromTokenAmount={fromTokenAmount}
-          toToken={toToken == null ? undefined : toToken}
+          toToken={toToken as TokenType}
+          toTokenAmount={toTokenAmount}
+          price={price == null ? null : price.toBN()}
+          minReceived={minReceived}
+          priceImpact={priceImpact}
+          liquidityProviderFee={liquidityProviderFee}
+          swapRoutes={swapRoutes ?? []}
         />
       )}
 

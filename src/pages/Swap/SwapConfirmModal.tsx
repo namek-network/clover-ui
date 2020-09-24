@@ -2,13 +2,19 @@ import React from 'react'
 import styled from 'styled-components'
 import { Button as RebassButton } from 'rebass/styled-components'
 import { darken } from 'polished';
+import { Text } from 'rebass'
+import { X } from 'react-feather'
+import { BigNumber as BN } from "bignumber.js";
 import { TokenType } from '../../state/token/types'
+import { useAccountInfo } from '../../state/wallet/hooks';
 import Modal from '../../components/Modal'
 import Column, { AutoColumn } from '../../components/Column'
 import { AutoRow, RowBetween, RowFixed } from '../../components/Row'
 import CurrencyLogo from '../../components/CurrencyLogo'
-import { Text } from 'rebass'
-import { X } from 'react-feather'
+import sysConfig from '../../configs/sysConfig';
+import swapUtils from '../../utils/swapUtils';
+import BigNum from '../../types/bigNum';
+
 
 const PaddedColumn = styled(AutoColumn)`
   padding: 20px;
@@ -129,20 +135,37 @@ interface SwapConfirmhModalProps {
   isOpen: boolean
   onDismiss: () => void
   onConfirmSwap: () => void
-  fromToken?: TokenType
-  fromTokenAmount?: string
-  toToken?: TokenType
+  fromToken: TokenType
+  fromTokenAmount: string
+  toToken: TokenType
+  toTokenAmount: string,
+  price: BN | null,
+  minReceived: BN | null,
+  priceImpact: BN | null,
+  liquidityProviderFee: BN | null,
+  swapRoutes: string[]
 }
 
-export default function CurrencySearchModal({
+export default function SwapConfirm({
   isOpen,
   onDismiss,
   onConfirmSwap,
   fromToken,
   fromTokenAmount,
-  toToken
+  toToken,
+  toTokenAmount,
+  price,
+  minReceived,
+  priceImpact,
+  liquidityProviderFee,
+  swapRoutes
 }: SwapConfirmhModalProps) {
 
+  const accountInfo = useAccountInfo();
+
+  const handleConfirmSwap = async() => {
+    await swapUtils.swapCurrency(accountInfo, fromToken.id, BigNum.fromRealNum(fromTokenAmount), toToken.id, BigNum.fromRealNum(toTokenAmount), swapRoutes);
+  }
 
   return (
     <Modal isOpen={isOpen} onDismiss={onDismiss} maxHeight={90} minHeight={50}>
@@ -179,7 +202,7 @@ export default function CurrencySearchModal({
                     {toToken?.name}
                   </StyledTokenName>
                 </RowFixed>
-                <TokenAmountText>3.2235</TokenAmountText>
+                <TokenAmountText>{toTokenAmount}</TokenAmountText>
               </AutoRow>
             </AutoColumn>
 
@@ -190,29 +213,29 @@ export default function CurrencySearchModal({
             <TransactionInfoPanel gap='6px'>
               <AutoRow justify='space-between'>
                 <TransactionInfoLabel>Price</TransactionInfoLabel>
-                <TransactionInfo>2.99967 {toToken?.name}/{fromToken?.name}</TransactionInfo>
+                <TransactionInfo>{price == null ? '' : `${price.toFixed(sysConfig.decimalPlaces)} ${toToken?.name}/${fromToken?.name}`}</TransactionInfo>
               </AutoRow>
 
               <AutoRow justify='space-between'>
-                <TransactionInfoLabel>Minimum sent</TransactionInfoLabel>
-                <TransactionInfo>2.99967 {toToken?.name}</TransactionInfo>
+                <TransactionInfoLabel>Minimum received</TransactionInfoLabel>
+                <TransactionInfo>{minReceived == null ? '' : `${minReceived.toFixed(sysConfig.decimalPlaces)} ${toToken?.name}`}</TransactionInfo>
               </AutoRow>
 
               <AutoRow justify='space-between'>
                 <TransactionInfoLabel>Price Impact</TransactionInfoLabel>
-                <TransactionInfo>5.27%</TransactionInfo>
+                <TransactionInfo>{priceImpact == null ? '' : `${priceImpact.times(100).toFixed(sysConfig.decimalPlaces)}%`}</TransactionInfo>
               </AutoRow>
 
               <AutoRow justify='space-between'>
-                <TransactionInfoLabel>Liquility Provder Fee</TransactionInfoLabel>
-                <TransactionInfo>0.0015 DOT</TransactionInfo>
+                <TransactionInfoLabel>Liquidity Provder Fee</TransactionInfoLabel>
+                <TransactionInfo>{liquidityProviderFee == null ? '' : liquidityProviderFee.toFixed(sysConfig.decimalPlaces)} {fromToken?.name}</TransactionInfo>
               </AutoRow>
 
             </TransactionInfoPanel>
           </ContentWrapper>
 
 
-          <ConfirmSwapButton onClick={onConfirmSwap}>Confirm Swap</ConfirmSwapButton>
+          <ConfirmSwapButton onClick={handleConfirmSwap}>Confirm Swap</ConfirmSwapButton>
 
         </PaddedColumn>
       </Column>

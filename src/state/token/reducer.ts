@@ -1,10 +1,9 @@
 import { createReducer } from '@reduxjs/toolkit';
 import { tokenTypes, clearTokenTypes, currencyPairs } from './actions';
 import { TokenState } from './types';
-import BuiltInTokens from './tokens';
 
 const initialState: TokenState = {
-  tokenTypes: BuiltInTokens,
+  tokenTypes: [],
   currencyPairs: []
 }
   
@@ -19,7 +18,7 @@ export default createReducer(initialState, builder =>
     })
     .addCase(currencyPairs, (state, action) => {
       const { pairs} = action.payload
-      state.currencyPairs = pairs
+      state.currencyPairs = pairs;
     })
 );
   

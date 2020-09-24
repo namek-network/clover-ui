@@ -60,7 +60,7 @@ const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpen, cust
 
     align-self: ${({ mobile }) => (mobile ? 'flex-end' : 'center')};
 
-    max-width: 420px;
+    max-width: 480px;
     ${({ maxHeight }) =>
       maxHeight &&
       css`

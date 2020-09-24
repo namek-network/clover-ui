@@ -174,7 +174,7 @@ export function SwapRoutes({
   return (
     <AutoRow justify='flex-start'>
       {routes.map((route, index) => (
-        <RouteContainer>
+        <RouteContainer key={`swap-route-${index}`}>
           {(index > 0) && (
             <RouteSeparator>
               <i className='fo-chevron-right' />

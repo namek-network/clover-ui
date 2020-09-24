@@ -1,8 +1,15 @@
 import { defaultTokenType, TokenType } from '../token/types';
 
+export type TransState = {
+  stateText: string,
+  amountText: string,
+  status: string  //available value: start, end, rejected, error
+}
+
 export type PoolState = {
   userPoolPairItems: PoolPairItem[],
-  chainPoolPairItems: PoolPairItem[]
+  chainPoolPairItems: PoolPairItem[],
+  transState: TransState
 }
 
 export type PoolPairItem = {

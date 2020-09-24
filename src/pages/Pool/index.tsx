@@ -22,6 +22,7 @@ import { useUserPoolPairItems, useChainPoolPairItems, useUserPoolPairItemsUpdate
 import { TokenType, defaultTokenType } from '../../state/token/types';
 import BigNum  from '../../types/bigNum';
 import { PoolPairItem as PoolPairItemType, defaultPoolPairItem } from '../../state/pool/types';
+import TransferStateModal from './transferStateModal';
 
 const BodyWrapper = styled.div`
   position: relative;
@@ -110,6 +111,7 @@ export default function Pool() {
   const [disabled, setDisabled] = useState(false)
 
   const [dataFromAddLiquid, setDataFromAddLiquid] = useState<DataFromAddLiquid>(defaultDataFromAddLiquid)
+  const [transferStateModalOpen, setTransferStateModalOpen] = useState(false)
 
   const userPoolItems = useUserPoolPairItems()
   const chainPoolItems = useChainPoolPairItems()
@@ -123,6 +125,8 @@ export default function Pool() {
   const apiInited = useApiInited()
 
   const tokenTypes = useTokenTypes()
+
+
 
   useEffect(() => {
     if (!apiInited) {
@@ -182,6 +186,14 @@ export default function Pool() {
       setDataFromAddLiquid(data ?? defaultDataFromAddLiquid)
     }
   }
+
+  const onLiquidAddConfirmModalClose = (state: string) => {
+    setLiquidAddConfirmModalOpen(false)
+
+    if (state !== 'close') {
+      setTransferStateModalOpen(true)
+    }
+  }
     return (
       <BodyWrapper>
         <SwapPoolTabs active={'pool'} />
@@ -222,8 +234,9 @@ export default function Pool() {
           toToken={dataFromAddLiquid.toToken}
           fromAmount={dataFromAddLiquid.fromAmount}
           toAmount={dataFromAddLiquid.toAmount}
-          onClose={() => setLiquidAddConfirmModalOpen(false)}></LiquidAddConfirmModal>
-        <RemoveLiquidModal isOpen={false} onDismiss={() => {}} onClose={() => setOpen(false)}></RemoveLiquidModal>
+          onClose={onLiquidAddConfirmModalClose}></LiquidAddConfirmModal>
+        <RemoveLiquidModal isOpen={false} onDismiss={() => {}} onClose={() => setRemoveLiquidModalOpen(false)}></RemoveLiquidModal>
+        <TransferStateModal isOpen={transferStateModalOpen} onDismiss={() => {}} onClose={() => setTransferStateModalOpen(false)}></TransferStateModal>
       </BodyWrapper>
     );
 }

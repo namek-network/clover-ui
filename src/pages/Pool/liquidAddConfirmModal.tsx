@@ -12,9 +12,13 @@ import BigNum from '../../types/bigNum';
 import { TokenType } from '../../state/token/types';
 import { showTextType } from './types'
 import {selectedPairExists, findPairItem} from './utils'
-import { useUserPoolPairItems, useChainPoolPairItems, useUserPoolPairItemsUpdate, useChainPairItemsUpdate } from '../../state/pool/hooks';
+import { useUserPoolPairItems, useChainPoolPairItems, useUserPoolPairItemsUpdate, useChainPairItemsUpdate, useTransStateUpdate } from '../../state/pool/hooks';
 import { api } from '../../utils/apiUtils'
 import { useApiInited } from '../../state/api/hooks';
+import { useAccountInfo, useAccountInfoUpdate } from '../../state/wallet/hooks'
+import { AccountInfo } from '../../state/wallet/types';
+import { doAddLiqudityTrans } from '../../utils/transUtils'
+import { toast } from 'react-toastify';
 
 
 const customStyle = "position: relative; \
@@ -100,7 +104,7 @@ const TipText = styled.div`
 interface AddLiquidModalProps {
   isOpen: boolean
   onDismiss: () => void
-  onClose: () => void
+  onClose: (state: string) => void
   fromToken: TokenType,
   toToken: TokenType,
   fromAmount: BigNum,
@@ -113,10 +117,11 @@ export default function LiquidAddConfirmModal({isOpen, onDismiss, onClose, fromT
   const [shareAmount, setShareAmount] = useState('')
 
   const inited = useApiInited()
+  const accountInfo = useAccountInfo()
+
+  const transStateUpdate = useTransStateUpdate()
   
   useEffect(() => {
-    const existedPair = findPairItem(chainPoolItems, fromToken, toToken)
-
     const loadShareFromServer = async (inited: boolean, fromToken: TokenType, toToken: TokenType, fromAmount: BigNum, toAmount: BigNum) => {
       if (!inited || _.isEmpty(fromToken.name) || _.isEmpty(toToken.name)) {
         return
@@ -148,12 +153,46 @@ export default function LiquidAddConfirmModal({isOpen, onDismiss, onClose, fromT
     loadShareFromServer(inited, fromToken, toToken, fromAmount, toAmount)
   }, [fromToken, toToken, fromAmount, toAmount, chainPoolItems, inited])
 
+  const handleConfirmClick = useCallback(() => {
+    onClose('confirm')
+
+    if (_.isEmpty(accountInfo.address)) {
+      return
+    }
+    const onError = (msg: string) => {
+      toast(msg)
+    }
+
+    const amountText = `Supplying ${fromAmount.realNum} ${fromToken.name} and  ${toAmount.realNum} ${toToken.name}`
+    const onStart = () => {
+      transStateUpdate({stateText: 'Waiting for Confrimation', amountText, status: 'start'})
+    }
+    const onEnd = (state: string) => {
+      let stateText = ''
+      let status = ''
+      if (state === 'complete') {
+        stateText = 'Transaction Submitted'
+        status = 'end'
+      } else if (state === 'rejected') {
+        stateText = 'Transaction Rejected'
+        status = 'rejected'
+      } else {
+        stateText = 'Transaction Failed'
+        status = 'error'
+      }
+      transStateUpdate({stateText: stateText, amountText, status: status})
+    }
+
+    doAddLiqudityTrans(fromToken, toToken, fromAmount, toAmount, accountInfo, onError, onStart, onEnd)
+
+  }, [fromToken, toToken, fromAmount, toAmount, accountInfo])
+
     return (
       <Modal isOpen={isOpen} onDismiss={() => {}} maxHeight={90} customStyle={customStyle}>
         <BodyWrapper>
           <Head>
             <Title>You will receive</Title>
-            <CloseButton onClick={() => onClose()}><i className="fa fo-x"></i></CloseButton>
+            <CloseButton onClick={() => onClose('close')}><i className="fa fo-x"></i></CloseButton>
           </Head>
           <Wrapper>
             <PairIconTitle left={fromToken.logo ?? ''} right={toToken.logo ?? ''} title={''} size={'40px'}></PairIconTitle>
@@ -166,7 +205,7 @@ export default function LiquidAddConfirmModal({isOpen, onDismiss, onClose, fromT
             <PairContentWrapper>
               <PairTransContent contents={showData}></PairTransContent>
             </PairContentWrapper>
-            <Button onClick={() => {}}>Confirm Supply</Button>
+            <Button onClick={handleConfirmClick}>Confirm Supply</Button>
           </Wrapper>
         </BodyWrapper>
       </Modal>

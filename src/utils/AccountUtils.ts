@@ -5,6 +5,7 @@ import { InjectedAccountWithMeta, InjectedExtension } from '@polkadot/extension-
 import { AccountInfo, TokenAmount } from '../state/wallet/types';
 import BigNum from '../types/bigNum'
 import { api } from './apiUtils'
+import { originName } from '../constants'
 import _ from 'lodash'
 
 export const supportedWalletTypes = [
@@ -67,7 +68,7 @@ export async function loadAllTokenAmount(addr: string, tokenTypes: TokenType[]) 
 }
 
 export async function loadAccount(wallet: any, tokenTypes: TokenType[], updateAccountInfo: (info: AccountInfo) => void) {
-  const injected = await web3Enable('bxb');
+  const injected = await web3Enable(originName);
 
   if (!injected.length) {
     return "notFoundWallet";

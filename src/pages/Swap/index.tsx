@@ -220,6 +220,7 @@ export default function Swap() {
   const [price, setPrice] = useState<BigNum | null>(null);
   const [priceReverse, setPriceReverse] = useState<BigNum | null>(null);
   const [swapRoutes, setSwapRoutes] = useState<string[]>();
+  const [swapRouteIds, setSwapRouteIds] = useState<number[]>();
 
   const [priceInfo, setPriceInfo] = useState('');
   const [priceInfoReverse, setPriceInfoReverse] = useState<boolean>(false);
@@ -242,6 +243,7 @@ export default function Swap() {
       const { balance: balance, routes: routes } = await api.targetAmountAvailable((fromToken as TokenType).name, (toToken as TokenType).name, BigNum.fromRealNum('1').bigNum);
       setPrice(BigNum.fromBigNum(balance.toString()));
       setSwapRoutes(routes);
+      setSwapRouteIds(routes.map((r: string) => myTokenTypesByName[r].id));
 
       const { balance: balanceReverse, routes: routesReverse } = await api.targetAmountAvailable((toToken as TokenType).name, (fromToken as TokenType).name, BigNum.fromRealNum('1').bigNum);
       setPriceReverse(BigNum.fromBigNum(balanceReverse.toString()));
@@ -308,7 +310,8 @@ export default function Swap() {
 
   const [walletSelectorOpen, setWalletSelectorOpen] = useState(false);
 
-  const myTokenTypes = useTokenTypes()
+  const myTokenTypes = useTokenTypes();
+  const myTokenTypesByName = _.keyBy(myTokenTypes, 'name');
 
   const { t } = useTranslation()
 
@@ -428,7 +431,7 @@ export default function Swap() {
 
                   <TransactionInfoLabel>Route:</TransactionInfoLabel>
                   {swapRoutes && (
-                    <SwapRoutes routes={fromToken == null ? swapRoutes : [fromToken.name, ...swapRoutes]} tokenTypesByName={_.keyBy(myTokenTypes, 'name')} />
+                    <SwapRoutes routes={fromToken == null ? swapRoutes : [fromToken.name, ...swapRoutes]} tokenTypesByName={myTokenTypesByName} />
                   )}
 
                 </>
@@ -453,7 +456,7 @@ export default function Swap() {
           minReceived={minReceived}
           priceImpact={priceImpact}
           liquidityProviderFee={liquidityProviderFee}
-          swapRoutes={swapRoutes ?? []}
+          swapRoutes={swapRouteIds ?? []}
         />
       )}
 

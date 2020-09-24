@@ -16,6 +16,11 @@ const types = {
     balance: 'String',
     routes: 'Vec<CurrencyTypeEnum>'
   },
+  PoolId: {
+    _enum: {
+      Swap: 'u64'
+    }
+  },
   PairKey: 'u64',
   Rate: 'u128',
   Ratio: 'u128',

@@ -143,7 +143,7 @@ interface SwapConfirmhModalProps {
   minReceived: BN | null,
   priceImpact: BN | null,
   liquidityProviderFee: BN | null,
-  swapRoutes: string[]
+  swapRoutes: number[]
 }
 
 export default function SwapConfirm({

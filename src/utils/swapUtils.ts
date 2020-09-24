@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { BigNumber as BN } from "bignumber.js";
 import { web3FromAddress } from '@polkadot/extension-dapp';
 import { AccountInfo } from '../state/wallet/types';
-import { api } from './apiUtils';
+import { api } from './apiUtils'; 
 import BigNum from '../types/bigNum';
 
 // slippage should be in [0.1%, 1%]
@@ -26,15 +26,17 @@ export function calPriceImpact(price: BN): BN {
   return price.sqrt().times(2).div(price.plus(1)).minus(1);
 }
 
-export async function swapCurrency(accountInfo: AccountInfo, supplyCurrencyId: number, supplyAmount: BigNum, targetCurrencyId: number, targetAmount: BigNum, routes: string[]) {
+export async function swapCurrency(accountInfo: AccountInfo, supplyCurrencyId: number, supplyAmount: BigNum, targetCurrencyId: number, targetAmount: BigNum, routes: number[]) {
   const injector = await web3FromAddress(accountInfo.address);
+
   api.getApi().setSigner(injector.signer);
 
   console.log('routes', routes);
 
   try {
-    await api.getApi().tx.bithumbDex.swapCurrency(supplyCurrencyId, supplyAmount.bigNum, targetCurrencyId, targetAmount.bigNum, [0, 1, 2])
+    await api.getApi().tx.bithumbDex.swapCurrency(supplyCurrencyId, supplyAmount.bigNum, targetCurrencyId, targetAmount.bigNum, routes)
       .signAndSend(accountInfo.address, (result: any) => {
+        // TODO: handle result
         console.log('swapCurrency result', result);
       });
   } catch (e) {

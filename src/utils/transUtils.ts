@@ -23,7 +23,6 @@ export async function doAddLiqudityTrans(fromToken: TokenType,
   toAmount: BigNum, accountInfo: AccountInfo, 
   onError: (msg: string) => void, onStart: () => void, onEnd: (state: string) => void) {
 
-  console.log('doTrans')
   onStart()
 
   const signer = await getSigner(accountInfo.address)
@@ -63,5 +62,49 @@ export async function doAddLiqudityTrans(fromToken: TokenType,
       unsub()
     } 
   }
+}
+
+export async function doRemoveLiqudityTrans(fromToken: TokenType, 
+  toToken: TokenType, shareAmount: BigNum,  accountInfo: AccountInfo, 
+  onError: (msg: string) => void, onStart: () => void, onEnd: (state: string) => void) {
+
+  onStart()
+
+  const signer = await getSigner(accountInfo.address)
+  if (signer == null) {
+    onError('no available wallet')
+    return
+  }
+
+  api.getApi().setSigner(signer)
+
+  let unsub: any;
+
+  try {
+    unsub = await api.getApi().tx.bithumbDex.withdrawLiquidity(fromToken.id, toToken.id, shareAmount.bigNum)
+    .signAndSend(accountInfo.address, (params: any) => {
+      console.log('Transaction status:', params.status.type);
   
+      if (params.status.isInBlock) {
+        console.log('Completed at block hash', params.status.asInBlock.toHex());
+        console.log('Events:');
+  
+        params.events.forEach((event: any/*{ phase, event: { data, method, section } }*/) => {
+          console.log(`${event.phase.toString()}, ${event.event.methohd}, ${event.event.section},${event.event.data.toString()}` );
+        });
+        onEnd('complete')
+        unsub()
+      }
+    });
+  } catch (e) {
+    if (e.type === 'signature_rejected') {
+      onEnd('rejected')
+    } else {
+      onEnd('error')
+    }
+    
+    if (!_.isEmpty(unsub)) {
+      unsub()
+    } 
+  }
 }

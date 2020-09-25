@@ -86,13 +86,6 @@ const Button = styled.button`
   }
 `
 
-const testData = [
-  {label:'Pooled DOT:', amount: '3.357 DOT'},
-  {label:'Pooled BxETH:', amount: '2.99967 BxETH'},
-  {label:'My pool tokens:', amount: '0.003'},
-  {label:'My pool share:', amount: '0.01%'}
-]
-
 interface ItemWrapperProps {
   isOpen: boolean
   children?: React.ReactNode

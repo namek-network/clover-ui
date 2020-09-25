@@ -194,6 +194,14 @@ export default function Pool() {
       setTransferStateModalOpen(true)
     }
   }
+
+  const onRemoveLiquidModalClose = (state: string) => {
+    setRemoveLiquidModalOpen(false)
+
+    if (state !== 'close') {
+      setTransferStateModalOpen(true)
+    }
+  }
     return (
       <BodyWrapper>
         <SwapPoolTabs active={'pool'} />
@@ -235,7 +243,12 @@ export default function Pool() {
           fromAmount={dataFromAddLiquid.fromAmount}
           toAmount={dataFromAddLiquid.toAmount}
           onClose={onLiquidAddConfirmModalClose}></LiquidAddConfirmModal>
-        <RemoveLiquidModal isOpen={false} onDismiss={() => {}} onClose={() => setRemoveLiquidModalOpen(false)}></RemoveLiquidModal>
+        <RemoveLiquidModal 
+          isOpen={removeLiquidModalOpen} 
+          onDismiss={() => {}} 
+          fromTokenType={selectedItem.fromToken}
+          toTokenType={selectedItem.toToken}
+          onClose={onRemoveLiquidModalClose}></RemoveLiquidModal>
         <TransferStateModal isOpen={transferStateModalOpen} onDismiss={() => {}} onClose={() => setTransferStateModalOpen(false)}></TransferStateModal>
       </BodyWrapper>
     );

@@ -7,11 +7,15 @@ import Column from '../Column'
 import QuestionHelper from '../QuestionHelper'
 import { RowBetween } from '../Row'
 import CurrencyList from './CurrencyList'
-import { filterTokens } from './filtering'
+import { filterTokens, filterPairs } from './filtering'
 import { TokenType } from '../../state/token/types'
 import { PaddedColumn, SearchInput, Separator } from './styleds'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { useTokenTypes } from '../../state/token/hooks';
+import { TokenPair } from '../CurrencyInputPanel'
+import TokenPairList from '../SearchModal/TokenPairList'
+import _ from 'lodash'
+import { useUserPoolPairItems, useChainPoolPairItems } from '../../state/pool/hooks';
 
 const CloseIcon = styled(X)<{ onClick: () => void }>`
   cursor: pointer;
@@ -23,7 +27,10 @@ interface CurrencySearchProps {
   onDismiss: () => void
   selectedCurrency?: TokenType | null,
   onCurrencySelect: (currency: TokenType) => void,
-  otherSelectedCurrency?: TokenType | null
+  otherSelectedCurrency?: TokenType | null,
+  forPair?: boolean,
+  selectedPair?: TokenPair,
+  onPairSelect?: (pair: TokenPair) => void
 }
 
 export function CurrencySearch({
@@ -31,7 +38,10 @@ export function CurrencySearch({
   onCurrencySelect,
   otherSelectedCurrency,
   onDismiss,
-  isOpen
+  isOpen,
+  forPair = false,
+  selectedPair,
+  onPairSelect
 }: CurrencySearchProps) {
   const allTokens = useTokenTypes();
 
@@ -49,6 +59,20 @@ export function CurrencySearch({
     },
     [onDismiss, onCurrencySelect]
   )
+
+  const handlePairSelect = useCallback(
+    (pair: TokenPair) => {
+      onPairSelect != undefined && onPairSelect(pair)
+      onDismiss()
+    },
+    [onDismiss, onPairSelect]
+  )
+
+  const chainPoolItems = useChainPoolPairItems()
+  const filteredPairs: TokenPair[] = useMemo(() => {
+    const allPairs = _.map(chainPoolItems, (item) => {return {fromToken: item.fromToken, toToken: item.toToken}})
+    return filterPairs(allPairs, searchQuery)
+  }, [chainPoolItems, searchQuery])
 
    // clear the input on open
    useEffect(() => {
@@ -68,7 +92,9 @@ export function CurrencySearch({
       <PaddedColumn gap="14px">
         <RowBetween>
           <Text fontWeight={500} fontSize={16} color='#777777'>
-            Select a token
+            {
+              forPair ? 'Select a pair' : 'Select a token'
+            }
           </Text>
           <QuestionHelper text="Find a token by searching for its name or symbol." />
           <CloseIcon onClick={onDismiss} />
@@ -76,7 +102,7 @@ export function CurrencySearch({
         <SearchInput
           type="text"
           id="token-search-input"
-          placeholder='Search token name'
+          placeholder={'Search token pair'}
           value={searchQuery}
           ref={inputRef as RefObject<HTMLInputElement>}
           onChange={handleInput}
@@ -89,12 +115,20 @@ export function CurrencySearch({
       <div style={{ flex: '1' }}>
         <AutoSizer disableWidth>
           {({ height }) => (
-            <CurrencyList
+            forPair !== true ? <CurrencyList
               height={height}
               currencies={filteredTokens}
               selectedCurrency={selectedCurrency}
               onCurrencySelect={handleCurrencySelect}
               otherCurrency={otherSelectedCurrency}
+              fixedListRef={fixedList}
+            /> 
+            :
+            <TokenPairList
+              height={height}
+              pairs={filteredPairs}
+              selectedPair={selectedPair}
+              onPairSelect={handlePairSelect}
               fixedListRef={fixedList}
             />
           )}

@@ -155,6 +155,10 @@ const Balance = styled.span`
   color: #666F83;
 `;
 
+export interface TokenPair {
+  fromToken: TokenType,
+  toToken: TokenType
+}
 interface CurrencyInputPanelProps {
   id: string,
   value: string
@@ -167,7 +171,9 @@ interface CurrencyInputPanelProps {
   showMaxButton: boolean,
   onMax?: () => void,
   insufficientBalance?: boolean | null
-  customStyle?: string
+  customStyle?: string,
+  forPair?: boolean,
+  tokenPair?: TokenPair
 }
 
 export default function CurrencyInputPanel({
@@ -182,7 +188,9 @@ export default function CurrencyInputPanel({
   showMaxButton,
   onMax,
   insufficientBalance,
-  customStyle
+  customStyle, 
+  forPair = false,
+  tokenPair
 }: CurrencyInputPanelProps) {
 
   const [modalOpen, setModalOpen] = useState(false)
@@ -199,19 +207,34 @@ export default function CurrencyInputPanel({
           className="open-currency-select-button"
           onClick={() => { setModalOpen(true) }}
         >
-          <Aligner>
-            {currency ? (
-              <CurrencyLogo currency={currency} size={'24px'} />
-            ) : null}
-            <StyledTokenName className="token-symbol-container" active={Boolean(currency && currency.name)}>
-                {(currency && currency.name && currency.name.length > 20
-                  ? currency.name.slice(0, 4) +
-                    '...' +
-                    currency.name.slice(currency.name.length - 5, currency.name.length)
-                  : currency?.name) || 'Select a token'}
+          {
+            forPair !== true && <Aligner>
+                {currency ? (
+                  <CurrencyLogo currency={currency} size={'24px'} />
+                ) : null}
+                <StyledTokenName className="token-symbol-container" active={Boolean(currency && currency.name)}>
+                    {(currency && currency.name && currency.name.length > 20
+                      ? currency.name.slice(0, 4) +
+                        '...' +
+                        currency.name.slice(currency.name.length - 5, currency.name.length)
+                      : currency?.name) || 'Select a token'}
+                </StyledTokenName>
+                <StyledDropDown  />
+              </Aligner>
+          }
+          {
+            forPair && <Aligner>
+            <StyledTokenName className="token-symbol-container" active={Boolean(forPair && tokenPair)}>
+                {tokenPair 
+                  && tokenPair.fromToken.id >= 0
+                  && tokenPair.toToken.id >= 0
+                  ? tokenPair.fromToken.name + '/' + tokenPair.toToken.name
+                   : 'Select a Pair'}
             </StyledTokenName>
             <StyledDropDown  />
           </Aligner>
+          }
+          
         </CurrencySelect>
 
         <NumericalInput
@@ -260,6 +283,8 @@ export default function CurrencyInputPanel({
           selectedCurrency={currency}
           onCurrencySelect={onCurrencySelect}
           otherSelectedCurrency={otherCurrency}
+          forPair={forPair}
+          selectedPair={tokenPair}
         />
 
     </InputPanel>

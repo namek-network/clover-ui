@@ -31,7 +31,7 @@ export default class BigNum {
   }
 
   get bigNum(): string {
-    return this._bigNum.toString(10);
+    return this._bigNum.toFixed(0);
   }
 
   getBigNumBase16(): string {
@@ -81,6 +81,10 @@ export default class BigNum {
 
   times = (other: BigNum): BigNum => {
     return BigNum.fromRealNum(this._realNum.times(other._realNum).toString(10));
+  }
+
+  div = (other: BigNum): BigNum => {
+    return BigNum.fromRealNum(this._realNum.div(other._realNum).toString(10));
   }
 
   lt = (other: BigNum): boolean => {

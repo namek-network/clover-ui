@@ -1,12 +1,15 @@
+import _ from 'lodash';
 import React from 'react'
 import styled from 'styled-components'
 import { Button as RebassButton } from 'rebass/styled-components'
 import { darken } from 'polished';
 import { Text } from 'rebass'
 import { X } from 'react-feather'
+import { toast } from 'react-toastify';
 import { BigNumber as BN } from "bignumber.js";
 import { TokenType } from '../../state/token/types'
 import { useAccountInfo } from '../../state/wallet/hooks';
+import { useSwapTransStateUpdate } from '../../state/swap/hooks';
 import Modal from '../../components/Modal'
 import Column, { AutoColumn } from '../../components/Column'
 import { AutoRow, RowBetween, RowFixed } from '../../components/Row'
@@ -146,7 +149,7 @@ interface SwapConfirmhModalProps {
   swapRoutes: number[]
 }
 
-export default function SwapConfirm({
+export default function SwapConfirmModal({
   isOpen,
   onDismiss,
   onConfirmSwap,
@@ -163,8 +166,41 @@ export default function SwapConfirm({
 
   const accountInfo = useAccountInfo();
 
-  const handleConfirmSwap = async() => {
-    await swapUtils.swapCurrency(accountInfo, fromToken.id, BigNum.fromRealNum(fromTokenAmount), toToken.id, BigNum.fromRealNum(toTokenAmount), swapRoutes);
+  const transStateUpdate = useSwapTransStateUpdate();
+
+  const handleConfirmSwap = () => {
+    onConfirmSwap();
+
+    const onError = (msg: string) => {
+      toast(msg)
+    }
+
+    const amountText = `Swapping ${fromTokenAmount} ${fromToken.name} to ${toTokenAmount} ${toToken.name}`
+    const onStart = () => {
+      transStateUpdate({stateText: 'Waiting for Confrimation', amountText, status: 'start'})
+    }
+
+    const onEnd = (state: string) => {
+      let stateText = ''
+      let status = ''
+      if (state === 'complete') {
+        stateText = 'Transaction Submitted'
+        status = 'end'
+      } else if (state === 'rejected') {
+        stateText = 'Transaction Rejected'
+        status = 'rejected'
+      } else {
+        stateText = 'Transaction Failed'
+        status = 'error'
+      }
+      transStateUpdate({stateText: stateText, amountText, status: status})
+    }
+
+    swapUtils.swapCurrency(
+      accountInfo,
+      fromToken.id, BigNum.fromRealNum(fromTokenAmount), toToken.id, minReceived == null ? BigNum.Zero : BigNum.fromRealNum(minReceived.toString()),
+      swapRoutes,
+      onError, onStart, onEnd);
   }
 
   return (

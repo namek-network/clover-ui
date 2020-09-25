@@ -12,6 +12,7 @@ import { SwapPoolTabs } from '../../components/NavigationTabs';
 import CurrencyInputPanel from '../../components/CurrencyInputPanel';
 import { Wrapper, BottomGrouping, SwapRoutes } from '../../components/Swap/styleds';
 import SwapConfirmhModal from './SwapConfirmModal';
+import SwapTransStateModal from './SwapTransStateModal';
 import { TokenType } from '../../state/token/types';
 import { useTokenTypes } from '../../state/token/hooks';
 import { useAccountInfo, useAccountInfoUpdate } from '../../state/wallet/hooks';
@@ -152,11 +153,6 @@ const TransactionPriceRefreshWapper = styled.div`
   align-items: center;
 `;
 
-enum AutoCalAmount {
-  FromTokenAmount,
-  ToTokenAmount
-}
-
 export default function Swap() {
   const apiInited = useApiInited();
 
@@ -166,18 +162,9 @@ export default function Swap() {
   const [toToken, setToToken] = useState<TokenType | null>(null);
   const [toTokenAmount, setToTokenAmount] = useState('');
 
-  const [autoCalAmount, setAutoCalAmount] = useState<AutoCalAmount>(AutoCalAmount.ToTokenAmount);
-
   const handleSetFromTokenAmount = (amount: string) => {
     setFromTokenAmount(amount);
     setToTokenAmount('');
-    setAutoCalAmount(AutoCalAmount.ToTokenAmount);
-  }
-
-  const handleSetToTokenAmount = (amount: string) => {
-    setToTokenAmount(amount);
-    setFromTokenAmount('');
-    setAutoCalAmount(AutoCalAmount.FromTokenAmount);
   }
 
   const handleSwitchFromToToken = () => {
@@ -224,72 +211,64 @@ export default function Swap() {
 
   const [priceInfo, setPriceInfo] = useState('');
   const [priceInfoReverse, setPriceInfoReverse] = useState<boolean>(false);
-  const showPrice = fromToken && toToken && fromToken.id !== toToken.id;
+  const showSwapInfo = fromToken && toToken && (fromToken.id !== toToken.id) && (_.toNumber(fromTokenAmount) > 0);
 
-  // fetch price and reversed price
+  const slippage = useSlippageTol();
+
+  // on user input (supply amount or target amount), dynamically fetch price & reverse price, calculate mimimal received and price impact, etc
   useEffect(() => {
-    if (!apiInited || fromToken == null || toToken == null || fromToken.id === toToken.id) {
+    const validFromTokenAmount = _.toNumber(fromTokenAmount) > 0;
+    if (!apiInited || fromToken == null || toToken == null || (fromToken.id === toToken.id) || !validFromTokenAmount) {
       return;
     }
 
-    async function fetchPrice() {
-      /**
-       * sample result:
-       * "result": {
-            "balance": "7242",
-            "routes": ["BUSD", "DOT"]
-        },
-       */
-      const { balance: balance, routes: routes } = await api.targetAmountAvailable((fromToken as TokenType).name, (toToken as TokenType).name, BigNum.fromRealNum('1').bigNum);
-      setPrice(BigNum.fromBigNum(balance.toString()));
-      setSwapRoutes(routes);
-      setSwapRouteIds(routes.map((r: string) => myTokenTypesByName[r].id));
+    // only allow user to input supply amount, and get target amount via api and calculate price 
+    async function calSwapInfo() {
+      const supplyAmountBN = BigNum.fromRealNum(fromTokenAmount);
+      const { balance: targetAmount, routes: swapRoutes } = await api.targetAmountAvailable((fromToken as TokenType).name, (toToken as TokenType).name, supplyAmountBN.bigNum);
+      const targetAmountBN = BigNum.fromBigNum(targetAmount);
+      const price: BigNum = targetAmountBN.div(supplyAmountBN);
 
-      const { balance: balanceReverse, routes: routesReverse } = await api.targetAmountAvailable((toToken as TokenType).name, (fromToken as TokenType).name, BigNum.fromRealNum('1').bigNum);
-      setPriceReverse(BigNum.fromBigNum(balanceReverse.toString()));
-    }
-    
-    fetchPrice();
-  }, [apiInited, fromToken, toToken]);
+      setToTokenAmount(targetAmountBN.toBN().toFixed(sysConfig.decimalPlaces));
+      setPrice(price);
+      setSwapRoutes(swapRoutes);
+      setSwapRouteIds(swapRoutes.map((r: string) => myTokenTypesByName[r].id));
 
-  // auto set to-token-amount base on user input from-token-amount and price, and vice versa
-  useEffect(() => {
-    if (fromToken == null || toToken == null
-      || (autoCalAmount === AutoCalAmount.ToTokenAmount && (price === null || !numUtils.isNum(fromTokenAmount)))
-      || (autoCalAmount === AutoCalAmount.FromTokenAmount && (priceReverse === null || !numUtils.isNum(toTokenAmount)))) {
-      return;
+      const { balance: reverseSupplyAmount, routes: reverseSwapRoutes } = await api.targetAmountAvailable((toToken as TokenType).name, (fromToken as TokenType).name, targetAmountBN.bigNum);
+      const reversePrice: BigNum = BigNum.fromBigNum(reverseSupplyAmount).div(targetAmountBN);
+      setPriceReverse(reversePrice);
     }
 
-    if (autoCalAmount === AutoCalAmount.ToTokenAmount) {
-      setToTokenAmount(BigNum.fromRealNum(fromTokenAmount).times(price as BigNum).toBN().toFixed(sysConfig.decimalPlaces));
-    } else if (autoCalAmount === AutoCalAmount.FromTokenAmount) {
-      setFromTokenAmount(BigNum.fromRealNum(toTokenAmount).times(priceReverse as BigNum).toBN().toFixed(sysConfig.decimalPlaces));
-    }
-  }, [fromToken, toToken, price, priceReverse, fromTokenAmount, toTokenAmount, autoCalAmount]);
+    calSwapInfo();
+  }, [apiInited, fromToken, toToken, fromTokenAmount, toTokenAmount]);
 
   // update price info
   useEffect(() => {
-    if (fromToken == null || toToken == null || (priceInfoReverse && priceReverse == null) || (!priceInfoReverse && price == null)) {
-      setPriceInfo('');
-      return;
-    }
-
-    if (priceInfoReverse) {
-      setPriceInfo(`${(priceReverse as BigNum).toBN().toFixed(sysConfig.decimalPlaces)} ${fromToken.name} per ${toToken.name}`);
+    if (!priceInfoReverse) {
+      if (price == null || fromToken == null || toToken == null) {
+        setPriceInfo('');
+      } else {
+        setPriceInfo(`${price.toBN().toFixed(sysConfig.decimalPlaces)} ${toToken.name} per ${fromToken.name}`);
+      }
     } else {
-      setPriceInfo(`${(price as BigNum).toBN().toFixed(sysConfig.decimalPlaces)} ${toToken.name} per ${fromToken.name}`);
+      if (priceReverse == null || fromToken == null || toToken == null) {
+        setPriceInfo('');
+      } else {
+        setPriceInfo(`${priceReverse.toBN().toFixed(sysConfig.decimalPlaces)} ${fromToken.name} per ${toToken.name}`);
+      }
     }
-  }, [fromToken, toToken, price, priceReverse, priceInfoReverse]);
 
-  const slippage = useSlippageTol();
+  }, [price, priceReverse, priceInfoReverse]);
+
+  // const slippage = useSlippageTol();
   const [minReceived, setMinReceived] = useState<BN | null>(null);
   useEffect(() => {
-    if (toToken == null || !numUtils.isNum(fromTokenAmount) || priceReverse == null) {
+    if (toToken == null || !numUtils.isNum(fromTokenAmount) || price == null) {
       setMinReceived(null);
       return;
     }
-    setMinReceived(swapUtils.calMinReceived(fromTokenAmount, priceReverse.toBN(), slippage / 10000));
-  }, [toToken, fromTokenAmount, priceReverse, slippage]);
+    setMinReceived(swapUtils.calMinReceived(fromTokenAmount, price.toBN(), slippage / 10000));
+  }, [toToken, fromTokenAmount, price, slippage]);
 
   const [priceImpact, setPriceImpact] = useState<BN | null>(null);
   useEffect(() => {
@@ -302,11 +281,17 @@ export default function Swap() {
 
   const liquidityProviderFee = new BN(fromTokenAmount).times(sysConfig.liquidityProviderFeeRatio);
 
-  const showTransactionInfo = showPrice && (_.toNumber(fromTokenAmount) > 0 || _.toNumber(toTokenAmount) > 0);
-
   const swapEnabled = walletConnected && fromToken != null && toToken != null && _.toNumber(fromTokenAmount) > 0 && !insufficientBalance;
 
   const [swapConfirmModalOpen, setSwapConfirmModalOpen] = useState(false);
+
+  const [swapTransStateModalOpen, setSwapTransStateModalOpen] = useState(false);
+
+  const handleOnSwapConfirm = () => {
+    setSwapConfirmModalOpen(false);
+    setSwapTransStateModalOpen(true);
+    // TODO: update fromTokenAmount & toTokenAmount, and trigger wallet balance refresh
+  }
 
   const [walletSelectorOpen, setWalletSelectorOpen] = useState(false);
 
@@ -367,7 +352,7 @@ export default function Swap() {
           <CurrencyInputPanel
             id="swap-currency-output"
             value={toTokenAmount || ''}
-            onUserInput={handleSetToTokenAmount}
+            onUserInput={() => {}}
             currency={toToken}
             onCurrencySelect={handleToTokenSelect}
             otherCurrency={fromToken}
@@ -388,53 +373,46 @@ export default function Swap() {
           }
         </BottomGrouping>
 
-        {(showPrice || showTransactionInfo) && (
+        {(showSwapInfo) && (
           <TransactionInfoPanel>
             <AutoColumn gap={'sm'}>
-              {showPrice && (
-                <AutoRow justify='space-between'>
-                  <TransactionInfoLabel>Price:</TransactionInfoLabel>
-                  <RowFixed>
-                    <TransactionInfo>{priceInfo}</TransactionInfo>
-                    <TransactionPriceRefreshWapper onClick={() => setPriceInfoReverse(!priceInfoReverse)}>
-                        <i className='fo-repeat refresh-price' />
-                    </TransactionPriceRefreshWapper>
-                  </RowFixed>
-                </AutoRow>
-              )}
+              <AutoRow justify='space-between'>
+                <TransactionInfoLabel>Price:</TransactionInfoLabel>
+                <RowFixed>
+                  <TransactionInfo>{priceInfo}</TransactionInfo>
+                  <TransactionPriceRefreshWapper onClick={() => setPriceInfoReverse(!priceInfoReverse)}>
+                      <i className='fo-repeat refresh-price' />
+                  </TransactionPriceRefreshWapper>
+                </RowFixed>
+              </AutoRow>
 
-              {showTransactionInfo && (
-                <>
-                  <AutoRow justify='space-between'>
-                    <RowFixed>
-                      <TransactionInfoLabel>Minimum Received:</TransactionInfoLabel>
-                      <i className='fo-info clover-info' onClick={() => {}}></i>
-                    </RowFixed>
-                    <TransactionInfo>{minReceived == null ? '' : `${minReceived.toFixed(sysConfig.decimalPlaces)} ${toToken?.name}`}</TransactionInfo>
-                  </AutoRow>
+              <AutoRow justify='space-between'>
+                <RowFixed>
+                  <TransactionInfoLabel>Minimum Received:</TransactionInfoLabel>
+                  <i className='fo-info clover-info' onClick={() => {}}></i>
+                </RowFixed>
+                <TransactionInfo>{minReceived == null ? '' : `${minReceived.toFixed(sysConfig.decimalPlaces)} ${toToken?.name}`}</TransactionInfo>
+              </AutoRow>
 
-                  <AutoRow justify='space-between'>
-                    <RowFixed>
-                      <TransactionInfoLabel>Price Impact:</TransactionInfoLabel>
-                      <i className='fo-info clover-info' onClick={() => {}}></i>
-                    </RowFixed>
-                    <TransactionInfo>{priceImpact == null ? '' : `${priceImpact.times(100).toFixed(sysConfig.decimalPlaces)}%`}</TransactionInfo>
-                  </AutoRow>
+              <AutoRow justify='space-between'>
+                <RowFixed>
+                  <TransactionInfoLabel>Price Impact:</TransactionInfoLabel>
+                  <i className='fo-info clover-info' onClick={() => {}}></i>
+                </RowFixed>
+                <TransactionInfo>{priceImpact == null ? '' : `${priceImpact.times(100).toFixed(sysConfig.decimalPlaces)}%`}</TransactionInfo>
+              </AutoRow>
 
-                  <AutoRow justify='space-between'>
-                    <RowFixed>
-                      <TransactionInfoLabel>Liquidity Provder Fee:</TransactionInfoLabel>
-                      <i className='fo-info clover-info' onClick={() => {}}></i>
-                    </RowFixed>
-                    <TransactionInfo>{liquidityProviderFee.toFixed(sysConfig.decimalPlaces)} {fromToken?.name}</TransactionInfo>
-                  </AutoRow>
+              <AutoRow justify='space-between'>
+                <RowFixed>
+                  <TransactionInfoLabel>Liquidity Provder Fee:</TransactionInfoLabel>
+                  <i className='fo-info clover-info' onClick={() => {}}></i>
+                </RowFixed>
+                <TransactionInfo>{liquidityProviderFee.toFixed(sysConfig.decimalPlaces)} {fromToken?.name}</TransactionInfo>
+              </AutoRow>
 
-                  <TransactionInfoLabel>Route:</TransactionInfoLabel>
-                  {swapRoutes && (
-                    <SwapRoutes routes={fromToken == null ? swapRoutes : [fromToken.name, ...swapRoutes]} tokenTypesByName={myTokenTypesByName} />
-                  )}
-
-                </>
+              <TransactionInfoLabel>Route:</TransactionInfoLabel>
+              {swapRoutes && (
+                <SwapRoutes routes={fromToken == null ? swapRoutes : [fromToken.name, ...swapRoutes]} tokenTypesByName={myTokenTypesByName} />
               )}
 
             </AutoColumn>
@@ -447,7 +425,7 @@ export default function Swap() {
         <SwapConfirmhModal
           isOpen={swapConfirmModalOpen}
           onDismiss={() => setSwapConfirmModalOpen(false)}
-          onConfirmSwap={() => setSwapConfirmModalOpen(false)}
+          onConfirmSwap={handleOnSwapConfirm}
           fromToken={fromToken as TokenType}
           fromTokenAmount={fromTokenAmount}
           toToken={toToken as TokenType}
@@ -459,6 +437,11 @@ export default function Swap() {
           swapRoutes={swapRouteIds ?? []}
         />
       )}
+
+      <SwapTransStateModal
+        isOpen={swapTransStateModalOpen}
+        onDismiss={() => {}}
+        onClose={() => setSwapTransStateModalOpen(false)} />
 
       <WalletSelectDialog 
           accountTypes={supportedWalletTypes} 

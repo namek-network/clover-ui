@@ -7,18 +7,18 @@ import BigNum from '../types/bigNum';
 
 // slippage should be in [0.1%, 1%]
 function normalizeSlippage(slippage: number): number {
-  const min = 0.001, max = 0.01;
+  const min = 0.001, max = 0.5;
   return (slippage < min) ? min : (slippage > max ? max : slippage);
 }
 
-// minial received = supply / (price * (1 + slippage))
+// minimal received = supply * price / 1 + slippage
 export function calMinReceived(supply: string, price: BN, slippage: number): BN | null {
   const supplyBN = new BN(supply, 10);
   if (supplyBN.isNaN()) {
     return null;
   }
 
-  return supplyBN.div(price.times(1 + normalizeSlippage(slippage)));
+  return supplyBN.times(price).div(1 + normalizeSlippage(slippage));
 }
 
 // price impace = 2 * sqrt (price) / (1 + price) - 1 
@@ -26,21 +26,47 @@ export function calPriceImpact(price: BN): BN {
   return price.sqrt().times(2).div(price.plus(1)).minus(1);
 }
 
-export async function swapCurrency(accountInfo: AccountInfo, supplyCurrencyId: number, supplyAmount: BigNum, targetCurrencyId: number, targetAmount: BigNum, routes: number[]) {
+export async function swapCurrency(
+  accountInfo: AccountInfo,
+  supplyCurrencyId: number, supplyAmount: BigNum, targetCurrencyId: number, targetAmount: BigNum,
+  routes: number[],
+  onError: (msg: string) => void, onStart: () => void, onEnd: (state: string) => void) {
+
   const injector = await web3FromAddress(accountInfo.address);
 
   api.getApi().setSigner(injector.signer);
 
-  console.log('routes', routes);
+  console.log(supplyCurrencyId, supplyAmount.bigNum, targetCurrencyId, targetAmount.bigNum, routes);
+
+  let unsub: any;
 
   try {
-    await api.getApi().tx.bithumbDex.swapCurrency(supplyCurrencyId, supplyAmount.bigNum, targetCurrencyId, targetAmount.bigNum, routes)
-      .signAndSend(accountInfo.address, (result: any) => {
-        // TODO: handle result
-        console.log('swapCurrency result', result);
+    unsub = await api.getApi().tx.bithumbDex.swapCurrency(supplyCurrencyId, supplyAmount.bigNum, targetCurrencyId, targetAmount.bigNum, routes)
+      .signAndSend(accountInfo.address, (params: any) => {
+        console.log('Transaction status:', params.status.type);
+  
+      if (params.status.isInBlock) {
+        console.log('Completed at block hash', params.status.asInBlock.toHex());
+        console.log('Events:');
+  
+        params.events.forEach((event: any/*{ phase, event: { data, method, section } }*/) => {
+          console.log(`${event.phase.toString()}, ${event.event.methohd}, ${event.event.section},${event.event.data.toString()}` );
+        });
+        onEnd('complete')
+        unsub()
+      }
       });
   } catch (e) {
     console.log('swapCurrency failed', e);
+    if (e.type === 'signature_rejected') {
+      onEnd('rejected')
+    } else {
+      onEnd('error')
+    }
+    
+    if (!_.isEmpty(unsub)) {
+      unsub()
+    } 
   }
 
 }

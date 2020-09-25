@@ -153,6 +153,11 @@ const TransactionPriceRefreshWapper = styled.div`
   align-items: center;
 `;
 
+enum AutoCalAmount {
+  FromTokenAmount,
+  ToTokenAmount
+}
+
 export default function Swap() {
   const apiInited = useApiInited();
 
@@ -162,9 +167,18 @@ export default function Swap() {
   const [toToken, setToToken] = useState<TokenType | null>(null);
   const [toTokenAmount, setToTokenAmount] = useState('');
 
+  const [autoCalAmount, setAutoCalAmount] = useState<AutoCalAmount>(AutoCalAmount.ToTokenAmount);
+
   const handleSetFromTokenAmount = (amount: string) => {
     setFromTokenAmount(amount);
     setToTokenAmount('');
+    setAutoCalAmount(AutoCalAmount.ToTokenAmount);
+  }
+
+  const handleSetToTokenAmount = (amount: string) => {
+    setToTokenAmount(amount);
+    setFromTokenAmount('');
+    setAutoCalAmount(AutoCalAmount.FromTokenAmount);
   }
 
   const handleSwitchFromToToken = () => {
@@ -215,21 +229,35 @@ export default function Swap() {
 
   const slippage = useSlippageTol();
 
-  // on user input (supply amount or target amount), dynamically fetch price & reverse price, calculate mimimal received and price impact, etc
+  // on user input, dynamically fetch price & reverse price, calculate mimimal received and price impact, etc
   useEffect(() => {
     const validFromTokenAmount = _.toNumber(fromTokenAmount) > 0;
-    if (!apiInited || fromToken == null || toToken == null || (fromToken.id === toToken.id) || !validFromTokenAmount) {
+    const validToTokenAmount = _.toNumber(toTokenAmount) > 0;
+    if (!apiInited || fromToken == null || toToken == null || (fromToken.id === toToken.id)
+      || (autoCalAmount === AutoCalAmount.ToTokenAmount && !validFromTokenAmount)
+      || (autoCalAmount === AutoCalAmount.FromTokenAmount && !validToTokenAmount)) {
       return;
     }
 
-    // only allow user to input supply amount, and get target amount via api and calculate price 
     async function calSwapInfo() {
-      const supplyAmountBN = BigNum.fromRealNum(fromTokenAmount);
-      const { balance: targetAmount, routes: swapRoutes } = await api.targetAmountAvailable((fromToken as TokenType).name, (toToken as TokenType).name, supplyAmountBN.bigNum);
-      const targetAmountBN = BigNum.fromBigNum(targetAmount);
+      let supplyAmountBN, targetAmountBN, swapRoutes;
+      if (autoCalAmount === AutoCalAmount.ToTokenAmount) {
+        supplyAmountBN = BigNum.fromRealNum(fromTokenAmount);
+        const { balance: targetAmount, routes: routes } = await api.targetAmountAvailable((fromToken as TokenType).name, (toToken as TokenType).name, supplyAmountBN.bigNum);
+        targetAmountBN = BigNum.fromBigNum(targetAmount);
+        swapRoutes = routes;
+        setToTokenAmount(targetAmountBN.toBN().toFixed(sysConfig.decimalPlaces));
+      }
+      else {
+        targetAmountBN = BigNum.fromRealNum(toTokenAmount);
+        const { balance: supplyAmount, routes: routes } = await api.supplyAmountNeeded((fromToken as TokenType).name, (toToken as TokenType).name, targetAmountBN.bigNum);
+        supplyAmountBN = BigNum.fromBigNum(supplyAmount);
+        swapRoutes = routes;
+        setFromTokenAmount(supplyAmountBN.toBN().toFixed(sysConfig.decimalPlaces));
+      }
+
       const price: BigNum = targetAmountBN.div(supplyAmountBN);
 
-      setToTokenAmount(targetAmountBN.toBN().toFixed(sysConfig.decimalPlaces));
       setPrice(price);
       setSwapRoutes(swapRoutes);
       setSwapRouteIds(swapRoutes.map((r: string) => myTokenTypesByName[r].id));
@@ -290,7 +318,9 @@ export default function Swap() {
   const handleOnSwapConfirm = () => {
     setSwapConfirmModalOpen(false);
     setSwapTransStateModalOpen(true);
-    // TODO: update fromTokenAmount & toTokenAmount, and trigger wallet balance refresh
+
+    setFromTokenAmount('');
+    setToTokenAmount('');
   }
 
   const [walletSelectorOpen, setWalletSelectorOpen] = useState(false);
@@ -352,7 +382,7 @@ export default function Swap() {
           <CurrencyInputPanel
             id="swap-currency-output"
             value={toTokenAmount || ''}
-            onUserInput={() => {}}
+            onUserInput={handleSetToTokenAmount}
             currency={toToken}
             onCurrencySelect={handleToTokenSelect}
             otherCurrency={fromToken}

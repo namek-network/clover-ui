@@ -26,15 +26,31 @@ export function calPriceImpact(price: BN): BN {
   return price.sqrt().times(2).div(price.plus(1)).minus(1);
 }
 
+async function getSigner(addr: string) {
+  try {
+    const injected = await web3FromAddress(addr)
+    return injected.signer || null
+  } catch (e) {
+    console.log("error"+e)
+    return null
+  }
+}
+
 export async function swapCurrency(
   accountInfo: AccountInfo,
   supplyCurrencyId: number, supplyAmount: BigNum, targetCurrencyId: number, targetAmount: BigNum,
   routes: number[],
   onError: (msg: string) => void, onStart: () => void, onEnd: (state: string) => void) {
 
-  const injector = await web3FromAddress(accountInfo.address);
+  onStart()
 
-  api.getApi().setSigner(injector.signer);
+  const signer = await getSigner(accountInfo.address)
+  if (signer == null) {
+    onError('no available wallet')
+    return
+  }
+
+  api.getApi().setSigner(signer)
 
   console.log(supplyCurrencyId, supplyAmount.bigNum, targetCurrencyId, targetAmount.bigNum, routes);
 

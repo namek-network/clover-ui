@@ -12,11 +12,7 @@ import * as serviceWorker from './serviceWorker';
 
 import ImgBg from './assets/images/bg.svg';
 
-import { library } from '@fortawesome/fontawesome-svg-core';
-import { faCog, faCheckSquare, faCoffee } from '@fortawesome/free-solid-svg-icons';
 import './i18n';
-
-library.add(faCog, faCheckSquare, faCoffee);
 
 ReactGA.initialize("UA-177617249-1");
 ReactGA.set({customBrowserType: isMobile ? 'mobile' : 'desktop'});

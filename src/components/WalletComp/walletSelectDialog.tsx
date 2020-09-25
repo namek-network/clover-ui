@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import styled from 'styled-components';
 import Dialog from '@material-ui/core/Dialog';
 import './index.css'
 import { useTranslation } from 'react-i18next'
 import Modal from '../../components/Modal'
 import Column from '../../components/Column'
 
+const Wrapper = styled.div`
+  overflow: auto;
+`
 export default function WalletSelectDialog(props: any) {
   const { onClose, open, accountTypes } = props;
   const [hoverValue, setHoverValue] = useState({});
@@ -29,25 +33,28 @@ export default function WalletSelectDialog(props: any) {
           <div>{t('connectToWallet')}</div>
           <div className="wallet-dia-close-btn" onClick={() => handleClose()}><i className="fa fo-x"></i></div>
         </div>
-        <div className='list-container'>
-          {
-              accountTypes.map((account: any, key: any) => (
-                <div className='item-container' key={key}
-                onMouseEnter={() => setHoverValue(account)}
-                onMouseLeave={() => setHoverValue({})}
-                onClick={() => handleListItemClick(account)}>
-                    <div className='dialog-item-text-left'>
-                      <img src={account.icon}></img>
-                      {account.name}
-                    </div>
-                    <div className={'dialog-item-text-right ' + (account === hoverValue ? 'dialog-item-text-right-hover' : '')}><i className="fa fo-chevron-right"></i></div>
-                </div>
-              ))
-            }
-        </div>
-        <div className="bottom-text">
-          By connecting, I accept bithumb’s <span className="bottom-text-right">Terms of Service</span>
-        </div>
+        <Wrapper>
+          <div className='list-container'>
+            {
+                accountTypes.map((account: any, key: any) => (
+                  <div className='item-container' key={key}
+                  onMouseEnter={() => setHoverValue(account)}
+                  onMouseLeave={() => setHoverValue({})}
+                  onClick={() => handleListItemClick(account)}>
+                      <div className='dialog-item-text-left'>
+                        <img src={account.icon}></img>
+                        {account.name}
+                      </div>
+                      <div className={'dialog-item-text-right ' + (account === hoverValue ? 'dialog-item-text-right-hover' : '')}><i className="fa fo-chevron-right"></i></div>
+                  </div>
+                ))
+              }
+          </div>
+          <div className="bottom-text">
+            By connecting, I accept bithumb’s <span className="bottom-text-right">Terms of Service</span>
+          </div>
+        </Wrapper>
+        
       </Column>
     </Modal>
   );

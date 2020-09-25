@@ -5,6 +5,7 @@ import Column, {ColumnCenter} from '../../components/Column'
 import { darken } from 'polished';
 import { Button as RebassButton, ButtonProps } from 'rebass/styled-components'
 import Row, {RowBetween} from '../../components/Row'
+import Circle from '../../components/Circle'
 import PoolPairItem, { PairTransContent, PairIconTitle } from './poolPairItem'
 import _ from 'lodash'
 import Modal from '../../components/Modal'
@@ -43,6 +44,7 @@ const BodyWrapper = styled(Column)`
 
 const Wrapper = styled(ColumnCenter)`
   padding: 0 27px 16px 24px;
+  overflow: auto;
 `
 
 const CirclePlus = styled.div`
@@ -87,27 +89,6 @@ export const Button = styled(RebassButton)`
   }
 }`
 
-const LabelText = styled.div`
-  height: 14px;
-  font-size: 14px;
-  font-family: Helvetica;
-  color: #858B9C;
-  line-height: 14px;
-`
-
-const AmountText = styled.div`
-  height: 14px;
-  font-size: 14px;
-  font-family: PingFangSC-Regular, PingFang SC;
-  font-weight: 400;
-  color: #41485D;
-  line-height: 14px;
-`
-
-const ContentRowBetween = styled(RowBetween)`
-  margin-bottom: 16px;
-`
-
 const ContentWrapper = styled(Column)`
   background: #F9FAFB;
   margin-top: 9px;
@@ -141,17 +122,10 @@ const FirstPoolTip = styled(Row)`
   margin-bottom: 12px;
 `
 
-const CircleTip = styled.div`
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
+const CircleTip = styled(Circle)`
   background: #FDE9E8;
-  height: 32px;
-  line-height: 32px;
-  text-align: center;
   font-size: 18px;
   color: #F6373F;
-  flex-shrink: 0;
 `
 const TipText = styled.div`
   font-size: 14px;
@@ -160,11 +134,25 @@ const TipText = styled.div`
   color: #FA5050;
 `
 
-const testData = [
-  {label:'Pooled DOT:', amount: '3.357 DOT'},
-  {label:'Pooled BxETH:', amount: '2.99967 BxETH'},
-  {label:'My pool share:', amount: '0.01%'}
-]
+const TipWrapper = styled(Row)`
+  align-items: start;
+  margin-top: 9px;
+`
+
+const CircleInfo = styled(Circle)`
+  background: #FCF0DC;
+  border: 2px solid #FFFFFF;
+  font-size: 18px;
+  color: #F99E3C;
+`
+
+const InfoText = styled.div`
+  font-size: 14px;
+  line-height: 20px;
+  color: #F99E3C;
+  margin-left: 4px;
+  padding-right: 10px;
+`
 
 interface AddLiquidModalProps {
   isOpen: boolean
@@ -467,6 +455,13 @@ export default function AddLiquidModal({isOpen, onDismiss, onClose, fromTokenTyp
               !_.isEmpty(showData) && <ContentWrapper>
                 <PairTransContent contents={showData}></PairTransContent>
               </ContentWrapper>
+            }
+            {
+              selectedPairExists(userPoolItems, fromToken, toToken) && 
+              <TipWrapper>
+                <CircleInfo><i className="fa fo-info"></i></CircleInfo>
+                <InfoText>Liquidity Providers earn 0.3% of all trades on this pair proportional to their share of the pool. Fees are added to the pool, and can be claimed by withdrawing liquidity.</InfoText>
+              </TipWrapper>
             }
             
           </Wrapper>

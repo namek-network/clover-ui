@@ -46,6 +46,7 @@ const BodyWrapper = styled(Column)`
 
 const Wrapper = styled(ColumnCenter)`
   padding: 0 27px 16px 24px;
+  overflow: auto;
 `
 
 const CirclePlus = styled.div`

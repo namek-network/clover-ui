@@ -101,6 +101,10 @@ const TipText = styled.div`
   margin-left: 20px;
   margin-top: 24px;
 `
+
+const Body = styled.div`
+  overflow: auto;
+`
 interface AddLiquidModalProps {
   isOpen: boolean
   onDismiss: () => void
@@ -194,19 +198,21 @@ export default function LiquidAddConfirmModal({isOpen, onDismiss, onClose, fromT
             <Title>You will receive</Title>
             <CloseButton onClick={() => onClose('close')}><i className="fa fo-x"></i></CloseButton>
           </Head>
-          <Wrapper>
-            <PairIconTitle left={fromToken.logo ?? ''} right={toToken.logo ?? ''} title={''} size={'40px'}></PairIconTitle>
-            <AmountText>{shareAmount}</AmountText>
-            <PairText>{`${fromToken.name}/${toToken.name} Tokens`}</PairText>
-            <TipText>Output is estimated. If the price changes by more than 0.5%. your transaction will revert.</TipText>
-          </Wrapper>
-          
-          <Wrapper>
-            <PairContentWrapper>
-              <PairTransContent contents={showData}></PairTransContent>
-            </PairContentWrapper>
-            <Button onClick={handleConfirmClick}>Confirm Supply</Button>
-          </Wrapper>
+          <Body>
+            <Wrapper>
+              <PairIconTitle left={fromToken.logo ?? ''} right={toToken.logo ?? ''} title={''} size={'40px'}></PairIconTitle>
+              <AmountText>{shareAmount}</AmountText>
+              <PairText>{`${fromToken.name}/${toToken.name} Tokens`}</PairText>
+              <TipText>Output is estimated. If the price changes by more than 0.5%. your transaction will revert.</TipText>
+            </Wrapper>
+            
+            <Wrapper>
+              <PairContentWrapper>
+                <PairTransContent contents={showData}></PairTransContent>
+              </PairContentWrapper>
+              <Button onClick={handleConfirmClick}>Confirm Supply</Button>
+            </Wrapper>
+          </Body>
         </BodyWrapper>
       </Modal>
     );

@@ -4,6 +4,7 @@ import { SwapPoolTabs } from '../../components/NavigationTabs'
 import Column from '../../components/Column'
 import { darken } from 'polished';
 import { Button as RebassButton, ButtonProps } from 'rebass/styled-components'
+import { BottomButton } from '../../components/Button'
 import PoolPairItem from './poolPairItem'
 import _ from 'lodash'
 import AddLiquidModal from './addLiquidModal'
@@ -23,11 +24,17 @@ import { TokenType, defaultTokenType } from '../../state/token/types';
 import BigNum  from '../../types/bigNum';
 import { PoolPairItem as PoolPairItemType, defaultPoolPairItem } from '../../state/pool/types';
 import TransferStateModal from './transferStateModal';
+import Row, {RowBetween} from '../../components/Row'
+import Circle from '../../components/Circle'
 
 const BodyWrapper = styled.div`
   position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   width: 100%;
-  max-width: 460px;
+  max-width: 620px;
 `;
 
 export const Wrapper = styled.div`
@@ -36,6 +43,8 @@ export const Wrapper = styled.div`
   box-shadow: 0px 0px 20px 0px rgba(17, 26, 52, 0.1);
   border-radius: 1rem;
   padding: 17px 24px;
+  max-width: 460px;
+  width: 100%;
 `;
 
 export const Title = styled.div`
@@ -46,29 +55,26 @@ export const Title = styled.div`
   color: #666F83;
   line-height: 24px;
   `
-export const Button = styled(RebassButton)`
-  color: white;
-  border: 0;
-  background: #FF6E12;
-  border-radius: 8px;
-  font-size: 18px;
-  outline: none;
-  height: 49px;
 
-  &:focus {
-    outline: none;
-  }
-  &:hover {
-    background-color: ${({ disabled }) => !disabled && darken(0.08, '#FF6E12')};
-  }
-  :disabled {
-    opacity: 0.4;
-  }
-}`
-
-const StyledButton = styled(Button)`
-  margin-top: 12px;
+const ButtonWrapper = styled.div`
   width: 100%;
+  max-width: 460px;
+  margin-top: 12px;
+`
+
+const StyledCircle = styled(Circle)`
+  background: #FCF0DC;
+  border: 2px solid #FFFFFF;
+  text-align: center;
+  font-size: 18px;
+  color: #F99E3C;
+`
+
+const InfoText = styled.div`
+  font-size: 14px;
+  line-height: 20px;
+  color: #F99E3C;
+  margin-left: 4px;
 `
 
 const NoLiquidFount = styled.div`
@@ -82,11 +88,12 @@ const NoLiquidFount = styled.div`
 const PoolPaireList = styled.div`
   max-height: 240px;
   overflow: auto;
+  width: 100%;
 `
 
-const testData = [
-  {id: 1}, {id:2},{id: 3}, {id: 4}, {id: 5}
-]
+const TipWrapper = styled(Row)`
+  margin-bottom: 32px;
+`
 
 export interface DataFromAddLiquid {
   fromToken: TokenType,
@@ -204,7 +211,11 @@ export default function Pool() {
   }
     return (
       <BodyWrapper>
-        <SwapPoolTabs active={'pool'} />
+        <SwapPoolTabs active={'pool'} customStyle={'width: 100%;max-width: 460px;'}/>
+        <TipWrapper>
+          <StyledCircle><i className="fa fo-info"></i></StyledCircle>
+          <InfoText>Liquidity Providers earn 0.3% of all trades on this pair proportional to their share of the pool. Fees are added to the pool, and can be claimed by withdrawing liquidity.</InfoText>
+        </TipWrapper>
         <Wrapper>
           <Column>
             <Title>
@@ -223,12 +234,16 @@ export default function Pool() {
                   }
                 </PoolPaireList>
             }
+            
           </Column>
         </Wrapper>
+        <ButtonWrapper>
         {
           _.isEmpty(myInfo.address) ? <WalletConnectComp></WalletConnectComp> 
-          : <StyledButton onClick={handleClick} disabled={disabled}>{t('addLiquidity')}</StyledButton>
+          : <BottomButton onClick={handleClick} disabled={disabled}>{t('addLiquidity')}</BottomButton>
         }
+        </ButtonWrapper>
+        
         
         <AddLiquidModal isOpen={addLiquidModalOpen} 
           onDismiss={() => {}} 

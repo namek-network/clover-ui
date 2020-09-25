@@ -22,7 +22,7 @@ const Link = styled.a`
 export default class Footer extends Component {
   render() {
     return (
-      <Navbar fixed="bottom" variant="light" className="justify-content-center">
+      <Navbar variant="light" className="justify-content-center">
         <Nav>
           <Link href="#/home">Home</Link>
           <Link href="#/developers">Developers</Link>

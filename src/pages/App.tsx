@@ -6,8 +6,7 @@ import { loadCurrencyPair, loadTokenTypes } from '../utils/tokenUtils'
 import { useTokenTypesUpdate, useCurrencyPairUpdate } from '../state/token/hooks'
 import { ToastContainer, toast, Slide } from 'react-toastify';
 
-import {useApiInited, useApiReadyUpdate, useApiConnectedUpdate, 
-  useApiInitedUpdate, useApiConnected, useApiReady} from '../state/api/hooks'
+import {useApiInited, useApiInitedUpdate} from '../state/api/hooks'
 
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -21,6 +20,9 @@ const AppWrapper = styled.div`
   flex-flow: column;
   justify-content: flex-start;
   align-items: stretch;
+  height: 100vh;
+  min-height: 650px;
+  overflow: auto;
 `;
 
 const BodyWrapper = styled.div`

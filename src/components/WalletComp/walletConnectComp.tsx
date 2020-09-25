@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import './index.css'
 import { useTranslation } from 'react-i18next'
-import { BottomButton } from '../Button'
+import { BottomButton, TopConnectButton } from '../Button'
 import styled from 'styled-components';
 import { supportedWalletTypes, loadAccount } from '../../utils/AccountUtils'
 import WalletSelectDialog from './walletSelectDialog'
@@ -14,11 +14,19 @@ import { darken } from 'polished';
 import { useApiInited } from '../../state/api/hooks'
 
 export const Wrapper = styled.div`
-  width: 100%
+  width: 100%;
 `
 
-
-export default function WalletConnectComp(props: any) {
+interface WalletConnectCompProps {
+  btnStyle?: string,
+  onButtonClick?: () => void,
+  onWalletClose?: (value: any) => void
+}
+export default function WalletConnectComp({
+  btnStyle = 'bottom',
+  onButtonClick = () => {},
+  onWalletClose = (value: any) => {}
+}: WalletConnectCompProps) {
   const [isOpen, setOpen] = useState(false)
 
   const { t } = useTranslation()
@@ -30,6 +38,7 @@ export default function WalletConnectComp(props: any) {
 
   const handleClick = () => {
     setOpen(true)
+    onButtonClick()
   }
 
   const handleWalletClose = useCallback((value: any) => {
@@ -50,11 +59,18 @@ export default function WalletConnectComp(props: any) {
     }
 
     getAcount()
+    onWalletClose(value)
   }, [apiInited, myTokenTypes]);
 
   return (
     <Wrapper>
-      <BottomButton onClick={handleClick} >{t('connectToWallet')}</BottomButton>
+      {
+        btnStyle === 'bottom' && <BottomButton onClick={handleClick} >{t('connectToWallet')}</BottomButton>
+      } 
+      {
+        btnStyle === 'top' && <TopConnectButton onClick={handleClick} >{t('connectToWallet')}</TopConnectButton>
+      }
+      
       <WalletSelectDialog 
             accountTypes={supportedWalletTypes} 
             open={isOpen} 

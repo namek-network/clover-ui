@@ -1,5 +1,4 @@
 import { web3Accounts, web3Enable, web3FromAddress } from '@polkadot/extension-dapp';
-import {getTokenAmount} from './httpServices'
 import { TokenType } from '../state/token/types'
 import { InjectedAccountWithMeta, InjectedExtension } from '@polkadot/extension-inject/types';
 import { AccountInfo, TokenAmount } from '../state/wallet/types';
@@ -45,7 +44,6 @@ export function createEmptyAccountInfo() {
 }
 
 export async function loadAllTokenAmount(addr: string, tokenTypes: TokenType[]) {
-  // const ret = await getTokenAmount(addr).catch(e => null)
   const ret = await api.getBalance(addr)
 
   if (_.isEmpty(ret)) {

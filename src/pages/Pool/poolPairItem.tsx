@@ -3,15 +3,11 @@ import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import Column from '../../components/Column'
 import Row, {RowBetween} from '../../components/Row'
-import BxbIcon from '../../assets/images/icon-bxb.svg';
-import BethIcon from '../../assets/images/icon-beth.svg';
-import BusdIcon from '../../assets/images/icon-busd.svg';
-import BdotIcon from '../../assets/images/icon-dot.svg';
 import './index.css'
 import _ from 'lodash'
 import { PoolPairItem as PoolPairItemType, defaultPoolPairItem } from '../../state/pool/types';
 import { showTextType } from './types'
-import BigNum  from '../../types/bigNum';
+import BigNum, {div, times}  from '../../types/bigNum';
 
 const ImageLeft = styled.img`
 `
@@ -45,11 +41,11 @@ const LabelText = styled.div`
 `
 
 const AmountText = styled.div`
-  height: 14px;
   font-size: 14px;
   font-family: PingFangSC-Regular, PingFang SC;
   font-weight: 400;
   color: #41485D;
+  max-width: 180px;
   line-height: 14px;
 `
 
@@ -169,7 +165,7 @@ export default function PoolPairItem({item, selectedItem, onSelectItem, onAddCli
         },
         {
           label: `My pool share:`,
-          amount: `${BigNum.div(item.userShare, item.totalShare, true)}%`
+          amount: `${div(item.userShare, item.totalShare, true)}%`
         }
       ])
     }, [item])

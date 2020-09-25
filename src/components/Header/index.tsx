@@ -4,6 +4,7 @@ import Navbar from 'react-bootstrap/Navbar';
 import styled from 'styled-components';
 import WalletComp from '../WalletComp'
 import SettingsComp from '../Settings'
+import LanguageComp from '../Language'
 import './index.css';
 import ImgLogo from '../../assets/images/logo.svg';
 
@@ -44,6 +45,7 @@ export default class Header extends Component {
 
         <WalletComp></WalletComp>
         <SettingsComp></SettingsComp>
+        <LanguageComp></LanguageComp>
       </NavbarWrapper>
     );
   }

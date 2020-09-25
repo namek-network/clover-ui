@@ -11,7 +11,7 @@ import _ from 'lodash'
 import Modal from '../../components/Modal'
 import CurrencyInputPanel from '../../components/CurrencyInputPanel';
 import { useAccountInfo, useAccountInfoUpdate } from '../../state/wallet/hooks';
-import BigNum  from '../../types/bigNum';
+import BigNum, {div, times}  from '../../types/bigNum';
 import { useUserPoolPairItems, useChainPoolPairItems, useUserPoolPairItemsUpdate, useChainPairItemsUpdate } from '../../state/pool/hooks';
 import { PoolPairItem as PoolPairItemType } from '../../state/pool/types'
 import { DataFromAddLiquid } from './index'
@@ -198,7 +198,7 @@ export default function AddLiquidModal({isOpen, onDismiss, onClose, fromTokenTyp
       fromTotal = item?.toAmount ?? ''
       toTotal = item?.fromAmount ?? ''
     }
-    return BigNum.div(BigNum.times(toAmount, fromTotal), toTotal)
+    return div(times(toAmount, fromTotal), toTotal)
   }
 
   const calcToAmount = (chainPoolItems: PoolPairItemType[], fromToken: TokenType|undefined, toToken: TokenType|undefined, fromAmount: string): string => {
@@ -212,7 +212,7 @@ export default function AddLiquidModal({isOpen, onDismiss, onClose, fromTokenTyp
       fromTotal = item?.toAmount ?? ''
       toTotal = item?.fromAmount ?? ''
     }
-    return BigNum.div(BigNum.times(fromAmount, toTotal), fromTotal)
+    return div(times(fromAmount, toTotal), fromTotal)
   }
 
   const handleSetFromTokenAmount = useCallback((amount: string) => {
@@ -327,8 +327,8 @@ export default function AddLiquidModal({isOpen, onDismiss, onClose, fromTokenTyp
       const amountToBig = BigNum.fromBigNum(tAmount ?? '')
 
       if (!amountFromBig.eq(BigNum.Zero)&& !amountToBig.eq(BigNum.Zero)) {
-        r1to2 = BigNum.div(amountFromBig.bigNum.toString(), amountToBig.bigNum.toString())
-        r2to1 = BigNum.div(amountToBig.bigNum.toString(), amountFromBig.bigNum.toString())
+        r1to2 = div(amountFromBig.bigNum.toString(), amountToBig.bigNum.toString())
+        r2to1 = div(amountToBig.bigNum.toString(), amountFromBig.bigNum.toString())
 
         const userItem = findPairItem(userPoolItems, fromToken, toToken)
         if (_.isEmpty(userItem)) {
@@ -336,7 +336,7 @@ export default function AddLiquidModal({isOpen, onDismiss, onClose, fromTokenTyp
         } else {
           const userShareAmount = BigNum.fromBigNum(userItem?.userShare ?? '')
           const totalShareAmount = BigNum.fromBigNum(userItem?.totalShare ?? '')
-          percent = BigNum.div(userShareAmount.bigNum.toString(), totalShareAmount.bigNum.toString(), true) + '%'
+          percent = div(userShareAmount.bigNum.toString(), totalShareAmount.bigNum.toString(), true) + '%'
         }
       }
     } else {
@@ -344,8 +344,8 @@ export default function AddLiquidModal({isOpen, onDismiss, onClose, fromTokenTyp
       const amountToBig = BigNum.fromRealNum(toTokenAmount)
 
       if (!amountFromBig.eq(BigNum.Zero)&& !amountToBig.eq(BigNum.Zero)) {
-        r1to2 = BigNum.div(amountFromBig.bigNum.toString(), amountToBig.bigNum.toString())
-        r2to1 = BigNum.div(amountToBig.bigNum.toString(), amountFromBig.bigNum.toString())
+        r1to2 = div(amountFromBig.bigNum.toString(), amountToBig.bigNum.toString())
+        r2to1 = div(amountToBig.bigNum.toString(), amountFromBig.bigNum.toString())
         percent = '100%'
       }
     }
@@ -396,7 +396,7 @@ export default function AddLiquidModal({isOpen, onDismiss, onClose, fromTokenTyp
       },
       {
         label: `My pool share:`,
-        amount: `${BigNum.div(item?.userShare ?? '', item?.totalShare ?? '', true)}%`
+        amount: `${div(item?.userShare ?? '', item?.totalShare ?? '', true)}%`
       }
     ])
   }, [fromToken, toToken])

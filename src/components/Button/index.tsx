@@ -23,3 +23,24 @@ export const BottomButton = styled(RebassButton)`
   }
 }`
 
+export const TopConnectButton = styled(RebassButton)`
+  color: #F99E3C;
+  border: 1px solid #F99E3C;
+  background-color: transparent;
+  border-radius: 4px;
+  outline:none;
+  padding: 6px 10px;
+  line-height: 16px;
+
+  &:hover  {
+    background-color: rgba(249,158,60,0.5);
+    border-color: rgba(249,158,60,0.1);
+    color: white;
+    outline:none;
+  }
+
+  &:focus  {
+    outline:none;
+  }
+}`
+

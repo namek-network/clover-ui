@@ -8,7 +8,7 @@ import Row, {RowBetween} from '../../components/Row'
 import PoolPairItem, { PairTransContent, PairIconTitle } from './poolPairItem'
 import _ from 'lodash'
 import Modal from '../../components/Modal'
-import BigNum from '../../types/bigNum';
+import BigNum, {div, times}  from '../../types/bigNum';
 import { TokenType } from '../../state/token/types';
 import { showTextType } from './types'
 import {selectedPairExists, findPairItem} from './utils'
@@ -145,11 +145,11 @@ export default function LiquidAddConfirmModal({isOpen, onDismiss, onClose, fromT
         },
         {
           label: `Rates:`,
-          amount: `${BigNum.div(fromAmount.bigNum.toString(), toAmount.bigNum.toString())} ${fromToken.name}/${toToken.name}`
+          amount: `${div(fromAmount.bigNum.toString(), toAmount.bigNum.toString())} ${fromToken.name}/${toToken.name}`
         },
         {
           label: `Share of pool:`,
-          amount: `${BigNum.div(ret[0], ret[1], true)}%`
+          amount: `${div(ret[0], ret[1], true)}%`
         },
       ])
     }

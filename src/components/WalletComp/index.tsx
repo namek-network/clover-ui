@@ -1,8 +1,9 @@
-import React, { Component, useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import _ from 'lodash'
+import styled from 'styled-components';
 import WalletSelectDialog from './walletSelectDialog'
 import AssetDialog from './assetDialog'
-import { ToastContainer, toast, Slide } from 'react-toastify';
+import { toast } from 'react-toastify';
 import {getAddress, createAccountInfo, createEmptyAccountInfo} from './utils'
 import { useAccountInfo, useAccountInfoUpdate } from '../../state/wallet/hooks';
 import { useTranslation } from 'react-i18next'
@@ -11,10 +12,15 @@ import { TokenType } from '../../state/token/types'
 import { useTokenTypes, useTokenTypesUpdate } from '../../state/token/hooks'
 import { loadAccount, supportedWalletTypes, loadAllTokenAmount } from '../../utils/AccountUtils'
 import { api } from '../../utils/apiUtils'
+import WalletConnectComp from './walletConnectComp'
 
 import './index.css'
 import 'react-toastify/dist/ReactToastify.css';
 import { useApiInited } from '../../state/api/hooks';
+
+const ConnectButtonWrapper = styled.div`
+  margin-right: 8px;
+`
 
 export default function WalletComp() {
   const [open, setOpen] = useState(false);
@@ -99,30 +105,6 @@ export default function WalletComp() {
     }
   }, [apiInited, myInfo, myTokenTypes])
 
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = useCallback((value: any) => {
-    setOpen(false);
-    if (_.isEmpty(value)) {
-      return
-    }
-    setSelectedWallet(value);
-    async function getAcount() {
-      if (!apiInited) {
-        toast('Api is not ready, please try later!')
-        return 
-      }
-      const msg = await loadAccount(value, myTokenTypes, updateAccountInfo);
-      if (msg !== 'ok') {
-        toast(t(msg))
-      }
-    }
-
-    getAcount()
-  }, [apiInited]);
-
   const handleAssetOpen = () => {
     setAssetOpen(true)
   }
@@ -131,11 +113,18 @@ export default function WalletComp() {
     setAssetOpen(false)
   }
 
+  const onWalletSelectDialogClose = (value: any) => {
+    setSelectedWallet(value);
+  }
+
     return (
       <div>
         {
-          myInfo.address === '' ? <button className="btn-custom" onClick={handleClickOpen}>
-          {t('connectToWallet')}</button> : <div className="addr-container" onClick={handleAssetOpen}>
+          myInfo.address === '' ? 
+            <ConnectButtonWrapper>
+              <WalletConnectComp btnStyle='top' onWalletClose={onWalletSelectDialogClose}></WalletConnectComp> 
+            </ConnectButtonWrapper>
+          : <div className="addr-container" onClick={handleAssetOpen}>
               <span>{getAddress(myInfo.address)}</span>
               <img src={_.get(selectedWallet, 'icon', supportedWalletTypes[0].icon)}></img>
             </div>
@@ -147,10 +136,6 @@ export default function WalletComp() {
           transactions={[]}
           onClose={handleAssetClose}
           open={assetOpen}></AssetDialog>
-        <WalletSelectDialog 
-          accountTypes={supportedWalletTypes} 
-          open={open} 
-          onClose={handleClose}></WalletSelectDialog>
       </div>
     );
 

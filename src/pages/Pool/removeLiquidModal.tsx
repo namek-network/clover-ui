@@ -11,7 +11,7 @@ import CurrencyInputPanel from '../../components/CurrencyInputPanel';
 import { useUserPoolPairItems, useChainPoolPairItems, useTransStateUpdate } from '../../state/pool/hooks';
 import { TokenType, defaultTokenType } from '../../state/token/types';
 import { PoolPairItem as PoolPairItemType } from '../../state/pool/types'
-import BigNum  from '../../types/bigNum';
+import BigNum, {div, times}  from '../../types/bigNum';
 import { useAccountInfo, useAccountInfoUpdate } from '../../state/wallet/hooks';
 import { toast } from 'react-toastify';
 import { doRemoveLiqudityTrans } from '../../utils/transUtils'
@@ -190,8 +190,8 @@ export default function RemoveLiquidModal({isOpen, onDismiss, onClose, fromToken
       toTotal = BigNum.fromBigNum(item?.fromAmount ?? '')
     }
     
-    const t1AmountBN = BigNum.fromBigNum(BigNum.div(BigNum.times(removeAmountBN.bigNum, fromTotal.bigNum), totalShareBN.bigNum))
-    const t2AmountBN = BigNum.fromBigNum(BigNum.div(BigNum.times(removeAmountBN.bigNum, toTotal.bigNum), totalShareBN.bigNum))
+    const t1AmountBN = BigNum.fromBigNum(div(times(removeAmountBN.bigNum, fromTotal.bigNum), totalShareBN.bigNum))
+    const t2AmountBN = BigNum.fromBigNum(div(times(removeAmountBN.bigNum, toTotal.bigNum), totalShareBN.bigNum))
     return {
       token1Type: fromTokenType,
       token1Amount: t1AmountBN.realNum,
@@ -286,8 +286,8 @@ export default function RemoveLiquidModal({isOpen, onDismiss, onClose, fromToken
       toTotal = BigNum.fromBigNum(item?.fromAmount ?? '')
     }
     
-    const rate = BigNum.div(fromTotal.bigNum, toTotal.bigNum)
-    const percent = totalBN.eq(BigNum.Zero) ? '-' : BigNum.div(inputBN.bigNum, totalBN.bigNum, true)
+    const rate = div(fromTotal.bigNum, toTotal.bigNum)
+    const percent = totalBN.eq(BigNum.Zero) ? '-' : div(inputBN.bigNum, totalBN.bigNum, true)
 
     setShowData([
       {

@@ -3,6 +3,24 @@ import { BigNumber as BN } from "bignumber.js";
 import { isNum } from '../utils/numUtils';
 import { trimEnd0 } from '../utils/balanceUtils'
 
+export function times(bigNum1: string, bigNum2: string): string {
+  const bn1 = new BN(bigNum1, 10);
+  const bn2 = new BN(bigNum2, 10);
+
+  return bn1.times(bn2).toFixed()
+}
+
+export function div(bigNum1: string, bigNum2: string, usePercentage: boolean = false): string {
+  const bigNum1BN = new BN(bigNum1, 10);
+  const bigNum2BN = new BN(bigNum2, 10);
+
+  if (usePercentage) {
+    return trimEnd0(bigNum1BN.div(bigNum2BN).times(new BN(100, 10)).toFixed(12))
+  }
+
+  return trimEnd0(bigNum1BN.div(bigNum2BN).toFixed(12))
+}
+
 export const defaultBase: string = '1000000000000';
 
 // seriable BigNum obj that could put to store
@@ -120,23 +138,5 @@ export default class BigNum {
       return this._bigNum.gte(other._bigNum);
     }
     return this._realNum.gte(other._realNum);
-  }
-
-  static times(bigNum1: string, bigNum2: string): string {
-    const bn1 = new BN(bigNum1, 10);
-    const bn2 = new BN(bigNum2, 10);
-
-    return bn1.times(bn2).toFixed()
-  }
-  
-  static div(bigNum1: string, bigNum2: string, usePercentage: boolean = false): string {
-    const bigNum1BN = new BN(bigNum1, 10);
-    const bigNum2BN = new BN(bigNum2, 10);
-
-    if (usePercentage) {
-      return trimEnd0(bigNum1BN.div(bigNum2BN).times(new BN(100, 10)).toFixed(11))
-    }
-
-    return trimEnd0(bigNum1BN.div(bigNum2BN).toFixed(11))
   }
 }

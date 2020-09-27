@@ -5,6 +5,7 @@ import { darken } from 'polished';
 import { Button as RebassButton } from 'rebass/styled-components'
 import { useTranslation } from 'react-i18next'
 import { BigNumber as BN } from "bignumber.js";
+import { ButtonBigCommon } from '../../components/Button';
 import { AutoColumn } from '../../components/Column';
 import { AutoRow, RowFixed } from '../../components/Row';
 import { SwapPoolTabs } from '../../components/NavigationTabs';
@@ -31,49 +32,6 @@ const BodyWrapper = styled.div`
   width: 100%;
   max-width: 460px;
 `;
-
-const SwapButton = styled(RebassButton)`
-  padding: 18px;
-  height: 49px;
-  width: 100%;
-  text-align: center;
-  border-radius: 8px;
-  outline: none;
-  border: 1px solid transparent;
-  text-decoration: none;
-  background: #FF6E12;
-  color: #FFFFFF;
-  font-size: 18px;
-  font-weight: 500;
-  font-family: Helvetica;
-
-  display: flex;
-  justify-content: center;
-  flex-wrap: nowrap;
-  align-items: center;
-
-  cursor: pointer;
-  position: relative;
-  z-index: 1;
-
-  > * {
-    user-select: none;
-  }
-
-  &:focus {
-    background-color: ${({ disabled }) => !disabled && darken(0.08, '#FF6E12')};
-    outline: none;
-  }
-  &:hover {
-    background-color: ${({ disabled }) => !disabled && darken(0.08, '#FF6E12')};
-  }
-  :disabled {
-    opacity: 0.4;
-    :hover {
-      cursor: auto;
-    }
-  }
-`
 
 const TransactionInfoPanel = styled(BottomGrouping)`
   padding: 0px 15px;
@@ -338,7 +296,7 @@ export default function Swap(): React.ReactElement {
             <WalletConnectComp></WalletConnectComp>
           }
           {walletConnected &&
-            <SwapButton disabled={!swapEnabled} onClick={() => setSwapConfirmModalOpen(true)}>Swap</SwapButton>
+            <ButtonBigCommon disabled={!swapEnabled} onClick={() => setSwapConfirmModalOpen(true)}>Swap</ButtonBigCommon>
           }
         </BottomGrouping>
 

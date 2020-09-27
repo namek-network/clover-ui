@@ -3,6 +3,7 @@ import styled, { css }  from 'styled-components'
 import { darken } from 'polished'
 import { TokenType } from '../../state/token/types';
 import CurrencySearchModal from '../SearchModal/CurrencySearchModal'
+import { ButtonSmallSecondary } from '../Button';
 import CurrencyLogo from '../CurrencyLogo'
 import { ReactComponent as DropDown }  from '../../assets/images/dropdown.svg';
 import { escapeRegExp } from '../../utils'
@@ -31,7 +32,7 @@ const CurrencySelect = styled.button<{ selected: boolean }>`
   align-items: center;
   height: 2.2rem;
   min-width: 135px;
-  margin-right: ${({ selected }) => (selected ? '0px' : '10px')};
+  margin-right: 10px;
   font-size: 20px;
   font-weight: 500;
   background-color: ${({ selected }) => (selected ? '#FFFFFF' : '#ff007a')};
@@ -203,25 +204,27 @@ export default function CurrencyInputPanel({
     <InputPanel id={id} customStyle={customStyle}>
       <InputRow>
         <CurrencySelect
-          selected={!!currency}
+          selected={true}
           className="open-currency-select-button"
           onClick={() => { setModalOpen(true) }}
         >
-          {
-            forPair !== true && <Aligner>
-                {currency ? (
-                  <CurrencyLogo currency={currency} size={'24px'} />
-                ) : null}
-                <StyledTokenName className="token-symbol-container" active={Boolean(currency && currency.name)}>
-                    {(currency && currency.name && currency.name.length > 20
-                      ? currency.name.slice(0, 4) +
-                        '...' +
-                        currency.name.slice(currency.name.length - 5, currency.name.length)
-                      : currency?.name) || 'Select a token'}
-                </StyledTokenName>
-                <StyledDropDown  />
-              </Aligner>
-          }
+        {(forPair !== true && !(currency && currency !== null)) &&
+          <ButtonSmallSecondary>Select a token</ButtonSmallSecondary>
+        }
+
+        {(forPair !== true && currency && currency !== null) &&
+          <Aligner>
+            <CurrencyLogo currency={currency} size={'24px'} />
+            <StyledTokenName className="token-symbol-container" active={Boolean(currency && currency.name)}>
+                {currency.name.length > 20
+                  ? currency.name.slice(0, 4) + '...' + currency.name.slice(currency.name.length - 5, currency.name.length)
+                  : currency?.name}
+            </StyledTokenName>
+            <StyledDropDown  />
+          </Aligner>
+        }
+
+
           {
             forPair && <Aligner>
             <StyledTokenName className="token-symbol-container" active={Boolean(forPair && tokenPair)}>

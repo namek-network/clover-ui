@@ -1,7 +1,4 @@
 .nav-item {
-  font-size: 16px;
-  font-family: Helvetica;
-  line-height: 16px;
   margin: 5px;
 }
 
@@ -11,6 +8,9 @@
 }
 
 .navbar-light .navbar-nav .nav-link {
+  font-size: 16px;
+  font-family: Roboto-Light, Roboto;
+  font-weight: 300;
   color: #666F83;
 }
 

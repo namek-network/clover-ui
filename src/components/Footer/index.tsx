@@ -6,12 +6,10 @@ import { darken } from 'polished';
 
 const Link = styled.a`
   margin: 5px 15px;
-  height: 16px;
   font-size: 16px;
   font-family: Roboto-Light, Roboto;
-  font-weight: 350;
+  font-weight: 300;
   color: #666F83;
-  line-height: 16px;
 
   :hover {
     color: ${darken(0.1, '#666F83')};

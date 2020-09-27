@@ -26,21 +26,20 @@ const StyledNavLink = styled(NavLink).attrs({
   outline: none;
   cursor: pointer;
   text-decoration: none;
-  color: #888D9B;
+  color: #666F83;
   font-size: 16px;
-  font-weight: bold;
+  font-weight: 300;
   font-family: Roboto-Bold, Roboto;
 
   &.${activeClassName} {
     border-radius: 12px;
-    font-weight: bolder;
+    font-weight: bold;
     color: #FF8212;
     text-decoration: none;
   }
 
-  :hover,
-  :focus {
-    color: ${darken(0.1, '#FF8212')};
+  :hover:not(.${activeClassName}) {
+    color: #111A34;
     text-decoration: none;
   }
 `;

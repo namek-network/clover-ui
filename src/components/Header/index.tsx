@@ -8,14 +8,10 @@ import LanguageComp from '../Language'
 import './index.css';
 import ImgLogo from '../../assets/images/logo.svg';
 
-const NavbarWrapper = styled(Navbar)`
-  // align-self: stretch
-`;
-
 export default class Header extends Component {
   render() {
     return (
-      <NavbarWrapper variant="light">
+      <Navbar variant="light">
         <Navbar.Brand href="#/swap">
           <img
             src={ImgLogo}
@@ -46,7 +42,7 @@ export default class Header extends Component {
         <WalletComp></WalletComp>
         <SettingsComp></SettingsComp>
         <LanguageComp></LanguageComp>
-      </NavbarWrapper>
+      </Navbar>
     );
   }
 

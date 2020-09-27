@@ -21,7 +21,7 @@ async function getSigner(addr: string) {
 export async function doAddLiqudityTrans(fromToken: TokenType, 
   toToken: TokenType, fromAmount: BigNum, 
   toAmount: BigNum, accountInfo: AccountInfo, 
-  onError: (msg: string) => void, onStart: () => void, onEnd: (state: string) => void) {
+  onError: (msg: string) => void, onStart: () => void, onEnd: (state: string, hash?: string) => void): Promise<void> {
 
   onStart()
 
@@ -47,7 +47,7 @@ export async function doAddLiqudityTrans(fromToken: TokenType,
         params.events.forEach((event: any/*{ phase, event: { data, method, section } }*/) => {
           console.log(`${event.phase.toString()}, ${event.event.methohd}, ${event.event.section},${event.event.data.toString()}` );
         });
-        onEnd('complete')
+        onEnd('complete', `${params.status.asInBlock.toHex()}`)
         unsub()
       }
     });
@@ -66,7 +66,7 @@ export async function doAddLiqudityTrans(fromToken: TokenType,
 
 export async function doRemoveLiqudityTrans(fromToken: TokenType, 
   toToken: TokenType, shareAmount: BigNum,  accountInfo: AccountInfo, 
-  onError: (msg: string) => void, onStart: () => void, onEnd: (state: string) => void) {
+  onError: (msg: string) => void, onStart: () => void, onEnd: (state: string, hash?: string) => void): Promise<void> {
 
   onStart()
 
@@ -92,7 +92,7 @@ export async function doRemoveLiqudityTrans(fromToken: TokenType,
         params.events.forEach((event: any/*{ phase, event: { data, method, section } }*/) => {
           console.log(`${event.phase.toString()}, ${event.event.methohd}, ${event.event.section},${event.event.data.toString()}` );
         });
-        onEnd('complete')
+        onEnd('complete', `${params.status.asInBlock.toHex()}`)
         unsub()
       }
     });

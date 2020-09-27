@@ -1,8 +1,7 @@
 import styled from 'styled-components'
 import { Button as RebassButton } from 'rebass/styled-components'
-import { darken } from 'polished';
 
-export const BottomButton = styled(RebassButton)`
+export const PrimitiveButton = styled(RebassButton)`
   color: white;
   border: 0;
   background: #FF6E12;
@@ -16,26 +15,27 @@ export const BottomButton = styled(RebassButton)`
     outline: none;
   }
   &:hover {
-    background-color: ${({ disabled }) => !disabled && darken(0.08, '#FF6E12')};
+    background: ${({ disabled }) => !disabled && '#FF9712'};
   }
-  :disabled {
-    opacity: 0.4;
+  &:active {
+    background: ${({ disabled }) => !disabled && '#FF6E12'};
+  }
+  &:disabled {
+    background: #E2E4EA;
   }
 }`
 
-export const TopConnectButton = styled(RebassButton)`
+export const SecondaryLittleButton = styled(RebassButton)`
   color: #F99E3C;
   border: 1px solid #F99E3C;
   background-color: transparent;
   border-radius: 4px;
   outline:none;
-  padding: 6px 10px;
-  line-height: 16px;
 
   &:hover  {
     background: #FCF0DC;
     border: 1px solid #F99E3C;
-    color: #E48014;;
+    color: #E48014;
     outline:none;
   }
 

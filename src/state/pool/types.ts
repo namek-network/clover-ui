@@ -3,7 +3,8 @@ import { defaultTokenType, TokenType } from '../token/types';
 export type TransState = {
   stateText: string,
   amountText: string,
-  status: string  //available value: start, end, rejected, error
+  status: string,  //available value: start, end, rejected, error
+  hash?: string
 }
 
 export type PoolState = {

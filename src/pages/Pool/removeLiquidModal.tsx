@@ -144,7 +144,6 @@ const testData = [
 
 interface RemoveLiquidModalProps {
   isOpen: boolean
-  onDismiss: () => void
   onClose: (state: string) => void
   fromTokenType: TokenType | undefined
   toTokenType: TokenType | undefined
@@ -158,7 +157,7 @@ interface OutputTokenPair {
 }
 
 const defaultOutputTokenPair = {token1Amount: '0', token2Amount: '0'}
-export default function RemoveLiquidModal({isOpen, onDismiss, onClose, fromTokenType, toTokenType}: RemoveLiquidModalProps) {
+export default function RemoveLiquidModal({isOpen, onClose, fromTokenType, toTokenType}: RemoveLiquidModalProps) {
   const chainPoolItems = useChainPoolPairItems()
   const userPoolItems = useUserPoolPairItems()
   const accountInfo = useAccountInfo();
@@ -241,12 +240,14 @@ export default function RemoveLiquidModal({isOpen, onDismiss, onClose, fromToken
     const onStart = () => {
       transStateUpdate({stateText: 'Waiting for Confrimation', amountText, status: 'start'})
     }
-    const onEnd = (state: string) => {
+    const onEnd = (state: string, blockHash?: string) => {
       let stateText = ''
       let status = ''
+      let hash
       if (state === 'complete') {
         stateText = 'Transaction Submitted'
         status = 'end'
+        hash = blockHash
       } else if (state === 'rejected') {
         stateText = 'Transaction Rejected'
         status = 'rejected'
@@ -254,7 +255,7 @@ export default function RemoveLiquidModal({isOpen, onDismiss, onClose, fromToken
         stateText = 'Transaction Failed'
         status = 'error'
       }
-      transStateUpdate({stateText: stateText, amountText, status: status})
+      transStateUpdate({stateText: stateText, amountText, status: status, hash})
     }
 
     doRemoveLiqudityTrans(fromTokenType ?? defaultTokenType, toTokenType ?? defaultTokenType, amountBN, accountInfo, onError, onStart, onEnd)

@@ -1,22 +1,19 @@
 import BN from 'bn.js';
-import { Compact } from '@polkadot/types';
 import { formatBalance } from '@polkadot/util';
-import _ from 'lodash'
 
 const baseStrNum = '1000000000000'
 const base = new BN(baseStrNum)
 const M_LENGTH = 6 + 1;
-const K_LENGTH = 3 + 1;
 
-export function divideBase(value: string) {
-  let num = new BN(value)
+export function divideBase(value: string): string[] {
+  const num = new BN(value)
   const m = num.mod(base) //小数部分
   const n = num.div(base) //整数部分
 
   return [n.toString(), m.toString()]
 }
 
-export function trimEnd0(value: string) {
+export function trimEnd0(value: string): string {
   const n = new BN(value)
 
   if (n.eqn(0)) {
@@ -30,7 +27,7 @@ export function trimEnd0(value: string) {
   return afterTrim
 }
 
-export function addPrefix0ByBase(value: string) {
+export function addPrefix0ByBase(value: string): string {
   if (value === '0') {
     return '0'
   }
@@ -38,18 +35,18 @@ export function addPrefix0ByBase(value: string) {
   return Array(num).fill(0).join('') + value.toString()
 }
 
-export function constructNumAfterPoint(value: string) {
+export function constructNumAfterPoint(value: string): string {
   const ret = addPrefix0ByBase(value)
   return trimEnd0(ret)
 }
 
-export function convertToShow(value: string) {
+export function convertToShow(value: string): string {
   const [n, m] = divideBase(value)
   const dp = constructNumAfterPoint(m)
   return n + '.' + dp
 }
 
-export function convertToShowSI(value: string) {
+export function convertToShowSI(value: string): string {
   const [n, m] = divideBase(value)
   const dp = constructNumAfterPoint(m)
 

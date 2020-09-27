@@ -1,12 +1,12 @@
-import React, { Component, Suspense, useEffect } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import { HashRouter, Route, Switch } from 'react-router-dom';
 import styled from 'styled-components';
-import { api, initApi } from '../utils/apiUtils'
+import { initApi } from '../utils/apiUtils'
 import { loadCurrencyPair, loadTokenTypes } from '../utils/tokenUtils'
 import { useTokenTypesUpdate, useCurrencyPairUpdate } from '../state/token/hooks'
-import { ToastContainer, toast, Slide } from 'react-toastify';
+import { ToastContainer, Slide } from 'react-toastify';
 
-import {useApiInited, useApiInitedUpdate} from '../state/api/hooks'
+import {useApiConnectedUpdate, useApiInited, useApiInitedUpdate} from '../state/api/hooks'
 
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -38,19 +38,21 @@ const BodyWrapper = styled.div`
   z-index: 1;
 `;
 
-export default function App() {
+export default function App(): React.ReactElement {
   const apiInited = useApiInited()
   const apiInitedUpdate = useApiInitedUpdate()
+  const updateApiConnected = useApiConnectedUpdate()
 
   const onApiInited = () => {
     apiInitedUpdate(true)
+    updateApiConnected(true)
   }
 
   const updateTokenTypeList = useTokenTypesUpdate()
   const updateCurrencyPair = useCurrencyPairUpdate()
 
   const initPolkaApi = async () => {
-    await initApi(onApiInited)
+    await initApi(onApiInited, () => {updateApiConnected(true)}, () => {updateApiConnected(false)})
   }
 
   useEffect(() => {

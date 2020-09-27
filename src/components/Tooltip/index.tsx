@@ -11,13 +11,13 @@ const TooltipContainer = styled.div`
 
 interface TooltipProps extends Omit<PopoverProps, 'content'> {
   text: string
-};
+}
 
-export default function Tooltip({ text, ...rest }: TooltipProps) {
+export default function Tooltip({ text, ...rest }: TooltipProps): React.ReactElement {
   return <Popover content={<TooltipContainer>{text}</TooltipContainer>} {...rest} />
-};
+}
 
-export function MouseoverTooltip({ children, ...rest }: Omit<TooltipProps, 'show'>) {
+export function MouseoverTooltip({ children, ...rest }: Omit<TooltipProps, 'show'>): React.ReactElement {
   const [show, setShow] = useState(false)
   const open = useCallback(() => setShow(true), [setShow])
   const close = useCallback(() => setShow(false), [setShow])
@@ -28,4 +28,4 @@ export function MouseoverTooltip({ children, ...rest }: Omit<TooltipProps, 'show
       </div>
     </Tooltip>
   )
-};
+}

@@ -107,7 +107,6 @@ const Body = styled.div`
 `
 interface AddLiquidModalProps {
   isOpen: boolean
-  onDismiss: () => void
   onClose: (state: string) => void
   fromToken: TokenType,
   toToken: TokenType,
@@ -115,7 +114,7 @@ interface AddLiquidModalProps {
   toAmount: BigNum
 }
 
-export default function LiquidAddConfirmModal({isOpen, onDismiss, onClose, fromToken, toToken, fromAmount, toAmount}: AddLiquidModalProps) {
+export default function LiquidAddConfirmModal({isOpen, onClose, fromToken, toToken, fromAmount, toAmount}: AddLiquidModalProps) {
   const [showData, setShowData] = useState<showTextType[]>([])
   const chainPoolItems = useChainPoolPairItems()
   const [shareAmount, setShareAmount] = useState('')
@@ -171,12 +170,14 @@ export default function LiquidAddConfirmModal({isOpen, onDismiss, onClose, fromT
     const onStart = () => {
       transStateUpdate({stateText: 'Waiting for Confrimation', amountText, status: 'start'})
     }
-    const onEnd = (state: string) => {
+    const onEnd = (state: string, blockHash?: string) => {
       let stateText = ''
       let status = ''
+      let hash
       if (state === 'complete') {
         stateText = 'Transaction Submitted'
         status = 'end'
+        hash = blockHash
       } else if (state === 'rejected') {
         stateText = 'Transaction Rejected'
         status = 'rejected'
@@ -184,7 +185,7 @@ export default function LiquidAddConfirmModal({isOpen, onDismiss, onClose, fromT
         stateText = 'Transaction Failed'
         status = 'error'
       }
-      transStateUpdate({stateText: stateText, amountText, status: status})
+      transStateUpdate({stateText: stateText, amountText, status: status, hash})
     }
 
     doAddLiqudityTrans(fromToken, toToken, fromAmount, toAmount, accountInfo, onError, onStart, onEnd)

@@ -5,6 +5,27 @@ import '../../assets/vendors/font-bxb/bxb-font.css'
 import SlippageChoiceComp from './slippageChoiceComp'
 import TranDeadlineComp from './tranDeadlineComp';
 import InfoHelper from '../InfoHelper'
+import styled from 'styled-components';
+
+const SettingWrapper = styled.div`
+  position: relative;
+  font-size: 20px;
+  color: #F78408;
+  cursor: pointer;
+  font-weight: 400;
+  height: 32px;
+  width: 38px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 4px;
+
+  &:hover {
+    background: #FCF0DC;
+  }
+`
 
 export default function SettingsComp(): React.ReactElement {
   const [open, setOpen] = useState(false)
@@ -34,9 +55,8 @@ export default function SettingsComp(): React.ReactElement {
     }
   })
     return (
-      <div className="setting-container">
-        <div className="setting-btn-container" onClick={handleClick}><i className="fa fo-settings"></i>
-        </div>
+      <SettingWrapper onClick={handleClick}>
+        <i className="fa fo-settings"></i>
         {
           open && 
           <div className="panel-container" onClick={stopPropagation}>
@@ -60,7 +80,7 @@ export default function SettingsComp(): React.ReactElement {
               setTransDeadline={tdUpdate}></TranDeadlineComp>
           </div>
         }
-      </div>
+      </SettingWrapper>
     );
 
 }

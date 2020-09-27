@@ -2,29 +2,24 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { SwapPoolTabs } from '../../components/NavigationTabs'
 import Column from '../../components/Column'
-import { darken } from 'polished';
-import { Button as RebassButton, ButtonProps } from 'rebass/styled-components'
-import { BottomButton } from '../../components/Button'
+import { PrimitiveButton } from '../../components/Button'
 import PoolPairItem from './poolPairItem'
 import _ from 'lodash'
 import AddLiquidModal from './addLiquidModal'
 import LiquidAddConfirmModal from './liquidAddConfirmModal'
 import RemoveLiquidModal from './removeLiquidModal';
-import { useAccountInfo, useAccountInfoUpdate } from '../../state/wallet/hooks'
+import { useAccountInfo } from '../../state/wallet/hooks'
 import { api } from '../../utils/apiUtils'
 import { useApiInited } from '../../state/api/hooks'
 import { useTranslation } from 'react-i18next'
-import WalletSelectDialog from '../../components/WalletComp/walletSelectDialog'
-import { supportedWalletTypes, loadAccount } from '../../utils/AccountUtils'
-import { toast } from 'react-toastify';
 import { useTokenTypes } from '../../state/token/hooks';
 import WalletConnectComp from '../../components/WalletComp/walletConnectComp'
-import { useUserPoolPairItems, useChainPoolPairItems, useUserPoolPairItemsUpdate, useChainPairItemsUpdate } from '../../state/pool/hooks';
+import { useUserPoolPairItems, useUserPoolPairItemsUpdate, useChainPairItemsUpdate } from '../../state/pool/hooks';
 import { TokenType, defaultTokenType } from '../../state/token/types';
 import BigNum  from '../../types/bigNum';
 import { PoolPairItem as PoolPairItemType, defaultPoolPairItem } from '../../state/pool/types';
 import TransferStateModal from './transferStateModal';
-import Row, {RowBetween} from '../../components/Row'
+import Row from '../../components/Row'
 import Circle from '../../components/Circle'
 
 const BodyWrapper = styled.div`
@@ -109,19 +104,17 @@ const defaultDataFromAddLiquid = {
   toAmount: BigNum.fromRealNum('')
 }
 
-export default function Pool() {
+export default function Pool(): React.ReactElement {
   const [selectedItem, setSeletedItem] = useState<PoolPairItemType>(defaultPoolPairItem)
-  const [isOpen, setOpen] = useState(false)
   const [addLiquidModalOpen, setAddLiquidModalOpen] = useState(false)
   const [removeLiquidModalOpen, setRemoveLiquidModalOpen] = useState(false)
   const [liquidAddConfirmModalOpen, setLiquidAddConfirmModalOpen] = useState(false)
-  const [disabled, setDisabled] = useState(false)
+  const [disabled] = useState(false)
 
   const [dataFromAddLiquid, setDataFromAddLiquid] = useState<DataFromAddLiquid>(defaultDataFromAddLiquid)
   const [transferStateModalOpen, setTransferStateModalOpen] = useState(false)
 
   const userPoolItems = useUserPoolPairItems()
-  const chainPoolItems = useChainPoolPairItems()
 
   const userPoolItemsUpdate = useUserPoolPairItemsUpdate()
   const chainPoolItemsUpdate = useChainPairItemsUpdate()
@@ -242,19 +235,17 @@ export default function Pool() {
         <ButtonWrapper>
         {
           _.isEmpty(myInfo.address) ? <WalletConnectComp></WalletConnectComp> 
-          : <BottomButton onClick={handleClick} disabled={disabled}>{t('addLiquidity')}</BottomButton>
+          : <PrimitiveButton onClick={handleClick} disabled={disabled}>{t('addLiquidity')}</PrimitiveButton>
         }
         </ButtonWrapper>
         
         
         <AddLiquidModal isOpen={addLiquidModalOpen} 
-          onDismiss={() => {}} 
           fromTokenType={selectedItem.fromToken.id < 0 ? undefined : selectedItem.fromToken}
           toTokenType={selectedItem.toToken.id < 0 ? undefined : selectedItem.toToken}
           onClose={onAddLiquidModalClose}></AddLiquidModal>
         <LiquidAddConfirmModal 
-          isOpen={liquidAddConfirmModalOpen} 
-          onDismiss={() => {}} 
+          isOpen={liquidAddConfirmModalOpen}  
           fromToken={dataFromAddLiquid.fromToken}
           toToken={dataFromAddLiquid.toToken}
           fromAmount={dataFromAddLiquid.fromAmount}
@@ -262,11 +253,10 @@ export default function Pool() {
           onClose={onLiquidAddConfirmModalClose}></LiquidAddConfirmModal>
         <RemoveLiquidModal 
           isOpen={removeLiquidModalOpen} 
-          onDismiss={() => {}} 
           fromTokenType={selectedItem.fromToken}
           toTokenType={selectedItem.toToken}
           onClose={onRemoveLiquidModalClose}></RemoveLiquidModal>
-        <TransferStateModal isOpen={transferStateModalOpen} onDismiss={() => {}} onClose={() => setTransferStateModalOpen(false)}></TransferStateModal>
+        <TransferStateModal isOpen={transferStateModalOpen} onClose={() => setTransferStateModalOpen(false)}></TransferStateModal>
       </BodyWrapper>
     );
 }

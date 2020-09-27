@@ -1,7 +1,7 @@
 import _ from 'lodash';
-import { TokenAmount } from '../../state/wallet/types';
+import { TokenAmount, AccountInfo } from '../../state/wallet/types';
 
-export function getAddress (addr: string) {
+export function getAddress (addr: string): string {
     if (_.size(addr) < 17) {
       return addr
     }
@@ -12,12 +12,12 @@ export function getAddress (addr: string) {
     return `${prefix}..${suffix}`
   }
 
-export function createAccountInfo(address: string, name: string, walletName: string, tokenAmounts: TokenAmount[]) {
+export function createAccountInfo(address: string, name: string, walletName: string, tokenAmounts: TokenAmount[]): AccountInfo {
   return {
     address, name, walletName, tokenAmounts
   }
 }
 
-export function createEmptyAccountInfo() {
+export function createEmptyAccountInfo(): AccountInfo {
   return createAccountInfo('', '', '', [])
 }

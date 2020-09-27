@@ -15,7 +15,7 @@ const TextButton = styled.div`
   padding-left: 8px;
   padding-right: 8px;
   padding-top: 4px;
-  padding-bottom: 2px;
+  padding-bottom: 4px;
   font-family: Roboto-Regular, Roboto;
   font-weight: 400;
 

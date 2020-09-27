@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import './index.css'
 import { useTranslation } from 'react-i18next'
-import { BottomButton, TopConnectButton } from '../Button'
+import { PrimitiveButton, SecondaryLittleButton } from '../Button'
 import styled from 'styled-components';
 import { supportedWalletTypes, loadAccount } from '../../utils/AccountUtils'
 import WalletSelectDialog from './walletSelectDialog'
@@ -14,6 +14,11 @@ import { WalletType } from '../../utils/AccountUtils'
 
 export const Wrapper = styled.div`
   width: 100%;
+`
+
+const LittleConnectButton = styled(SecondaryLittleButton)`
+  padding: 6px 10px;
+  line-height: 16px;
 `
 
 interface WalletConnectCompProps {
@@ -64,10 +69,10 @@ export default function WalletConnectComp({
   return (
     <Wrapper>
       {
-        btnStyle === 'bottom' && <BottomButton onClick={handleClick} >{t('connectToWallet')}</BottomButton>
+        btnStyle === 'bottom' && <PrimitiveButton onClick={handleClick} >{t('connectToWallet')}</PrimitiveButton>
       } 
       {
-        btnStyle === 'top' && <TopConnectButton onClick={handleClick} >{t('connectToWallet')}</TopConnectButton>
+        btnStyle === 'top' && <LittleConnectButton onClick={handleClick} >{t('connectToWallet')}</LittleConnectButton>
       }
       
       <WalletSelectDialog 

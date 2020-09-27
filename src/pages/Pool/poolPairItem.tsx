@@ -7,7 +7,8 @@ import './index.css'
 import _ from 'lodash'
 import { PoolPairItem as PoolPairItemType, defaultPoolPairItem } from '../../state/pool/types';
 import { showTextType } from './types'
-import BigNum, {div, times}  from '../../types/bigNum';
+import BigNum, {div}  from '../../types/bigNum';
+import {SecondaryLittleButton} from '../../components/Button'
 
 const ImageLeft = styled.img`
 `
@@ -61,25 +62,15 @@ const ButtonWrapper = styled(RowBetween)`
 
 `
 
-const Button = styled.button`
+const Button = styled(SecondaryLittleButton)`
   width: 160px;
-  color: #F99E3C;
-  border: 1px solid #F99E3C;
-  background-color: transparent;
-  border-radius: 4px;
-  margin-right: 3px;
-  outline:none;
+  flex-grow: 1;
+  padding: 6px 10px;
+  line-height: 16px;
+`
 
-  &:hover  {
-    background-color: rgba(249,158,60,0.5);
-    border-color: rgba(249,158,60,0.1);
-    color: white;
-    outline:none;
-  }
-
-  &:focus  {
-  outline:none;
-  }
+const ButtonLeftWrapper = styled(Button)`
+  margin-right: 8px;
 `
 
 interface ItemWrapperProps {
@@ -190,7 +181,7 @@ export default function PoolPairItem({item, selectedItem, onSelectItem, onAddCli
             <ContentWrapper>
               <PairTransContent contents={showData}></PairTransContent>
               <ButtonWrapper>
-                <Button onClick={onAddClick}>Add</Button>
+                <ButtonLeftWrapper onClick={onAddClick}>Add</ButtonLeftWrapper>
                 <Button onClick={onRemoveClick}>Remove</Button>
               </ButtonWrapper>
 

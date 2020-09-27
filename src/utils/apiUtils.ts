@@ -81,7 +81,7 @@ class ApiWrapper {
 
 export const api = new ApiWrapper()
 
-export const initApi = async (onInited: () => void) => {
+export const initApi = async (onInited: () => void, onConnected: () => void, onDisConnected: () => void): Promise<void> => {
   if (!_.isEmpty(api.getApi())) {
     return
   }
@@ -191,9 +191,11 @@ export const initApi = async (onInited: () => void) => {
   api.setApi(theApi)
   theApi.on('connected', () => {
     console.log('connected')
+    onConnected()
   })
   theApi.on('disconnected', () => {
     console.log('disconnected')
+    onDisConnected()
   })
   theApi.on('ready', () => {
     console.log('ready')

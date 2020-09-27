@@ -1,13 +1,59 @@
-import React from 'react';
+import React, {useCallback, useState} from 'react';
 import {getAddress} from './utils'
+import styled from 'styled-components'
 import _ from 'lodash'
 import { TokenAmount, AccountInfo } from '../../state/wallet/types'
-import { convertToShow } from '../../utils/balanceUtils'
 import Modal from '../../components/Modal'
 import Column from '../../components/Column'
+import BigNum from '../../types/bigNum'
 
 import './index.css'
 import { WalletType } from '../../utils/AccountUtils';
+import Row from '../Row';
+
+const BodyWrapper = styled(Column)`
+  overflow: auto;
+`
+
+const AddressWrapper = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-itmes: center;
+  font-size: 32px;
+  font-family: Roboto-Medium, Roboto;
+  font-weight: 500;
+  color: #111A34;
+  height: 32px;
+  line-height: 32px;
+`
+
+const AddressImg = styled.img`
+  width: 24px;
+  margin-right: 6px;
+`
+
+const AddressText = styled.div`
+`
+
+const ChangeBtnWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  position: relative;
+`
+
+const ChangeBtn = styled.div<{left: string}>`
+  position: absolute;
+  left: ${({ left }) => (left ? left : '100px')};
+  background: #FCF0DC;
+  border-radius: 4px;
+  color: #FF8212;
+  font-size: 14px;
+  cursor: pointer;
+  height: 24px;
+  line-height: 24px;
+  width: 58px;
+  text-align: center;
+`
 
 interface AssetDialogPropTypes {
   account: AccountInfo,
@@ -18,28 +64,36 @@ interface AssetDialogPropTypes {
 
 export default function AssetDialog({ account, wallet, onClose, open }: AssetDialogPropTypes): React.ReactElement {
   const { tokenAmounts } = account
+  const [positionLeft, setPositionLeft] = useState('0')
 
   const handleClose = () => {
     onClose();
   };
 
+  const addressRef = useCallback(node => {
+    if (node !== null) {
+      const leftPosition = 30 + node.getBoundingClientRect().width - 58
+      setPositionLeft(leftPosition + 'px')
+    }
+  }, []);
+
   const customStyle = 'border-radius: 16px; max-width: 530px; width: 528px;'
   return (
     <Modal isOpen={open} onDismiss={handleClose} maxHeight={90} customStyle={customStyle}>
-      <Column>
+      <BodyWrapper>
         <div className="content-width asset-content-width">
           <div>My account</div>
           <div className="wallet-dia-close-btn" onClick={() => handleClose()}><i className="fa fo-x"></i></div>
         </div>
         <div className="asset-account-container">
-          <div className="asset-change-container">
+          <ChangeBtnWrapper>
             <div className="asset-change-left">Conneted with {wallet?.showName}</div>
-            <div className="asset-change-btn">Change</div>
-          </div>
-          <div className="asset-addr-container">
-            <img src={_.get(wallet, 'icon', '')}></img>
-            <span>{getAddress(account.address)}</span>
-          </div>
+            <ChangeBtn left={positionLeft}>Change</ChangeBtn>
+          </ChangeBtnWrapper>
+          <AddressWrapper>
+            <AddressImg src={_.get(wallet, 'icon', '')}></AddressImg>
+            <AddressText ref={addressRef}>{getAddress(account.address)}</AddressText>
+          </AddressWrapper>
           <div className="asset-change-container asset-copy">
             <div className="asset-copy-margin">Copy Address</div>
             <div className="asset-copy-right">View on Subscan</div>
@@ -61,7 +115,7 @@ export default function AssetDialog({ account, wallet, onClose, open }: AssetDia
                       </div>
                     </div>
                   </div>
-                  <div className="asset-amount-text">{convertToShow(tokenAmount.amount)}</div>
+                  <div className="asset-amount-text">{BigNum.fromBigNum(tokenAmount.amount).realNum}</div>
                 </div>
               ))
               }
@@ -80,7 +134,7 @@ export default function AssetDialog({ account, wallet, onClose, open }: AssetDia
             </div>
           </div>
         </div>
-      </Column>
+      </BodyWrapper>
     </Modal>
   );
 }

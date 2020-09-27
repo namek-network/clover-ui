@@ -1,16 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import { SwapPoolTabs } from '../../components/NavigationTabs'
 import Column, {ColumnCenter} from '../../components/Column'
 import { darken } from 'polished';
-import { Button as RebassButton, ButtonProps } from 'rebass/styled-components'
-import Row, {RowBetween, RowFlat} from '../../components/Row'
-import _ from 'lodash'
+import { Button as RebassButton } from 'rebass/styled-components'
 import Modal from '../../components/Modal'
-import CurrencyInputPanel from '../../components/CurrencyInputPanel';
 
-import { useTransState, useTransStateUpdate } from '../../state/pool/hooks';
+import { useTransState } from '../../state/pool/hooks';
 import ReactLoading from "react-loading";
+import {getBlockBrowserAddress} from '../../utils/httpServices'
 
 
 const customStyle = "position: relative; \
@@ -63,6 +60,10 @@ export const Button = styled(RebassButton)`
   }
 }`
 
+const StateTextWrapper = styled(Column)`
+  align-items: center;
+  margin-bottom: 30px;
+`
 const AmountText = styled.div`
   height: 16px;
   font-size: 16px;
@@ -70,7 +71,6 @@ const AmountText = styled.div`
   color: #111A34;
   line-height: 16px;
   margin-top: 8px;
-  margin-bottom: 30px;
 `
 
 const StateText = styled.div`
@@ -89,15 +89,29 @@ const SubmitIcon = styled.div`
   line-height: 57px;
 `
 
+const TransLink = styled.a`
+  height: 16px;
+  font-size: 16px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: #FF8212;
+  line-height: 16px;
+  cursor: pointer;
+  margin-top: 8px;
+
+  &:hover {
+    color: #F99E3C;
+    text-decoration: none;
+  }
+`
+
 interface TransferStateModal {
   isOpen: boolean
-  onDismiss: () => void
   onClose: () => void
 }
 
-export default function TransferStateModal({isOpen, onDismiss, onClose}: TransferStateModal) {
+export default function TransferStateModal({isOpen, onClose}: TransferStateModal): React.ReactElement {
   const transState = useTransState()
-  const transStateUpdate = useTransStateUpdate()
     return (
       <Modal isOpen={isOpen} onDismiss={() => {}} maxHeight={90} customStyle={customStyle}>
         <BodyWrapper>
@@ -115,9 +129,13 @@ export default function TransferStateModal({isOpen, onDismiss, onClose}: Transfe
                   }
                 </SubmitIcon>
             }
-          
-          <StateText>{transState.stateText}</StateText>
-          <AmountText>{transState.amountText}</AmountText>
+          <StateTextWrapper>
+            <StateText>{transState.stateText}</StateText>
+            <AmountText>{transState.amountText}</AmountText>
+            {
+              transState.status === 'end' && <TransLink href={getBlockBrowserAddress(transState.hash)} target="_blank">View on Subscan</TransLink>
+            }
+          </StateTextWrapper>
             {
               (transState.status === 'end' || transState.status === 'rejected' || transState.status === 'error') && <Button onClick={() => {
                 onClose()

@@ -156,13 +156,12 @@ const InfoText = styled.div`
 
 interface AddLiquidModalProps {
   isOpen: boolean
-  onDismiss: () => void
   onClose: (state: string, data?: DataFromAddLiquid) => void
   fromTokenType?: TokenType
   toTokenType?: TokenType
 }
 
-export default function AddLiquidModal({isOpen, onDismiss, onClose, fromTokenType, toTokenType}: AddLiquidModalProps) {
+export default function AddLiquidModal({isOpen, onClose, fromTokenType, toTokenType}: AddLiquidModalProps): React.ReactElement {
   const [fromToken, setFromToken] = useState<TokenType | undefined>(fromTokenType);
   const [fromTokenAmount, setFromTokenAmount] = useState<string>('');
 
@@ -170,7 +169,6 @@ export default function AddLiquidModal({isOpen, onDismiss, onClose, fromTokenTyp
   const [toTokenAmount, setToTokenAmount] = useState('');
 
   const accountInfo = useAccountInfo();
-  const updateAccountInfo = useAccountInfoUpdate()
 
   const [tokenAmounts, setTokenAmounts] = useState(_.get(accountInfo, 'tokenAmounts', []))
 

@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { Button as RebassButton, ButtonProps } from 'rebass/styled-components'
+import { Button as RebassButton } from 'rebass/styled-components'
 import { darken } from 'polished';
 
 export const BottomButton = styled(RebassButton)`
@@ -33,9 +33,16 @@ export const TopConnectButton = styled(RebassButton)`
   line-height: 16px;
 
   &:hover  {
-    background-color: rgba(249,158,60,0.5);
-    border-color: rgba(249,158,60,0.1);
-    color: white;
+    background: #FCF0DC;
+    border: 1px solid #F99E3C;
+    color: #E48014;;
+    outline:none;
+  }
+
+  &:active  {
+    background: #FFE8BF;
+    border-radius: 4px;
+    border: 1px solid #F99E3C;
     outline:none;
   }
 

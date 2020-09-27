@@ -1,26 +1,31 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import Dialog from '@material-ui/core/Dialog';
 import './index.css'
 import { useTranslation } from 'react-i18next'
 import Modal from '../../components/Modal'
 import Column from '../../components/Column'
+import {WalletType} from '../../utils/AccountUtils'
 
 const Wrapper = styled.div`
   overflow: auto;
 `
-export default function WalletSelectDialog(props: any) {
-  const { onClose, open, accountTypes } = props;
+
+interface WalletSelectDialogPropTypes {
+  onClose: (value?: WalletType) => void,
+  open: boolean,
+  walletTypes: WalletType[]
+}
+
+export default function WalletSelectDialog({ onClose, open, walletTypes }: WalletSelectDialogPropTypes): React.ReactElement {
   const [hoverValue, setHoverValue] = useState({});
 
   const { t } = useTranslation()
   const handleClose = () => {
     setHoverValue({})
-    onClose({});
+    onClose();
   };
 
-  const handleListItemClick = (value: any) => {
+  const handleListItemClick = (value: WalletType) => {
     setHoverValue({})
     onClose(value);
   };
@@ -36,8 +41,8 @@ export default function WalletSelectDialog(props: any) {
         <Wrapper>
           <div className='list-container'>
             {
-                accountTypes.map((account: any, key: any) => (
-                  <div className='item-container' key={key}
+                walletTypes.map((account: WalletType, index: number) => (
+                  <div className='item-container' key={index}
                   onMouseEnter={() => setHoverValue(account)}
                   onMouseLeave={() => setHoverValue({})}
                   onClick={() => handleListItemClick(account)}>
@@ -59,9 +64,3 @@ export default function WalletSelectDialog(props: any) {
     </Modal>
   );
 }
-
-WalletSelectDialog.propTypes = {
-  onClose: PropTypes.func.isRequired,
-  open: PropTypes.bool.isRequired,
-  accountTypes: PropTypes.array.isRequired
-};

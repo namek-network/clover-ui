@@ -1,4 +1,4 @@
-import React, { Component, useEffect, useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import Tooltip from '../Tooltip';
 import styled, { css } from 'styled-components'
 
@@ -9,7 +9,7 @@ const InfoWrapper = styled.div<{customStyle?: string}>`
   ${({ customStyle }) => customStyle && css`${customStyle}`}
 `;
 
-export default function InfoHelper({ text, className, customStyle }: { text: string, className: string, customStyle?: string }) {
+export default function InfoHelper({ text, className, customStyle }: { text: string, className: string, customStyle?: string }): React.ReactElement {
 const [show, setShow] = useState<boolean>(false)
 
 const open = useCallback(() => setShow(true), [setShow])
@@ -24,5 +24,5 @@ return (
       onMouseLeave={close}><i className={className}></i></InfoWrapper>
   </Tooltip>
 )
-};
+}
 

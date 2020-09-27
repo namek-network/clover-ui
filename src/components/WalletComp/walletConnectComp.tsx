@@ -1,5 +1,4 @@
 import React, { useCallback, useState } from 'react';
-import PropTypes from 'prop-types';
 import './index.css'
 import { useTranslation } from 'react-i18next'
 import { BottomButton, TopConnectButton } from '../Button'
@@ -10,8 +9,8 @@ import _ from 'lodash'
 import { toast } from 'react-toastify';
 import { useAccountInfoUpdate } from '../../state/wallet/hooks'
 import { useTokenTypes } from '../../state/token/hooks';
-import { darken } from 'polished';
 import { useApiInited } from '../../state/api/hooks'
+import { WalletType } from '../../utils/AccountUtils'
 
 export const Wrapper = styled.div`
   width: 100%;
@@ -20,13 +19,13 @@ export const Wrapper = styled.div`
 interface WalletConnectCompProps {
   btnStyle?: string,
   onButtonClick?: () => void,
-  onWalletClose?: (value: any) => void
+  onWalletClose?: (value?: WalletType) => void
 }
 export default function WalletConnectComp({
   btnStyle = 'bottom',
-  onButtonClick = () => {},
-  onWalletClose = (value: any) => {}
-}: WalletConnectCompProps) {
+  onButtonClick,
+  onWalletClose
+}: WalletConnectCompProps): React.ReactElement {
   const [isOpen, setOpen] = useState(false)
 
   const { t } = useTranslation()
@@ -38,10 +37,10 @@ export default function WalletConnectComp({
 
   const handleClick = () => {
     setOpen(true)
-    onButtonClick()
+    onButtonClick && onButtonClick()
   }
 
-  const handleWalletClose = useCallback((value: any) => {
+  const handleWalletClose = useCallback((value?: WalletType) => {
     setOpen(false)
     if (_.isEmpty(value)) {
       return
@@ -59,7 +58,7 @@ export default function WalletConnectComp({
     }
 
     getAcount()
-    onWalletClose(value)
+    onWalletClose && onWalletClose(value)
   }, [apiInited, myTokenTypes]);
 
   return (
@@ -72,7 +71,7 @@ export default function WalletConnectComp({
       }
       
       <WalletSelectDialog 
-            accountTypes={supportedWalletTypes} 
+            walletTypes={supportedWalletTypes} 
             open={isOpen} 
             onClose={handleWalletClose}></WalletSelectDialog> 
     </Wrapper>

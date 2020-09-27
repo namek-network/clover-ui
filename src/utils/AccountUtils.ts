@@ -7,6 +7,12 @@ import { api } from './apiUtils'
 import { originName } from '../constants'
 import _ from 'lodash'
 
+export interface WalletType {
+  name: string,
+  showName: string,
+  icon: string
+}
+
 export const supportedWalletTypes = [
   {
     name: 'Math Wallet',
@@ -22,7 +28,7 @@ export const supportedWalletTypes = [
     icon: require('../assets/images/icon-lunie.svg')
   }];
 
-export function getAddress (addr: string) {
+export function getAddress (addr: string): string {
     if (_.size(addr) < 17) {
       return addr
     }
@@ -33,17 +39,17 @@ export function getAddress (addr: string) {
     return `${prefix}..${suffix}`
   }
 
-export function createAccountInfo(address: string, name: string, walletName: string, tokenAmounts: TokenAmount[]) {
+export function createAccountInfo(address: string, name: string, walletName: string, tokenAmounts: TokenAmount[]): AccountInfo {
   return {
     address, name, walletName, tokenAmounts
   }
 }
 
-export function createEmptyAccountInfo() {
+export function createEmptyAccountInfo(): AccountInfo {
   return createAccountInfo('', '', '', [])
 }
 
-export async function loadAllTokenAmount(addr: string, tokenTypes: TokenType[]) {
+export async function loadAllTokenAmount(addr: string, tokenTypes: TokenType[]): Promise<TokenAmount[]|null> {
   const ret = await api.getBalance(addr)
 
   if (_.isEmpty(ret)) {
@@ -65,7 +71,7 @@ export async function loadAllTokenAmount(addr: string, tokenTypes: TokenType[]) 
   return _.filter(types, (t) => t.tokenType.id >= 0)
 }
 
-export async function loadAccount(wallet: any, tokenTypes: TokenType[], updateAccountInfo: (info: AccountInfo) => void) {
+export async function loadAccount(wallet: any, tokenTypes: TokenType[], updateAccountInfo: (info: AccountInfo) => void): Promise<string> {
   const injected = await web3Enable(originName);
 
   if (!injected.length) {

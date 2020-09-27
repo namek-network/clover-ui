@@ -1,4 +1,4 @@
-import React, { Component, useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, MouseEvent } from 'react';
 import { useSlippageTol, useSlippageTolUpdate, useTransDeadline, useTransDeadlineUpdate } from '../../state/settings/hooks';
 import './index.css'
 import '../../assets/vendors/font-bxb/bxb-font.css'
@@ -6,7 +6,7 @@ import SlippageChoiceComp from './slippageChoiceComp'
 import TranDeadlineComp from './tranDeadlineComp';
 import InfoHelper from '../InfoHelper'
 
-export default function SettingsComp() {
+export default function SettingsComp(): React.ReactElement {
   const [open, setOpen] = useState(false)
 
   const spt = useSlippageTol()
@@ -14,17 +14,17 @@ export default function SettingsComp() {
   const td = useTransDeadline()
   const tdUpdate = useTransDeadlineUpdate()
 
-  const handleClick = (e: any) => {
+  const handleClick = (e: MouseEvent) => {
     setOpen(!open)
     e.nativeEvent.stopImmediatePropagation()
   }
 
-  const stopPropagation = (e: any) => {
+  const stopPropagation = (e: MouseEvent) => {
     e.nativeEvent.stopImmediatePropagation()
   }
 
   useEffect(() => {
-    const listener = (e: any) => {
+    const listener = () => {
       setOpen(false)
     }
     document.addEventListener('click', listener)

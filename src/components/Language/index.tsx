@@ -1,4 +1,4 @@
-import React, { Component, useEffect, useState } from 'react';
+import React, { useEffect, useState, MouseEvent } from 'react';
 import '../../assets/vendors/font-bxb/bxb-font.css'
 import styled from 'styled-components';
 import Column from '../Column'
@@ -53,16 +53,12 @@ const LangBtn = styled.div<{actived?: boolean}>`
 `
 
 const languageList = ['EN', '中文', 'KOR']
-export default function LanguageComp() {
+export default function LanguageComp(): React.ReactElement {
   const [open, setOpen] = useState(false)
   const [selectedLanguage, setSelectedLanguage] = useState('EN')
 
-  const handleClick = (e: any) => {
+  const handleClick = (e: MouseEvent) => {
     setOpen(!open)
-    e.nativeEvent.stopImmediatePropagation()
-  }
-
-  const stopPropagation = (e: any) => {
     e.nativeEvent.stopImmediatePropagation()
   }
 
@@ -74,7 +70,7 @@ export default function LanguageComp() {
   }
   
   useEffect(() => {
-    const listener = (e: any) => {
+    const listener = () => {
       setOpen(false)
     }
     document.addEventListener('click', listener)

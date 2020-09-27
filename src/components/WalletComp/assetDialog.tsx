@@ -1,24 +1,25 @@
-import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
 import {getAddress} from './utils'
 import _ from 'lodash'
-import { TokenAmount } from '../../state/wallet/types'
+import { TokenAmount, AccountInfo } from '../../state/wallet/types'
 import { convertToShow } from '../../utils/balanceUtils'
 import Modal from '../../components/Modal'
 import Column from '../../components/Column'
 
 import './index.css'
+import { WalletType } from '../../utils/AccountUtils';
 
-export default function AssetDialog(props: any) {
-  const { account, assets, wallet, transactions, onClose, open } = props;
+interface AssetDialogPropTypes {
+  account: AccountInfo,
+  wallet?: WalletType,
+  onClose: () => void,
+  open: boolean
+}
 
+export default function AssetDialog({ account, wallet, onClose, open }: AssetDialogPropTypes): React.ReactElement {
   const { tokenAmounts } = account
 
   const handleClose = () => {
-    onClose();
-  };
-
-  const handleListItemClick = () => {
     onClose();
   };
 
@@ -32,11 +33,11 @@ export default function AssetDialog(props: any) {
         </div>
         <div className="asset-account-container">
           <div className="asset-change-container">
-            <div className="asset-change-left">Conneted with {wallet.showName}</div>
+            <div className="asset-change-left">Conneted with {wallet?.showName}</div>
             <div className="asset-change-btn">Change</div>
           </div>
           <div className="asset-addr-container">
-            <img src={_.get(wallet, 'icon')}></img>
+            <img src={_.get(wallet, 'icon', '')}></img>
             <span>{getAddress(account.address)}</span>
           </div>
           <div className="asset-change-container asset-copy">
@@ -48,8 +49,8 @@ export default function AssetDialog(props: any) {
           <div className="asset-token-title">My assets</div>
           <div className="asset-token-list">
             {
-              tokenAmounts.map((tokenAmount: TokenAmount, key: any) => (
-                <div className='asset-token-amount-item' key={key}>
+              tokenAmounts.map((tokenAmount: TokenAmount, index: number) => (
+                <div className='asset-token-amount-item' key={index}>
                   <div className="row-container">
                     <img src={tokenAmount.tokenType.logo}></img>
                     <div className="margin-left-9">
@@ -83,12 +84,3 @@ export default function AssetDialog(props: any) {
     </Modal>
   );
 }
-
-AssetDialog.propTypes = {
-  account: PropTypes.object.isRequired,
-  assets: PropTypes.array.isRequired,
-  wallet: PropTypes.object.isRequired,
-  transactions: PropTypes.array.isRequired,
-  onClose: PropTypes.func.isRequired,
-  open: PropTypes.bool.isRequired
-};

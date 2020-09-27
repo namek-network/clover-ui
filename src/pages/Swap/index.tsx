@@ -1,9 +1,8 @@
-import _, { reverse } from 'lodash';
-import React, { useState, useEffect, useCallback } from 'react';
+import _ from 'lodash';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { darken } from 'polished';
 import { Button as RebassButton } from 'rebass/styled-components'
-import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next'
 import { BigNumber as BN } from "bignumber.js";
 import { AutoColumn } from '../../components/Column';
@@ -15,12 +14,11 @@ import SwapConfirmhModal from './SwapConfirmModal';
 import SwapTransStateModal from './SwapTransStateModal';
 import { TokenType } from '../../state/token/types';
 import { useTokenTypes } from '../../state/token/hooks';
-import { useAccountInfo, useAccountInfoUpdate } from '../../state/wallet/hooks';
+import { useAccountInfo } from '../../state/wallet/hooks';
 import { useApiInited } from '../../state/api/hooks';
 import { useSlippageTol } from '../../state/settings/hooks';
 import BigNum  from '../../types/bigNum';
-import WalletSelectDialog from '../../components/WalletComp/walletSelectDialog'
-import { supportedWalletTypes, loadAccount } from '../../utils/AccountUtils'
+import WalletConnectComp from '../../components/WalletComp/walletConnectComp'
 import { api } from '../../utils/apiUtils';
 import numUtils from '../../utils/numUtils';
 import swapUtils from '../../utils/swapUtils';
@@ -33,46 +31,6 @@ const BodyWrapper = styled.div`
   width: 100%;
   max-width: 460px;
 `;
-
-const ConnectWalletButton = styled(RebassButton)`
-  padding: 18px;
-  height: 49px;
-  width: 100%;
-  text-align: center;
-  border-radius: 8px;
-  outline: none;
-  border: 1px solid transparent;
-  text-decoration: none;
-  background: #FF6E12;
-  color: #FFFFFF;
-  font-size: 18px;
-  font-weight: 500;
-  font-family: Helvetica;
-
-  display: flex;
-  justify-content: center;
-  flex-wrap: nowrap;
-  align-items: center;
-
-  cursor: pointer;
-  position: relative;
-  z-index: 1;
-  &:disabled {
-    cursor: auto;
-  }
-
-  > * {
-    user-select: none;
-  }
-
-  &:focus {
-    background-color: ${({ disabled }) => !disabled && darken(0.08, '#FF6E12')};
-    outline: none;
-  }
-  &:hover {
-    background-color: ${({ disabled }) => !disabled && darken(0.08, '#FF6E12')};
-  }
-`
 
 const SwapButton = styled(RebassButton)`
   padding: 18px;
@@ -158,7 +116,7 @@ enum AutoCalAmount {
   ToTokenAmount
 }
 
-export default function Swap() {
+export default function Swap(): React.ReactElement {
   const apiInited = useApiInited();
 
   const [fromToken, setFromToken] = useState<TokenType | null>(null);
@@ -206,7 +164,6 @@ export default function Swap() {
   };
   
   const accountInfo = useAccountInfo();
-  const updateAccountInfo = useAccountInfoUpdate()
 
   const [walletConnected, setWalletConnected] = useState(!_.isEmpty(_.get(accountInfo, 'address', '')))
 
@@ -323,28 +280,10 @@ export default function Swap() {
     setToTokenAmount('');
   }
 
-  const [walletSelectorOpen, setWalletSelectorOpen] = useState(false);
-
   const myTokenTypes = useTokenTypes();
   const myTokenTypesByName = _.keyBy(myTokenTypes, 'name');
 
   const { t } = useTranslation()
-
-  const handleClose = useCallback((value: any) => {
-    setWalletSelectorOpen(false)
-    if (_.isEmpty(value)) {
-      return
-    }
-
-    async function getAcount() {
-      const msg = await loadAccount(value, myTokenTypes, updateAccountInfo);
-      if (msg !== 'ok') {
-        toast(t(msg))
-      }
-    }
-
-    getAcount()
-  }, [apiInited, myTokenTypes]);
 
   useEffect(() => {
     setWalletConnected(!_.isEmpty(_.get(accountInfo, 'address', '')))
@@ -396,7 +335,7 @@ export default function Swap() {
 
         <BottomGrouping>
           {!walletConnected &&
-            <ConnectWalletButton onClick={() => {setWalletSelectorOpen(true)}}>Connect Wallet</ConnectWalletButton>
+            <WalletConnectComp></WalletConnectComp>
           }
           {walletConnected &&
             <SwapButton disabled={!swapEnabled} onClick={() => setSwapConfirmModalOpen(true)}>Swap</SwapButton>
@@ -472,11 +411,6 @@ export default function Swap() {
         isOpen={swapTransStateModalOpen}
         onDismiss={() => {}}
         onClose={() => setSwapTransStateModalOpen(false)} />
-
-      <WalletSelectDialog 
-          accountTypes={supportedWalletTypes} 
-          open={walletSelectorOpen} 
-          onClose={handleClose}></WalletSelectDialog>
 
     </BodyWrapper>
   );

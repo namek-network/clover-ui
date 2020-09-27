@@ -1,18 +1,13 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import _ from 'lodash'
 import styled from 'styled-components';
-import WalletSelectDialog from './walletSelectDialog'
 import AssetDialog from './assetDialog'
-import { toast } from 'react-toastify';
 import {getAddress, createAccountInfo, createEmptyAccountInfo} from './utils'
 import { useAccountInfo, useAccountInfoUpdate } from '../../state/wallet/hooks';
-import { useTranslation } from 'react-i18next'
-import { getTokenTypes } from '../../utils/httpServices';
-import { TokenType } from '../../state/token/types'
-import { useTokenTypes, useTokenTypesUpdate } from '../../state/token/hooks'
-import { loadAccount, supportedWalletTypes, loadAllTokenAmount } from '../../utils/AccountUtils'
-import { api } from '../../utils/apiUtils'
+import { useTokenTypes } from '../../state/token/hooks'
+import { supportedWalletTypes, loadAllTokenAmount } from '../../utils/AccountUtils'
 import WalletConnectComp from './walletConnectComp'
+import { WalletType } from '../../utils/AccountUtils'
 
 import './index.css'
 import 'react-toastify/dist/ReactToastify.css';
@@ -22,22 +17,17 @@ const ConnectButtonWrapper = styled.div`
   margin-right: 8px;
 `
 
-export default function WalletComp() {
-  const [open, setOpen] = useState(false);
-
+export default function WalletComp(): React.ReactElement {
   const [assetOpen, setAssetOpen] = useState(false)
 
-  const [selectedWallet, setSelectedWallet] = useState({});
+  const [selectedWallet, setSelectedWallet] = useState<WalletType>();
 
   const myInfo = useAccountInfo()
   const updateAccountInfo = useAccountInfoUpdate()
 
   const myTokenTypes = useTokenTypes()
-  const updateTokenTypeList = useTokenTypesUpdate()
 
   const apiInited = useApiInited()
-
-  const { t } = useTranslation()
 
   useEffect(() => {
     updateAccountInfo(createEmptyAccountInfo())
@@ -53,7 +43,7 @@ export default function WalletComp() {
       return
     }
 
-    setSelectedWallet(wallet ?? {id: -1, showName: '', icon: ''})
+    setSelectedWallet(wallet ?? {name: '', showName: '', icon: ''})
   }, [myInfo])
   
   // useEffect(() => {
@@ -89,11 +79,6 @@ export default function WalletComp() {
       }
 
       if (!_.isEqual(tokenAmounts, myInfo.tokenAmounts)) {
-        const info = {
-          address: myInfo.address,
-          walletName: myInfo.walletName,
-          tokenAmounts: tokenAmounts ?? []
-        }
         updateAccountInfo(createAccountInfo(myInfo.address, myInfo.name, myInfo.walletName, tokenAmounts ?? []))
       }
     }
@@ -113,7 +98,7 @@ export default function WalletComp() {
     setAssetOpen(false)
   }
 
-  const onWalletSelectDialogClose = (value: any) => {
+  const onWalletSelectDialogClose = (value?: WalletType) => {
     setSelectedWallet(value);
   }
 
@@ -130,10 +115,8 @@ export default function WalletComp() {
             </div>
         }
         <AssetDialog 
-          account={myInfo} 
-          assets={[]}
+          account={myInfo}
           wallet={selectedWallet}
-          transactions={[]}
           onClose={handleAssetClose}
           open={assetOpen}></AssetDialog>
       </div>

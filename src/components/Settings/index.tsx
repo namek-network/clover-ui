@@ -1,11 +1,10 @@
-import React, { Component, useEffect, useState } from 'react';
+import React, { Component, useEffect, useState, useCallback } from 'react';
 import { useSlippageTol, useSlippageTolUpdate, useTransDeadline, useTransDeadlineUpdate } from '../../state/settings/hooks';
 import './index.css'
 import '../../assets/vendors/font-bxb/bxb-font.css'
 import SlippageChoiceComp from './slippageChoiceComp'
 import TranDeadlineComp from './tranDeadlineComp';
-import Tooltip from '@material-ui/core/Tooltip';
-
+import InfoHelper from '../InfoHelper'
 
 export default function SettingsComp() {
   const [open, setOpen] = useState(false)
@@ -42,17 +41,19 @@ export default function SettingsComp() {
           open && 
           <div className="panel-container" onClick={stopPropagation}>
             <div className="title">Slippage tolerance
-              <Tooltip title="Your transaction will revert if there is a large, unfavorable price movement before it is confirmed.">
-                <i className="fa fo-alert-circle info-text"></i>
-              </Tooltip>
+              <InfoHelper 
+                className={"fa fo-alert-circle"} 
+                customStyle={"margin-left: 4px;"}
+                text={'Your transaction will revert if there is a large, unfavorable price movement before it is confirmed.'}></InfoHelper>
             </div>
             <SlippageChoiceComp 
               slippageTol={spt} 
               setSlippageTol={sptUpdate}></SlippageChoiceComp>
             <div className="title margin-title">Transaction Deadline
-              <Tooltip title="Your transaction will revert if it is pending for more than this long.">
-                <i className="fa fo-alert-circle info-text"></i>
-              </Tooltip>
+              <InfoHelper 
+                className={"fa fo-alert-circle"} 
+                customStyle={"margin-left: 4px;"}
+                text={'Your transaction will revert if it is pending for more than this long.'}></InfoHelper>
             </div>
             <TranDeadlineComp 
               transDeadline={td}

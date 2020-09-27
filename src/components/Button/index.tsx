@@ -196,3 +196,4 @@ export const ButtonSmallSecondary = styled(RebassButton)<{
       cursor: auto;
     }
   }
+`

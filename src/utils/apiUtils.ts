@@ -119,7 +119,7 @@ export const initApi = async (onInited: () => void) => {
               isOptional: true
             }
           ],
-          type: 'Vec<(CurrencyTypeEnum, CurrencyTypeEnum, String, String, String, String)>'
+          type: 'Vec<(CurrencyTypeEnum, CurrencyTypeEnum, String, String, String, String, String)>'
         },
         currency_pair: {
           description: 'currency pairs',

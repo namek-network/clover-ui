@@ -149,26 +149,28 @@ export default function Pool() {
       console.log(`item: ${items}`)
       
 
-      userPoolItemsUpdate(_.map(items, ([fromTokenName, toTokenName, fromAmount, toAmount, userShare, totalShare]) => {
+      userPoolItemsUpdate(_.map(items, ([fromTokenName, toTokenName, fromAmount, toAmount, userShare, userStaked, totalShare]) => {
         return {
           fromToken: _.find(tokenTypes, (tt) => tt.name === fromTokenName.toString()) ?? defaultTokenType,
           toToken: _.find(tokenTypes, (tt) => tt.name === toTokenName.toString()) ?? defaultTokenType,
           fromAmount: fromAmount.toString(), 
           toAmount: toAmount.toString(), 
           userShare: userShare.toString(), 
+          userStaked: userStaked.toString(),
           totalShare: totalShare.toString()
         }
       }))
 
       const chainItems = await api.getLiquidity()
       console.log(`chain item: ${chainItems}`)
-      chainPoolItemsUpdate(_.map(chainItems, ([fromTokenName, toTokenName, fromAmount, toAmount, userShare, totalShare]) => {
+      chainPoolItemsUpdate(_.map(chainItems, ([fromTokenName, toTokenName, fromAmount, toAmount, userShare, userStaked, totalShare]) => {
         return {
           fromToken: _.find(tokenTypes, (tt) => tt.name === fromTokenName.toString()) ?? defaultTokenType,
           toToken: _.find(tokenTypes, (tt) => tt.name === toTokenName.toString()) ?? defaultTokenType,
           fromAmount: fromAmount.toString(), 
           toAmount: toAmount.toString(), 
           userShare: userShare.toString(), 
+          userStaked: userStaked.toString(),
           totalShare: totalShare.toString()
         }
       }))

@@ -1,0 +1,36 @@
+name: Bithumb interface build action
+on:
+  push:
+    branches:
+      - master
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+
+      - name: Install node modules
+        uses: borales/actions-yarn@v2.0.0
+        with:
+          cmd: install
+        env:
+          CI: false
+
+      - name: Build
+        uses: borales/actions-yarn@v2.0.0
+        with:
+          cmd: build
+        env:
+          CI: false
+
+      - name: Rsync deployments
+        uses: AEnterprise/rsync-deploy@v1.0
+        env:
+          DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
+          ARGS: -avz --delete
+          SERVER_PORT: 22
+          FOLDER: ./build
+          SERVER_IP: ${{ secrets.SSH_HOST }}
+          USERNAME: ${{ secrets.SSH_USER }}
+          SERVER_DESTINATION: ${{ secrets.DEPLOY_TARGET }}

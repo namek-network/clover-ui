@@ -1,6 +1,5 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
-import { darken } from 'polished';
 import { NavLink } from 'react-router-dom';
 
 const Tabs = styled.div<{ customStyle?: string|undefined }>`
@@ -44,7 +43,7 @@ const StyledNavLink = styled(NavLink).attrs({
   }
 `;
 
-export function SwapPoolTabs({ active, customStyle }: { active: 'swap' | 'pool', customStyle?: string | undefined }) {
+export function SwapPoolTabs({ active, customStyle }: { active: 'swap' | 'pool', customStyle?: string | undefined }): React.ReactElement {
   return (
     <Tabs style={{ marginBottom: '20px' }} customStyle={customStyle}>
       <StyledNavLink id={`swap-nav-link`} to={'/swap'} isActive={() => active === 'swap'}>
@@ -55,4 +54,4 @@ export function SwapPoolTabs({ active, customStyle }: { active: 'swap' | 'pool',
       </StyledNavLink>
     </Tabs>
   )
-};
+}

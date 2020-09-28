@@ -122,7 +122,7 @@ const SwapCallbackErrorInnerAlertTriangle = styled.div`
   height: 48px;
 `;
 
-export function SwapCallbackError({ error }: { error: string }) {
+export function SwapCallbackError({ error }: { error: string }): React.ReactElement {
   return (
     <SwapCallbackErrorInner>
       <SwapCallbackErrorInnerAlertTriangle>
@@ -131,7 +131,7 @@ export function SwapCallbackError({ error }: { error: string }) {
       <p>{error}</p>
     </SwapCallbackErrorInner>
   )
-};
+}
 
 export const SwapShowAcceptChanges = styled(AutoColumn)`
   background-color: transparentize(0.9, #ff007a);

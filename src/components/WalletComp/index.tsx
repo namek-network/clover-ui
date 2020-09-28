@@ -78,7 +78,7 @@ export default function WalletComp(): React.ReactElement {
 
   useEffect(() => {
     updateAccountInfo(createEmptyAccountInfo())
-  }, []);
+  }, [updateAccountInfo]);
 
   useEffect(() => {
     if (_.isEmpty(myInfo.walletName)) {
@@ -135,7 +135,7 @@ export default function WalletComp(): React.ReactElement {
     return () => {
       clearInterval(unsub)
     }
-  }, [apiInited, myInfo, myTokenTypes])
+  }, [apiInited, myInfo, myTokenTypes, updateAccountInfo])
 
   const handleAssetOpen = () => {
     setAssetOpen(true)

@@ -192,7 +192,7 @@ export default function CurrencyInputPanel({
   customStyle, 
   forPair = false,
   tokenPair
-}: CurrencyInputPanelProps) {
+}: CurrencyInputPanelProps): React.ReactElement {
 
   const [modalOpen, setModalOpen] = useState(false)
 

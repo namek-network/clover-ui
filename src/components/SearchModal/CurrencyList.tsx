@@ -63,7 +63,7 @@ export default function CurrencyList({
   onCurrencySelect: (currency: TokenType) => void
   otherCurrency?: TokenType | null
   fixedListRef?: MutableRefObject<FixedSizeList | undefined>
-}) {
+}): React.ReactElement {
   const itemData = currencies;
 
   const Row = useCallback(
@@ -85,6 +85,7 @@ export default function CurrencyList({
     [onCurrencySelect, otherCurrency, selectedCurrency]
   )
 
+  /* eslint-disable  @typescript-eslint/no-explicit-any */
   const itemKey = useCallback((index: number, data: any) => currencyKey(data[index]), [])
 
   return (

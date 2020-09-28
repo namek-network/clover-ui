@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import React from 'react'
 import styled from 'styled-components'
 import { Button as RebassButton } from 'rebass/styled-components'
@@ -162,7 +161,7 @@ export default function SwapConfirmModal({
   priceImpact,
   liquidityProviderFee,
   swapRoutes
-}: SwapConfirmhModalProps) {
+}: SwapConfirmhModalProps): React.ReactElement {
 
   const accountInfo = useAccountInfo();
 

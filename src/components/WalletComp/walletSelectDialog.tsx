@@ -47,7 +47,7 @@ export default function WalletSelectDialog({ onClose, open, walletTypes }: Walle
                   onMouseLeave={() => setHoverValue({})}
                   onClick={() => handleListItemClick(account)}>
                       <div className='dialog-item-text-left'>
-                        <img src={account.icon}></img>
+                        <img alt={account.icon} src={account.icon}></img>
                         {account.name}
                       </div>
                       <div className={'dialog-item-text-right ' + (account === hoverValue ? 'dialog-item-text-right-hover' : '')}><i className="fa fo-chevron-right"></i></div>

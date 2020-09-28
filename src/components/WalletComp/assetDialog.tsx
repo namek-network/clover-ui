@@ -9,7 +9,6 @@ import BigNum from '../../types/bigNum'
 
 import './index.css'
 import { WalletType } from '../../utils/AccountUtils';
-import Row from '../Row';
 
 const BodyWrapper = styled(Column)`
   overflow: auto;
@@ -106,7 +105,7 @@ export default function AssetDialog({ account, wallet, onClose, open }: AssetDia
               tokenAmounts.map((tokenAmount: TokenAmount, index: number) => (
                 <div className='asset-token-amount-item' key={index}>
                   <div className="row-container">
-                    <img src={tokenAmount.tokenType.logo}></img>
+                    <img alt={''} src={tokenAmount.tokenType.logo}></img>
                     <div className="margin-left-9">
                       <div className="asset-token-name">{tokenAmount.tokenType.name}</div>
                       <div className="asset-deposit-name">

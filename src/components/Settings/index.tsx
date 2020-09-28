@@ -9,6 +9,9 @@ import styled from 'styled-components';
 
 const SettingWrapper = styled.div`
   position: relative;
+`
+
+const BtnWrapper = styled.div`
   font-size: 20px;
   color: #F78408;
   cursor: pointer;
@@ -55,8 +58,8 @@ export default function SettingsComp(): React.ReactElement {
     }
   })
     return (
-      <SettingWrapper onClick={handleClick}>
-        <i className="fa fo-settings"></i>
+      <SettingWrapper>
+        <BtnWrapper onClick={handleClick}><i className="fa fo-settings"></i></BtnWrapper>
         {
           open && 
           <div className="panel-container" onClick={stopPropagation}>

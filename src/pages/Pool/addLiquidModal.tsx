@@ -3,25 +3,23 @@ import styled from 'styled-components';
 import { TokenType } from '../../state/token/types';
 import Column, {ColumnCenter} from '../../components/Column'
 import { darken } from 'polished';
-import { Button as RebassButton, ButtonProps } from 'rebass/styled-components'
+import { Button as RebassButton } from 'rebass/styled-components'
 import Row, {RowBetween} from '../../components/Row'
 import Circle from '../../components/Circle'
-import PoolPairItem, { PairTransContent, PairIconTitle } from './poolPairItem'
+import { PairTransContent, PairIconTitle } from './poolPairItem'
 import _ from 'lodash'
 import Modal from '../../components/Modal'
 import CurrencyInputPanel from '../../components/CurrencyInputPanel';
-import { useAccountInfo, useAccountInfoUpdate } from '../../state/wallet/hooks';
+import { useAccountInfo } from '../../state/wallet/hooks';
 import BigNum, {div, times}  from '../../types/bigNum';
-import { useUserPoolPairItems, useChainPoolPairItems, useUserPoolPairItemsUpdate, useChainPairItemsUpdate } from '../../state/pool/hooks';
+import { useUserPoolPairItems, useChainPoolPairItems } from '../../state/pool/hooks';
 import { PoolPairItem as PoolPairItemType } from '../../state/pool/types'
 import { DataFromAddLiquid } from './index'
 import {selectedPairExists, findPairItem} from './utils'
 import { showTextType } from './types'
 
 
-const customStyle = "position: relative; \
-overflow: visible; \
-max-width:472px;"
+const customStyle = "position: relative;overflow: visible;max-width:472px;"
 
 const Head = styled(RowBetween)`
   padding: 16px 12px 0 16px;
@@ -60,11 +58,6 @@ const CirclePlus = styled.div`
   color:#F99E3C;
   margin-top: -10px;
   z-index: 2;
-`
-
-const CurrencyInputPanelBottom = styled(CurrencyInputPanel)`
-  width: 100%;
-  margin-top: -12px;
 `
 
 export const Button = styled(RebassButton)`
@@ -221,7 +214,7 @@ export default function AddLiquidModal({isOpen, onClose, fromTokenType, toTokenT
     } else {
       setFromTokenAmount(amount);
     }
-  }, [chainPoolItems, fromToken, toToken, toTokenAmount])
+  }, [chainPoolItems, fromToken, toToken])
 
   const handleSetMaxFromTokenAmount = () => setFromTokenAmount(fromTokenBalance);
 
@@ -397,10 +390,10 @@ export default function AddLiquidModal({isOpen, onClose, fromTokenType, toTokenT
         amount: `${div(item?.userShare ?? '', item?.totalShare ?? '', true)}%`
       }
     ])
-  }, [fromToken, toToken])
+  }, [fromToken, toToken, userPoolItems])
 
     return (
-      <Modal isOpen={isOpen} onDismiss={() => {}} maxHeight={90} customStyle={customStyle}>
+      <Modal isOpen={isOpen} onDismiss={() => {''}} maxHeight={90} customStyle={customStyle}>
         <BodyWrapper>
           <Head>
             <Title>Add liquidity</Title>

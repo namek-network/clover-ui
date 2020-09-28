@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { createReducer } from '@reduxjs/toolkit';
 import { userPoolPairItems, chainPoolPairItems, transState } from './actions';
 import { PoolState } from './types';

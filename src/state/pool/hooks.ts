@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { useSelector, useDispatch } from 'react-redux';
 import { useCallback } from 'react';
 import { userPoolPairItems, chainPoolPairItems, transState } from './actions';

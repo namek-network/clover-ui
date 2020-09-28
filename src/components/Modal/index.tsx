@@ -14,9 +14,11 @@ const MEDIA_WIDTHS = {
   upToLarge: 1280
 }
 
+/* eslint-disable  @typescript-eslint/no-explicit-any */
+
 const mediaWidthTemplates: { [width in keyof typeof MEDIA_WIDTHS]: typeof css } = Object.keys(MEDIA_WIDTHS).reduce(
   (accumulator, size) => {
-    ;(accumulator as any)[size] = (a: any, b: any, c: any) => css`
+    (accumulator as any)[size] = (a: any, b: any, c: any) => css`
       @media (max-width: ${(MEDIA_WIDTHS as any)[size]}px) {
         ${css(a, b, c)}
       }
@@ -76,7 +78,7 @@ const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpen, cust
     border-radius: 20px;
 
     ${({ customStyle }) => customStyle && css`${customStyle}`}
-    ${({  }) => mediaWidthTemplates.upToMedium`
+    ${() => mediaWidthTemplates.upToMedium`
       width: 65vw;
       margin: 0;
     `}
@@ -111,7 +113,7 @@ export default function Modal({
   customStyle = undefined,
   initialFocusRef,
   children
-}: ModalProps) {
+}: ModalProps): React.ReactElement {
   const fadeTransition = useTransition(isOpen, null, {
     config: { duration: 200 },
     from: { opacity: 0 },

@@ -1,9 +1,6 @@
 import _ from 'lodash';
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { darken } from 'polished';
-import { Button as RebassButton } from 'rebass/styled-components'
-import { useTranslation } from 'react-i18next'
 import { BigNumber as BN } from "bignumber.js";
 import { ButtonBigCommon } from '../../components/Button';
 import { AutoColumn } from '../../components/Column';
@@ -85,6 +82,9 @@ export default function Swap(): React.ReactElement {
 
   const [autoCalAmount, setAutoCalAmount] = useState<AutoCalAmount>(AutoCalAmount.ToTokenAmount);
 
+  const myTokenTypes = useTokenTypes();
+  const myTokenTypesByName = _.keyBy(myTokenTypes, 'name');
+
   const handleSetFromTokenAmount = (amount: string) => {
     setFromTokenAmount(amount);
     setToTokenAmount('');
@@ -158,14 +158,14 @@ export default function Swap(): React.ReactElement {
       let supplyAmountBN, targetAmountBN, swapRoutes;
       if (autoCalAmount === AutoCalAmount.ToTokenAmount) {
         supplyAmountBN = BigNum.fromRealNum(fromTokenAmount);
-        const { balance: targetAmount, routes: routes } = await api.targetAmountAvailable((fromToken as TokenType).name, (toToken as TokenType).name, supplyAmountBN.bigNum);
+        const { balance: targetAmount, routes } = await api.targetAmountAvailable((fromToken as TokenType).name, (toToken as TokenType).name, supplyAmountBN.bigNum);
         targetAmountBN = BigNum.fromBigNum(targetAmount);
         swapRoutes = routes;
         setToTokenAmount(targetAmountBN.toBN().toFixed(sysConfig.decimalPlaces));
       }
       else {
         targetAmountBN = BigNum.fromRealNum(toTokenAmount);
-        const { balance: supplyAmount, routes: routes } = await api.supplyAmountNeeded((fromToken as TokenType).name, (toToken as TokenType).name, targetAmountBN.bigNum);
+        const { balance: supplyAmount, routes } = await api.supplyAmountNeeded((fromToken as TokenType).name, (toToken as TokenType).name, targetAmountBN.bigNum);
         supplyAmountBN = BigNum.fromBigNum(supplyAmount);
         swapRoutes = routes;
         setFromTokenAmount(supplyAmountBN.toBN().toFixed(sysConfig.decimalPlaces));
@@ -177,13 +177,13 @@ export default function Swap(): React.ReactElement {
       setSwapRoutes(swapRoutes);
       setSwapRouteIds(swapRoutes.map((r: string) => myTokenTypesByName[r].id));
 
-      const { balance: reverseSupplyAmount, routes: reverseSwapRoutes } = await api.targetAmountAvailable((toToken as TokenType).name, (fromToken as TokenType).name, targetAmountBN.bigNum);
+      const { balance: reverseSupplyAmount } = await api.targetAmountAvailable((toToken as TokenType).name, (fromToken as TokenType).name, targetAmountBN.bigNum);
       const reversePrice: BigNum = BigNum.fromBigNum(reverseSupplyAmount).div(targetAmountBN);
       setPriceReverse(reversePrice);
     }
 
     calSwapInfo();
-  }, [apiInited, fromToken, toToken, fromTokenAmount, toTokenAmount]);
+  }, [apiInited, fromToken, toToken, fromTokenAmount, toTokenAmount, autoCalAmount, myTokenTypesByName]);
 
   // update price info
   useEffect(() => {
@@ -201,7 +201,7 @@ export default function Swap(): React.ReactElement {
       }
     }
 
-  }, [price, priceReverse, priceInfoReverse]);
+  }, [price, priceReverse, priceInfoReverse, fromToken, toToken])
 
   // const slippage = useSlippageTol();
   const [minReceived, setMinReceived] = useState<BN | null>(null);
@@ -237,11 +237,6 @@ export default function Swap(): React.ReactElement {
     setFromTokenAmount('');
     setToTokenAmount('');
   }
-
-  const myTokenTypes = useTokenTypes();
-  const myTokenTypesByName = _.keyBy(myTokenTypes, 'name');
-
-  const { t } = useTranslation()
 
   useEffect(() => {
     setWalletConnected(!_.isEmpty(_.get(accountInfo, 'address', '')))
@@ -316,7 +311,7 @@ export default function Swap(): React.ReactElement {
               <AutoRow justify='space-between'>
                 <RowFixed>
                   <TransactionInfoLabel>Minimum Received:</TransactionInfoLabel>
-                  <i className='fo-info clover-info' onClick={() => {}}></i>
+                  <i className='fo-info clover-info' onClick={() => {''}}></i>
                 </RowFixed>
                 <TransactionInfo>{minReceived == null ? '' : `${minReceived.toFixed(sysConfig.decimalPlaces)} ${toToken?.name}`}</TransactionInfo>
               </AutoRow>
@@ -324,7 +319,7 @@ export default function Swap(): React.ReactElement {
               <AutoRow justify='space-between'>
                 <RowFixed>
                   <TransactionInfoLabel>Price Impact:</TransactionInfoLabel>
-                  <i className='fo-info clover-info' onClick={() => {}}></i>
+                  <i className='fo-info clover-info' onClick={() => {''}}></i>
                 </RowFixed>
                 <TransactionInfo>{priceImpact == null ? '' : `${priceImpact.times(100).toFixed(sysConfig.decimalPlaces)}%`}</TransactionInfo>
               </AutoRow>
@@ -332,7 +327,7 @@ export default function Swap(): React.ReactElement {
               <AutoRow justify='space-between'>
                 <RowFixed>
                   <TransactionInfoLabel>Liquidity Provder Fee:</TransactionInfoLabel>
-                  <i className='fo-info clover-info' onClick={() => {}}></i>
+                  <i className='fo-info clover-info' onClick={() => {''}}></i>
                 </RowFixed>
                 <TransactionInfo>{liquidityProviderFee.toFixed(sysConfig.decimalPlaces)} {fromToken?.name}</TransactionInfo>
               </AutoRow>
@@ -367,7 +362,7 @@ export default function Swap(): React.ReactElement {
 
       <SwapTransStateModal
         isOpen={swapTransStateModalOpen}
-        onDismiss={() => {}}
+        onDismiss={() => {''}}
         onClose={() => setSwapTransStateModalOpen(false)} />
 
     </BodyWrapper>

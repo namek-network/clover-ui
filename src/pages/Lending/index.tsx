@@ -7,7 +7,7 @@ const TempDiv = styled.div`
 `;
 
 export default class Lending extends Component {
-  render() {
+  render(): React.ReactElement {
     return (
       <TempDiv>
         Lending page placeholder

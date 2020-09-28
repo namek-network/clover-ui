@@ -22,7 +22,7 @@ const QuestionWrapper = styled.div`
   }
 `;
 
-export default function QuestionHelper({ text }: { text: string }) {
+export default function QuestionHelper({ text }: { text: string }): React.ReactElement {
   const [show, setShow] = useState<boolean>(false)
 
   const open = useCallback(() => setShow(true), [setShow])
@@ -37,4 +37,4 @@ export default function QuestionHelper({ text }: { text: string }) {
       </Tooltip>
     </span>
   )
-};
+}

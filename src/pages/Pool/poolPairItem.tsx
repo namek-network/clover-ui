@@ -1,8 +1,7 @@
-import React, { Children, useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import PropTypes from 'prop-types';
 import Column from '../../components/Column'
-import Row, {RowBetween} from '../../components/Row'
+import {RowBetween} from '../../components/Row'
 import './index.css'
 import _ from 'lodash'
 import { PoolPairItem as PoolPairItemType, defaultPoolPairItem } from '../../state/pool/types';
@@ -90,7 +89,7 @@ export interface PairIconTitleProps {
   showTitle?: boolean
 }
 
-export const PairIconTitle = ({left, right, title, size='32px', showTitle=true}: PairIconTitleProps) => {
+export const PairIconTitle = ({left, right, title, size='32px', showTitle=true}: PairIconTitleProps): React.ReactElement => {
   return (
     <div>
       <ImageLeft src={left} width={size}></ImageLeft>
@@ -108,7 +107,7 @@ interface Content {
 interface PairTransContentProps {
   contents: Content[]
 }
-export const PairTransContent = (props: PairTransContentProps) => {
+export const PairTransContent = (props: PairTransContentProps): React.ReactElement => {
   const {contents} = props
   return (
     <Column>
@@ -137,7 +136,7 @@ export interface PoolPairItemProps {
   onRemoveClick: () => void
 }
 
-export default function PoolPairItem({item, selectedItem, onSelectItem, onAddClick, onRemoveClick}: PoolPairItemProps) {
+export default function PoolPairItem({item, selectedItem, onSelectItem, onAddClick, onRemoveClick}: PoolPairItemProps): React.ReactElement {
     const [showData, setShowData] = useState<showTextType[]>([])
 
     useEffect(() => {

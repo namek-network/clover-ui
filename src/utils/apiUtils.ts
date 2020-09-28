@@ -6,7 +6,7 @@ const types = {
   CurrencyId: 'u8',
   CurrencyIdOf: 'CurrencyId',
   CurrencyTypeEnum: {
-    _enum: ['BXB', 'BUSD', 'DOT', 'BETH']
+    _enum: ['CLV', 'CUSDT', 'DOT', 'CETH']
   },
   CurrencyInfo: {
     id: 'u32',
@@ -28,6 +28,7 @@ const types = {
   Share: 'u128'
 }
 
+/* eslint-disable  @typescript-eslint/no-explicit-any */
 class ApiWrapper {
   private api: any
 
@@ -40,42 +41,42 @@ class ApiWrapper {
   }
 
   getTokenTypes() {
-    return this.api.rpc.bitdex.get_currencies()
+    return this.api.rpc.bitdex.getCurrencies()
   }
 
   getCurrencyPair() {
-    return this.api.rpc.bitdex.currency_pair()
+    return this.api.rpc.bitdex.currencyPair()
   }
 
   getBalance(account: string, currencyType?: string) {
     if (_.isEmpty(currencyType)) {
-      return this.api.rpc.bitdex.get_balance(account)
+      return this.api.rpc.bitdex.getBalance(account)
     }
 
-    return this.api.rpc.bitdex.get_balance(account, currencyType)
+    return this.api.rpc.bitdex.getBalance(account, currencyType)
   }
 
   getBalanceSubscribe(account: string, cb: (params: any) => void) {
-    return this.api.rpc.bitdex.get_balance(account, cb)
+    return this.api.rpc.bitdex.getBalance(account, cb)
   }
   
   targetAmountAvailable(source: string, target: string, amount: string) {
-    return this.api.rpc.bitdex.target_amount_available(source, target, amount)
+    return this.api.rpc.bitdex.targetAmountAvailable(source, target, amount)
   }
 
   supplyAmountNeeded(source: string, target: string, amount: string) {
-    return this.api.rpc.bitdex.supply_amount_needed(source, target, amount)
+    return this.api.rpc.bitdex.supplyAmountNeeded(source, target, amount)
   }
 
   getLiquidity(addr?: string) {
     if (_.isEmpty(addr)) {
-      return this.api.rpc.bitdex.get_liquidity()
+      return this.api.rpc.bitdex.getLiquidity()
     }
-    return this.api.rpc.bitdex.get_liquidity(addr)
+    return this.api.rpc.bitdex.getLiquidity(addr)
   }
 
   toAddLiquidity(from: string, to: string, amountFrom: string, amountTo: string) {
-    return this.api.rpc.bitdex.to_add_liquidity(from, to, amountFrom, amountTo)
+    return this.api.rpc.bitdex.toAddLiquidity(from, to, amountFrom, amountTo)
   }
 }
 
@@ -89,13 +90,13 @@ export const initApi = async (onInited: () => void, onConnected: () => void, onD
   const wsProvider = new WsProvider('wss://api.ownstack.cn');
   const theApi = await ApiPromise.create({ provider: wsProvider, types, rpc: {
     bitdex: {
-        get_currencies: {
+        getCurrencies: {
           description: 'get currencies',
           params: [
           ],
           type: 'Vec<CurrencyInfo>'
         },
-        get_balance: {
+        getBalance: {
           description: 'get balance',
           params: [
             {
@@ -110,7 +111,7 @@ export const initApi = async (onInited: () => void, onConnected: () => void, onD
           ],
           type: 'Vec<(CurrencyTypeEnum, String)>'
         },
-        get_liquidity: {
+        getLiquidity: {
           description: 'get liquidity',
           params: [
             {
@@ -121,13 +122,13 @@ export const initApi = async (onInited: () => void, onConnected: () => void, onD
           ],
           type: 'Vec<(CurrencyTypeEnum, CurrencyTypeEnum, String, String, String, String, String)>'
         },
-        currency_pair: {
+        currencyPair: {
           description: 'currency pairs',
           params: [
           ],
           type: 'Vec<(CurrencyTypeEnum, CurrencyTypeEnum)>'
         },
-        target_amount_available: {
+        targetAmountAvailable: {
           description: 'target amount available',
           params: [
             {
@@ -145,7 +146,7 @@ export const initApi = async (onInited: () => void, onConnected: () => void, onD
           ],
           type: 'SwapResultInfo'
         },
-        supply_amount_needed: {
+        supplyAmountNeeded: {
           description: 'supply amount needed',
           params: [
             {
@@ -163,7 +164,7 @@ export const initApi = async (onInited: () => void, onConnected: () => void, onD
           ],
           type: 'SwapResultInfo'
         },
-        to_add_liquidity: {
+        toAddLiquidity: {
           description: 'to add liquidity',
           params: [
             {

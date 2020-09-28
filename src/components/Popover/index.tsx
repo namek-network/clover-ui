@@ -80,9 +80,9 @@ export interface PopoverProps {
   show: boolean
   children: React.ReactNode
   placement?: Placement
-};
+}
 
-export default function Popover({ content, show, children, placement = 'auto' }: PopoverProps) {
+export default function Popover({ content, show, children, placement = 'auto' }: PopoverProps): React.ReactElement {
   const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(null)
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null)
   const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null)
@@ -98,7 +98,7 @@ export default function Popover({ content, show, children, placement = 'auto' }:
     update && update()
   }, [update])
   useInterval(updateCallback, show ? 100 : null)
-
+/* eslint-disable  @typescript-eslint/no-explicit-any */
   return (
     <>
       <ReferenceElement ref={setReferenceElement as any}>{children}</ReferenceElement>
@@ -115,4 +115,4 @@ export default function Popover({ content, show, children, placement = 'auto' }:
       </Portal>
     </>
   )
-};
+}

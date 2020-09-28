@@ -1,11 +1,7 @@
 import React, { CSSProperties, MutableRefObject, useCallback } from 'react'
 import { FixedSizeList } from 'react-window'
-import { Text } from 'rebass'
 import styled from 'styled-components'
-import Column from '../Column'
-import CurrencyLogo from '../CurrencyLogo'
 import { MenuItem } from './styleds'
-import { TokenType } from '../../state/token/types'
 import { TokenPair } from '../CurrencyInputPanel'
 import { PairIconTitle } from '../../pages/Pool/poolPairItem'
 
@@ -65,7 +61,7 @@ export default function TokenPairList({
   selectedPair?: TokenPair | null
   onPairSelect: (pair: TokenPair) => void
   fixedListRef?: MutableRefObject<FixedSizeList | undefined>
-}) {
+}): React.ReactElement {
   const itemData = pairs;
 
   const Row = useCallback(
@@ -85,6 +81,7 @@ export default function TokenPairList({
     [onPairSelect, selectedPair]
   )
 
+  /* eslint-disable  @typescript-eslint/no-explicit-any */
   const itemKey = useCallback((index: number, data: any) => pairKey(data[index]), [])
 
   return (

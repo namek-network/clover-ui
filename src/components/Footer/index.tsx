@@ -18,7 +18,7 @@ const Link = styled.a`
 `;
 
 export default class Footer extends Component {
-  render() {
+  render(): React.ReactElement {
     return (
       <Navbar variant="light" className="justify-content-center">
         <Nav>

@@ -24,7 +24,7 @@ export default function CurrencySearchModal({
   forPair = false,
   selectedPair,
   onPairSelect
-}: CurrencySearchModalProps) {
+}: CurrencySearchModalProps): React.ReactElement {
 
   const handleCurrencySelect = useCallback(
     (currency: TokenType) => {
@@ -36,7 +36,7 @@ export default function CurrencySearchModal({
 
   const handlePairSelect = useCallback(
     (pair: TokenPair) => {
-      onPairSelect != undefined && onPairSelect(pair)
+      onPairSelect !== undefined && onPairSelect(pair)
       onDismiss()
     },
     [onDismiss, onPairSelect]

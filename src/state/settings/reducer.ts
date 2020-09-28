@@ -13,10 +13,10 @@ const initialState: SettingState = {
 
 export default createReducer(initialState, builder =>
   builder
-    .addCase(slippageTol, (state, action: any) => {
+    .addCase(slippageTol, (state, action) => {
       state.slippageTol = action.payload
     })
-    .addCase(transDeadline, (state, action: any) => {
+    .addCase(transDeadline, (state, action) => {
       state.transDeadline = action.payload
     })
 );

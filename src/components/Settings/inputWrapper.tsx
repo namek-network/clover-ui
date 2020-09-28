@@ -1,8 +1,11 @@
 import React from 'react';
-import _ from 'lodash';
 
-export default function InputWrapper(props: any) {
-  const { active, children } = props
+interface Props {
+  active: boolean,
+  children: React.ReactNode
+}
+export default function InputWrapper(props: Props): React.ReactElement<Props> {
+  const { active } = props
   const classStr = active === true ? "input-container input-container-active" : "input-container input-container-inactive"
   return (<div className={"inline-div"}>
           <span className={classStr}>

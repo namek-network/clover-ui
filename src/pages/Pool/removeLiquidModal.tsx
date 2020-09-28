@@ -2,9 +2,9 @@ import React, { useState, useCallback, useEffect } from 'react';
 import styled from 'styled-components';
 import Column, {ColumnCenter} from '../../components/Column'
 import { darken } from 'polished';
-import { Button as RebassButton, ButtonProps } from 'rebass/styled-components'
-import Row, {RowBetween} from '../../components/Row'
-import PoolPairItem, { PairTransContent, PairIconTitle } from './poolPairItem'
+import { Button as RebassButton } from 'rebass/styled-components'
+import {RowBetween} from '../../components/Row'
+import { PairTransContent } from './poolPairItem'
 import _ from 'lodash'
 import Modal from '../../components/Modal'
 import CurrencyInputPanel from '../../components/CurrencyInputPanel';
@@ -12,18 +12,15 @@ import { useUserPoolPairItems, useChainPoolPairItems, useTransStateUpdate } from
 import { TokenType, defaultTokenType } from '../../state/token/types';
 import { PoolPairItem as PoolPairItemType } from '../../state/pool/types'
 import BigNum, {div, times}  from '../../types/bigNum';
-import { useAccountInfo, useAccountInfoUpdate } from '../../state/wallet/hooks';
+import { useAccountInfo } from '../../state/wallet/hooks';
 import { toast } from 'react-toastify';
 import { doRemoveLiqudityTrans } from '../../utils/transUtils'
 
-import Types from '../../state/token/tokens'
 import { findPairItem } from './utils';
 import { showTextType } from './types'
 
 
-const customStyle = "position: relative; \
-overflow: visible; \
-max-width:472px;"
+const customStyle = "position: relative;overflow: visible; max-width:472px;"
 
 const Head = styled(RowBetween)`
   padding: 16px 12px 0 16px;
@@ -64,11 +61,6 @@ const CirclePlus = styled.div`
   z-index: 2;
 `
 
-const CurrencyInputPanelBottom = styled(CurrencyInputPanel)`
-  width: 100%;
-  margin-top: -12px;
-`
-
 export const Button = styled(RebassButton)`
   color: white;
   border: 0;
@@ -90,18 +82,6 @@ export const Button = styled(RebassButton)`
     opacity: 0.4;
   }
 }`
-
-const LabelText = styled.div`
-  height: 14px;
-  font-size: 14px;
-  font-family: Helvetica;
-  color: #858B9C;
-  line-height: 14px;
-`
-
-const ContentRowBetween = styled(RowBetween)`
-  margin-bottom: 16px;
-`
 
 const ContentWrapper = styled(Column)`
   background: #F9FAFB;
@@ -136,12 +116,6 @@ const AmountText = styled.div`
   margin-top: 8px;
 `
 
-const testData = [
-  {label:'Pooled DOT:', amount: '3.357 DOT'},
-  {label:'Pooled BxETH:', amount: '2.99967 BxETH'},
-  {label:'My pool share:', amount: '0.01%'}
-]
-
 interface RemoveLiquidModalProps {
   isOpen: boolean
   onClose: (state: string) => void
@@ -157,7 +131,7 @@ interface OutputTokenPair {
 }
 
 const defaultOutputTokenPair = {token1Amount: '0', token2Amount: '0'}
-export default function RemoveLiquidModal({isOpen, onClose, fromTokenType, toTokenType}: RemoveLiquidModalProps) {
+export default function RemoveLiquidModal({isOpen, onClose, fromTokenType, toTokenType}: RemoveLiquidModalProps): React.ReactElement {
   const chainPoolItems = useChainPoolPairItems()
   const userPoolItems = useUserPoolPairItems()
   const accountInfo = useAccountInfo();
@@ -209,7 +183,7 @@ export default function RemoveLiquidModal({isOpen, onClose, fromTokenType, toTok
     setInputShareAmount(balanceAmount)
     const outputAmount = calcOutPutAmount(chainPoolItems, balanceAmount, fromTokenType, toTokenType)
     setOutputTokenAmount(outputAmount)
-  }, [balanceAmount, fromTokenType, toTokenType]);
+  }, [balanceAmount, fromTokenType, toTokenType, chainPoolItems]);
 
   const inputBtnEnable = useCallback(() => {
     const amountBN = BigNum.fromRealNum(inputShareAmount)
@@ -260,7 +234,7 @@ export default function RemoveLiquidModal({isOpen, onClose, fromTokenType, toTok
 
     doRemoveLiqudityTrans(fromTokenType ?? defaultTokenType, toTokenType ?? defaultTokenType, amountBN, accountInfo, onError, onStart, onEnd)
 
-  }, [fromTokenType, toTokenType, inputShareAmount, accountInfo])
+  }, [fromTokenType, toTokenType, inputShareAmount, accountInfo, onClose, transStateUpdate])
   
   useEffect(() => {
     const item = findPairItem(userPoolItems, fromTokenType, toTokenType)
@@ -307,7 +281,7 @@ export default function RemoveLiquidModal({isOpen, onClose, fromTokenType, toTok
   }, [fromTokenType, toTokenType, inputShareAmount, chainPoolItems])
 
     return (
-      <Modal isOpen={isOpen} onDismiss={() => {}} maxHeight={90} customStyle={customStyle}>
+      <Modal isOpen={isOpen} onDismiss={() => {''}} maxHeight={90} customStyle={customStyle}>
         <BodyWrapper>
           <Head>
             <Title>Remove liquidity</Title>
@@ -318,7 +292,7 @@ export default function RemoveLiquidModal({isOpen, onClose, fromTokenType, toTok
               id="remove-liquid-input"
               value={inputShareAmount ?? ''}
               onUserInput={handleSetInputShareAmount}
-              onCurrencySelect={()=> {}}
+              onCurrencySelect={()=> {''}}
               balance={balanceAmount}
               showBalance={!_.isEmpty(accountInfo.address)}
               showMaxButton={!_.isEmpty(accountInfo.address)}

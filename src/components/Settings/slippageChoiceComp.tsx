@@ -1,10 +1,14 @@
-import React, { Component, useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
+import React, { useState } from 'react';
 import _ from 'lodash';
 import InputWrapper from './inputWrapper'
 
-
-const OptionButton = (props: any) => {
+interface OptionButtonProps {
+  text: string,
+  onClick: () => void,
+  active: boolean,
+  customClass?: string
+}
+const OptionButton = (props: OptionButtonProps) => {
   const { text, active, onClick, customClass } = props
   const classStr = (active ? "option-btn active-btn":"option-btn inactive-btn") + (_.isEmpty(customClass) ? "" : " " + customClass)
   return (
@@ -14,15 +18,13 @@ const OptionButton = (props: any) => {
   )
 }
 
-OptionButton.propTypes = {
-  text: PropTypes.string.isRequired,
-  onClick: PropTypes.func.isRequired,
-  active: PropTypes.bool.isRequired,
-  customClass: PropTypes.string
+interface SlippageChoiceCompPropTypes {
+  slippageTol: number,
+  setSlippageTol: (val: number) => void
 }
 
-export default function SlippageChoiceComp(props: any) {
-  const {slippageTol, setSlippageTol, transDeadline, setTransDeadline} = props;
+export default function SlippageChoiceComp(props: SlippageChoiceCompPropTypes): React.ReactElement {
+  const {slippageTol, setSlippageTol} = props;
   const [slippageInput, setSlippageInput] = useState('')
 
   const parseInput = (value: string) => {
@@ -35,7 +37,9 @@ export default function SlippageChoiceComp(props: any) {
           setSlippageTol(valueAsIntFromRoundedFloat)
         }
       }
-    } catch {}
+    } catch(e) {
+      console.log('error:' + e)
+    }
   }
 
   return (
@@ -77,8 +81,3 @@ export default function SlippageChoiceComp(props: any) {
     </div>
   );
 }
-
-SlippageChoiceComp.propTypes = {
-  slippageTol: PropTypes.number.isRequired,
-  setSlippageTol: PropTypes.func.isRequired
-};

@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { BigNumber as BN } from "bignumber.js";
 import { isNum } from '../utils/numUtils';
 import { trimEnd0 } from '../utils/balanceUtils'
@@ -10,7 +9,7 @@ export function times(bigNum1: string, bigNum2: string): string {
   return bn1.times(bn2).toFixed()
 }
 
-export function div(bigNum1: string, bigNum2: string, usePercentage: boolean = false): string {
+export function div(bigNum1: string, bigNum2: string, usePercentage = false): string {
   const bigNum1BN = new BN(bigNum1, 10);
   const bigNum2BN = new BN(bigNum2, 10);
 
@@ -21,7 +20,7 @@ export function div(bigNum1: string, bigNum2: string, usePercentage: boolean = f
   return trimEnd0(bigNum1BN.div(bigNum2BN).toFixed(12))
 }
 
-export const defaultBase: string = '1000000000000';
+export const defaultBase = '1000000000000';
 
 // seriable BigNum obj that could put to store
 export type SerializableBigNum = {
@@ -61,7 +60,7 @@ export default class BigNum {
   static SerizableZero: SerializableBigNum = BigNum.Zero.toSerizableBigNum();
 
   static fromRealNum(realNum: string, base: string = defaultBase): BigNum {
-    if (!isNum(realNum) || !isNum(base) || realNum.trim() == '.') {
+    if (!isNum(realNum) || !isNum(base) || realNum.trim() === '.') {
       return BigNum.Zero;
     }
 
@@ -72,7 +71,7 @@ export default class BigNum {
   }
 
   static fromBigNum(bigNum: string, base: string = defaultBase): BigNum {
-    if (!isNum(bigNum) || !isNum(base) || bigNum.trim() == '.') {
+    if (!isNum(bigNum) || !isNum(base) || bigNum.trim() === '.') {
       return BigNum.Zero;
     }
 

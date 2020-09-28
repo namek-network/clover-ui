@@ -17,7 +17,7 @@ export default function CurrencyLogo({
   currency?: TokenType
   size?: string
   style?: React.CSSProperties
-}) {
+}): React.ReactElement {
   const srcs: string[] = (currency == null || currency.logo == null) ? [] : [currency.logo];
 
   return <StyledLogo size={size} srcs={srcs} alt={`${currency?.name ?? 'token'} logo`} style={style} />

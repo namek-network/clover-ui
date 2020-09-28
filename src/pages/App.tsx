@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect } from 'react';
+import React, { Suspense, useEffect, useCallback } from 'react';
 import { HashRouter, Route, Switch } from 'react-router-dom';
 import styled from 'styled-components';
 import { initApi } from '../utils/apiUtils'
@@ -43,21 +43,21 @@ export default function App(): React.ReactElement {
   const apiInitedUpdate = useApiInitedUpdate()
   const updateApiConnected = useApiConnectedUpdate()
 
-  const onApiInited = () => {
+  const onApiInited = useCallback(() => {
     apiInitedUpdate(true)
     updateApiConnected(true)
-  }
+  }, [apiInitedUpdate, updateApiConnected])
 
   const updateTokenTypeList = useTokenTypesUpdate()
   const updateCurrencyPair = useCurrencyPairUpdate()
 
-  const initPolkaApi = async () => {
+  const initPolkaApi = useCallback(async () => {
     await initApi(onApiInited, () => {updateApiConnected(true)}, () => {updateApiConnected(false)})
-  }
+  }, [onApiInited, updateApiConnected])
 
   useEffect(() => {
     initPolkaApi()
-  }, [])
+  }, [initPolkaApi])
 
   useEffect(() => {
     if (!apiInited) {
@@ -66,7 +66,7 @@ export default function App(): React.ReactElement {
 
     loadTokenTypes(updateTokenTypeList)
     loadCurrencyPair(updateCurrencyPair)
-  }, [apiInited])
+  }, [apiInited, updateCurrencyPair, updateTokenTypeList])
   
   return (
     <Suspense fallback={null}>

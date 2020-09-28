@@ -1,9 +1,12 @@
-import React, { Component, useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
+import React, { useState } from 'react';
 import _ from 'lodash';
 import InputWrapper from './inputWrapper'
 
-export default function TranDeadlineComp(props: any) {
+interface TranDeadlineCompPropTypes {
+  transDeadline: number,
+  setTransDeadline: (val: number) => void
+}
+export default function TranDeadlineComp(props: TranDeadlineCompPropTypes): React.ReactElement {
   const {transDeadline, setTransDeadline} = props;
   const [transDeadlineInput, setTransDeadlineInput] = useState('')
   
@@ -16,7 +19,8 @@ export default function TranDeadlineComp(props: any) {
       if (!Number.isNaN(valueAsInt) && validNumber(valueAsInt)) {
         setTransDeadline(valueAsInt)
       }
-    } catch {
+    } catch(e) {
+      console.log('error:'+e)
     }
   }
 
@@ -24,10 +28,10 @@ export default function TranDeadlineComp(props: any) {
     <div className="slip-container">
       <InputWrapper active={(_.isEmpty(transDeadlineInput) && validNumber(transDeadline)) || (!Number.isNaN(transDeadlineInput) && validNumber(Number.parseInt(transDeadlineInput)))}>
         <input 
-          placeholder={transDeadline}
+          placeholder={transDeadline.toString()}
           value={transDeadlineInput}
           onBlur={() => {
-            parseInput(transDeadline)
+            parseInput(transDeadline.toString())
           }}
           onChange={e => parseInput(e.target.value)}/>
       </InputWrapper>
@@ -35,8 +39,3 @@ export default function TranDeadlineComp(props: any) {
     </div>
   );
 }
-
-TranDeadlineComp.propTypes = {
-  transDeadline: PropTypes.number.isRequired,
-  setTransDeadline: PropTypes.func.isRequired
-};

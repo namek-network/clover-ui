@@ -10,19 +10,12 @@ import ReactLoading from "react-loading";
 import {getBlockBrowserAddress} from '../../utils/httpServices'
 
 
-const customStyle = "position: relative; \
-overflow: visible; \
-max-width:472px;"
+const customStyle = "position: relative; overflow: visible; max-width:472px;"
 
 const Head = styled.div`
   display: flex;
   flex-direction: row-reverse;
   padding: 16px 12px 0 16px;
-`
-const Title = styled.div`
-  font-size: 16px;
-  font-family: Helvetica;
-  color: #777777;
 `
 
 const CloseButton = styled.div`
@@ -105,15 +98,15 @@ const TransLink = styled.a`
   }
 `
 
-interface TransferStateModal {
+interface TransferStateModalProps {
   isOpen: boolean
   onClose: () => void
 }
 
-export default function TransferStateModal({isOpen, onClose}: TransferStateModal): React.ReactElement {
+export default function TransferStateModal({isOpen, onClose}: TransferStateModalProps): React.ReactElement {
   const transState = useTransState()
     return (
-      <Modal isOpen={isOpen} onDismiss={() => {}} maxHeight={90} customStyle={customStyle}>
+      <Modal isOpen={isOpen} onDismiss={() => {''}} maxHeight={90} customStyle={customStyle}>
         <BodyWrapper>
           <Head>
             <CloseButton onClick={() => onClose()}><i className="fa fo-x"></i></CloseButton>

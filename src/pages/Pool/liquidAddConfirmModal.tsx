@@ -1,29 +1,24 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import styled from 'styled-components';
-import { SwapPoolTabs } from '../../components/NavigationTabs'
 import Column, {ColumnCenter} from '../../components/Column'
 import { darken } from 'polished';
-import { Button as RebassButton, ButtonProps } from 'rebass/styled-components'
-import Row, {RowBetween} from '../../components/Row'
-import PoolPairItem, { PairTransContent, PairIconTitle } from './poolPairItem'
+import { Button as RebassButton } from 'rebass/styled-components'
+import {RowBetween} from '../../components/Row'
+import { PairTransContent, PairIconTitle } from './poolPairItem'
 import _ from 'lodash'
 import Modal from '../../components/Modal'
-import BigNum, {div, times}  from '../../types/bigNum';
+import BigNum, {div}  from '../../types/bigNum';
 import { TokenType } from '../../state/token/types';
 import { showTextType } from './types'
-import {selectedPairExists, findPairItem} from './utils'
-import { useUserPoolPairItems, useChainPoolPairItems, useUserPoolPairItemsUpdate, useChainPairItemsUpdate, useTransStateUpdate } from '../../state/pool/hooks';
+import { useChainPoolPairItems, useTransStateUpdate } from '../../state/pool/hooks';
 import { api } from '../../utils/apiUtils'
 import { useApiInited } from '../../state/api/hooks';
-import { useAccountInfo, useAccountInfoUpdate } from '../../state/wallet/hooks'
-import { AccountInfo } from '../../state/wallet/types';
+import { useAccountInfo } from '../../state/wallet/hooks'
 import { doAddLiqudityTrans } from '../../utils/transUtils'
 import { toast } from 'react-toastify';
 
 
-const customStyle = "position: relative; \
-overflow: visible; \
-max-width:472px;"
+const customStyle = "position: relative; overflow: visible; max-width:472px;"
 
 const Head = styled(RowBetween)`
   padding: 16px 12px 0 16px;
@@ -114,7 +109,7 @@ interface AddLiquidModalProps {
   toAmount: BigNum
 }
 
-export default function LiquidAddConfirmModal({isOpen, onClose, fromToken, toToken, fromAmount, toAmount}: AddLiquidModalProps) {
+export default function LiquidAddConfirmModal({isOpen, onClose, fromToken, toToken, fromAmount, toAmount}: AddLiquidModalProps): React.ReactElement {
   const [showData, setShowData] = useState<showTextType[]>([])
   const chainPoolItems = useChainPoolPairItems()
   const [shareAmount, setShareAmount] = useState('')
@@ -190,10 +185,10 @@ export default function LiquidAddConfirmModal({isOpen, onClose, fromToken, toTok
 
     doAddLiqudityTrans(fromToken, toToken, fromAmount, toAmount, accountInfo, onError, onStart, onEnd)
 
-  }, [fromToken, toToken, fromAmount, toAmount, accountInfo])
+  }, [fromToken, toToken, fromAmount, toAmount, accountInfo, onClose, transStateUpdate])
 
     return (
-      <Modal isOpen={isOpen} onDismiss={() => {}} maxHeight={90} customStyle={customStyle}>
+      <Modal isOpen={isOpen} onDismiss={() => {''}} maxHeight={90} customStyle={customStyle}>
         <BodyWrapper>
           <Head>
             <Title>You will receive</Title>

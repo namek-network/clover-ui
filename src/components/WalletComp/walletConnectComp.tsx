@@ -64,7 +64,7 @@ export default function WalletConnectComp({
 
     getAcount()
     onWalletClose && onWalletClose(value)
-  }, [apiInited, myTokenTypes]);
+  }, [apiInited, myTokenTypes, onWalletClose, t, updateAccountInfo]);
 
   return (
     <Wrapper>

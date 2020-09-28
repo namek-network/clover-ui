@@ -15,7 +15,7 @@ import { useTokenTypes } from '../../state/token/hooks';
 import { TokenPair } from '../CurrencyInputPanel'
 import TokenPairList from '../SearchModal/TokenPairList'
 import _ from 'lodash'
-import { useUserPoolPairItems, useChainPoolPairItems } from '../../state/pool/hooks';
+import { useChainPoolPairItems } from '../../state/pool/hooks';
 
 const CloseIcon = styled(X)<{ onClick: () => void }>`
   cursor: pointer;
@@ -42,7 +42,7 @@ export function CurrencySearch({
   forPair = false,
   selectedPair,
   onPairSelect
-}: CurrencySearchProps) {
+}: CurrencySearchProps): React.ReactElement {
   const allTokens = useTokenTypes();
 
   const fixedList = useRef<FixedSizeList>()
@@ -62,7 +62,7 @@ export function CurrencySearch({
 
   const handlePairSelect = useCallback(
     (pair: TokenPair) => {
-      onPairSelect != undefined && onPairSelect(pair)
+      onPairSelect !== undefined && onPairSelect(pair)
       onDismiss()
     },
     [onDismiss, onPairSelect]
@@ -106,7 +106,7 @@ export function CurrencySearch({
           value={searchQuery}
           ref={inputRef as RefObject<HTMLInputElement>}
           onChange={handleInput}
-          onKeyDown={() => {}}
+          onKeyDown={() => {''}}
         />
       </PaddedColumn>
 

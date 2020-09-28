@@ -1,6 +1,6 @@
 import { AppState } from '../index'
-import { useSelector, useDispatch, Connect } from 'react-redux'
-import { useCallback, useMemo } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { useCallback } from 'react'
 
 import { connected, ready, inited } from './actions'
 

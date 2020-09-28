@@ -170,7 +170,7 @@ export default function Pool(): React.ReactElement {
     }
 
     loadPoolItems()
-  }, [myInfo, apiInited, tokenTypes])
+  }, [myInfo, apiInited, tokenTypes, chainPoolItemsUpdate, userPoolItemsUpdate])
 
   const handleClick = () => {
     setAddLiquidModalOpen(true)

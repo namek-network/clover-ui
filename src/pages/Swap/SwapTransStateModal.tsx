@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import React from 'react';
 import styled from 'styled-components';
 import Column, {ColumnCenter} from '../../components/Column'
@@ -8,21 +7,13 @@ import Modal from '../../components/Modal'
 import { useSwapTransState } from '../../state/swap/hooks';
 import ReactLoading from "react-loading";
 
-const customStyle = "position: relative; \
-  overflow: visible; \
-  max-width:472px;"
+const customStyle = "position: relative; overflow: visible; max-width:472px;"
 
 
 const Head = styled.div`
   display: flex;
   flex-direction: row-reverse;
   padding: 16px 12px 0 16px;
-`
-
-const Title = styled.div`
-  font-size: 16px;
-  font-family: Helvetica;
-  color: #777777;
 `
 
 const CloseButton = styled.div`
@@ -87,17 +78,17 @@ const SubmitIcon = styled.div`
   line-height: 57px;
 `
 
-interface TransferStateModal {
+interface TransferStateModalProps {
   isOpen: boolean
   onDismiss: () => void
   onClose: () => void
 }
 
-export default function TransferStateModal({isOpen, onDismiss, onClose}: TransferStateModal) {
+export default function TransferStateModal({isOpen, onClose}: TransferStateModalProps): React.ReactElement {
   const transState = useSwapTransState()
 
     return (
-      <Modal isOpen={isOpen} onDismiss={() => {}} maxHeight={90} customStyle={customStyle}>
+      <Modal isOpen={isOpen} onDismiss={() => {''}} maxHeight={90} customStyle={customStyle}>
         <BodyWrapper>
           <Head>
             <CloseButton onClick={() => onClose()}><i className="fa fo-x"></i></CloseButton>

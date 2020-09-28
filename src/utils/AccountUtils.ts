@@ -71,13 +71,14 @@ export async function loadAllTokenAmount(addr: string, tokenTypes: TokenType[]):
   return _.filter(types, (t) => t.tokenType.id >= 0)
 }
 
-export async function loadAccount(wallet: any, tokenTypes: TokenType[], updateAccountInfo: (info: AccountInfo) => void): Promise<string> {
+export async function loadAccount(wallet: WalletType | undefined, tokenTypes: TokenType[], updateAccountInfo: (info: AccountInfo) => void): Promise<string> {
   const injected = await web3Enable(originName);
 
   if (!injected.length) {
     return "notFoundWallet";
   }
 
+  /* eslint-disable  @typescript-eslint/no-explicit-any */
   const mathWallet = _.find(injected, (w: any) => w.isMathWallet === true)
   if (_.isEmpty(mathWallet)) {
     return "notFoundWallet";

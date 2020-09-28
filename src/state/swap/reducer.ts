@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { createReducer } from '@reduxjs/toolkit';
 import { transState } from './actions';
 import { SwapState } from './types';

@@ -13,7 +13,7 @@ export default createReducer(initialState, builder =>
       const {types} = action.payload;
       state.tokenTypes = types || [];
     })
-    .addCase(clearTokenTypes, (state, action) => {
+    .addCase(clearTokenTypes, (state) => {
       state.tokenTypes = [];
     })
     .addCase(currencyPairs, (state, action) => {

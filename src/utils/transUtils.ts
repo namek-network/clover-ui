@@ -1,11 +1,8 @@
-import { web3Accounts, web3Enable, web3FromAddress } from '@polkadot/extension-dapp';
-import {getTokenAmount} from './httpServices'
+import { web3FromAddress } from '@polkadot/extension-dapp';
 import { TokenType } from '../state/token/types'
-import { InjectedAccountWithMeta, InjectedExtension } from '@polkadot/extension-inject/types';
-import { AccountInfo, TokenAmount } from '../state/wallet/types';
+import { AccountInfo } from '../state/wallet/types';
 import BigNum from '../types/bigNum'
 import { api } from './apiUtils'
-import { originName } from '../constants'
 import _ from 'lodash'
 
 async function getSigner(addr: string) {
@@ -33,9 +30,10 @@ export async function doAddLiqudityTrans(fromToken: TokenType,
 
   api.getApi().setSigner(signer)
 
-  let unsub: any;
+  let unsub: ()=>void = () => {''};
 
   try {
+    /* eslint-disable  @typescript-eslint/no-explicit-any */
     unsub = await api.getApi().tx.bithumbDex.addLiquidity(fromToken.id, toToken.id, fromAmount.bigNum, toAmount.bigNum)
     .signAndSend(accountInfo.address, (params: any) => {
       console.log('Transaction status:', params.status.type);
@@ -78,7 +76,7 @@ export async function doRemoveLiqudityTrans(fromToken: TokenType,
 
   api.getApi().setSigner(signer)
 
-  let unsub: any;
+  let unsub: () => void = () => {''};
 
   try {
     unsub = await api.getApi().tx.bithumbDex.withdrawLiquidity(fromToken.id, toToken.id, shareAmount.bigNum)

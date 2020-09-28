@@ -6,6 +6,8 @@ import { TokenAmount, AccountInfo } from '../../state/wallet/types'
 import Modal from '../../components/Modal'
 import Column from '../../components/Column'
 import BigNum from '../../types/bigNum'
+import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next'
 
 import './index.css'
 import { WalletType } from '../../utils/AccountUtils';
@@ -13,7 +15,15 @@ import { TokenType } from '../../state/token/types';
 import {SerializableBigNum} from '../../types/bigNum';
 
 const BodyWrapper = styled(Column)`
+`
+
+const ContentWrapper = styled.div`
   overflow: auto;
+  display: flex;
+  flex-direction: column;
+  margin-left: 24px;
+  margin-right: 24px;
+  margin-top: 20px;
 `
 
 const AddressWrapper = styled.div`
@@ -67,6 +77,8 @@ export default function AssetDialog({ account, wallet, onClose, open }: AssetDia
   const { tokenAmounts } = account
   const [positionLeft, setPositionLeft] = useState('0')
 
+  const {t} = useTranslation()
+
   const handleClose = () => {
     onClose();
   };
@@ -89,6 +101,11 @@ export default function AssetDialog({ account, wallet, onClose, open }: AssetDia
     })
   }, [tokenAmounts])
 
+  const copyAddress = (addr: string) => {
+    navigator.clipboard.writeText(addr)
+    toast(t('copySuccess'))
+  }
+
   const customStyle = 'border-radius: 16px; max-width: 530px; width: 528px;'
   return (
     <Modal isOpen={open} onDismiss={handleClose} maxHeight={90} customStyle={customStyle}>
@@ -107,11 +124,11 @@ export default function AssetDialog({ account, wallet, onClose, open }: AssetDia
             <AddressText ref={addressRef}>{getAddress(account.address)}</AddressText>
           </AddressWrapper>
           <div className="asset-change-container asset-copy">
-            <div className="asset-copy-margin">Copy Address</div>
+            <div className="asset-copy-margin" onClick={() => copyAddress(account.address)}>Copy Address</div>
             <div className="asset-copy-right">View on Subscan</div>
           </div>
         </div>
-        <div className="asset-token-container">
+        <ContentWrapper>
           <div className="asset-token-title">My assets</div>
           <div className="asset-token-list">
             {
@@ -148,7 +165,7 @@ export default function AssetDialog({ account, wallet, onClose, open }: AssetDia
               <span>Swap 14 CLV for 12.6743553 DOT</span>
             </div>
           </div>
-        </div>
+        </ContentWrapper>
       </BodyWrapper>
     </Modal>
   );

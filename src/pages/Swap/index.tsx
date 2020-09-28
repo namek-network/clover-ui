@@ -22,6 +22,7 @@ import numUtils from '../../utils/numUtils';
 import swapUtils from '../../utils/swapUtils';
 import sysConfig from '../../configs/sysConfig';
 import '../../assets/vendors/font-bxb/bxb-font.css'
+import ImgSwitch from '../../assets/images/switch.svg'
 import './index.css'
 
 const BodyWrapper = styled.div`
@@ -266,8 +267,8 @@ export default function Swap(): React.ReactElement {
             <div className='switch-circle' onClick={() => handleSwitchFromToToken()}>
               <span>
                 <i className='fo-arrow-down switch-icon switch-icon-default'></i>
-                <i className='fo-repeat switch-icon switch-icon-onhover'></i>
               </span>
+              <img src={ImgSwitch} alt='switch' className='switch-icon switch-icon-onhover' />
             </div>
           </AutoRow>
           

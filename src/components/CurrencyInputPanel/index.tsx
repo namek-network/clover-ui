@@ -28,9 +28,8 @@ const InputRow = styled.div`
   padding: 0.75rem 0.95rem 0.75rem 1rem;
 `;
 
-const CurrencySelect = styled.button<{ selected: boolean }>`
+const CurrencySelect = styled.div<{ selected: boolean }>`
   align-items: center;
-  height: 2.2rem;
   min-width: 135px;
   margin-right: 10px;
   font-size: 20px;
@@ -47,7 +46,6 @@ const CurrencySelect = styled.button<{ selected: boolean }>`
 
   :focus,
   :hover {
-    background-color: ${({ selected }) => (selected ? '#F7F8FA': darken(0.05, '#ff007a'))};
     outline: none;
   }
 `
@@ -205,7 +203,6 @@ export default function CurrencyInputPanel({
       <InputRow>
         <CurrencySelect
           selected={true}
-          className="open-currency-select-button"
           onClick={() => { setModalOpen(true) }}
         >
         {(forPair !== true && !(currency && currency !== null)) &&

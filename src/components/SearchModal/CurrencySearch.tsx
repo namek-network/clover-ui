@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import React, { RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { FixedSizeList } from 'react-window'
@@ -14,7 +15,6 @@ import AutoSizer from 'react-virtualized-auto-sizer'
 import { useTokenTypes } from '../../state/token/hooks';
 import { TokenPair } from '../CurrencyInputPanel'
 import TokenPairList from '../SearchModal/TokenPairList'
-import _ from 'lodash'
 import { useChainPoolPairItems } from '../../state/pool/hooks';
 
 const CloseIcon = styled(X)<{ onClick: () => void }>`

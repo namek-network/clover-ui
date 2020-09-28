@@ -13,6 +13,7 @@ import Row from '../Row'
 import './index.css'
 import 'react-toastify/dist/ReactToastify.css';
 import { useApiInited, useApiConnected } from '../../state/api/hooks';
+import InfoModal from './InfoModal';
 
 const ConnectButtonWrapper = styled.div`
   margin-right: 8px;
@@ -52,6 +53,7 @@ const WarningWrapper = styled(Row)`
   border-radius: 4px;
   background: #FDEDED;
   padding: 6px 4px 5px 4px;
+  cursor: pointer;
 `
 
 const WarningIcon = styled.div`
@@ -60,6 +62,27 @@ const WarningIcon = styled.div`
   line-height: 20px;
   margin-right: 4px;
 `
+
+const WarningInfoComp = (): React.ReactElement => {
+  const [open, setOpen] = useState(false)
+
+  const onClose = () => {
+    setOpen(false)
+  }
+
+  const onClick = () => {
+    setOpen(true)
+  }
+  return (
+    <div>
+      <WarningWrapper onClick={onClick}>
+        <WarningIcon><i className={'fa fo-alert-octagon'}></i>
+        </WarningIcon>Wrong Network
+      </WarningWrapper>
+      <InfoModal isOpen={open} onClose={onClose} title={'Wrong Network'} info={'Please connect to Clover network'}></InfoModal>
+    </div>
+    )
+}
 
 export default function WalletComp(): React.ReactElement {
   const [assetOpen, setAssetOpen] = useState(false)
@@ -152,7 +175,7 @@ export default function WalletComp(): React.ReactElement {
     return (
       <div>
         {
-          (!inited || !apiConnected)? <WarningWrapper><WarningIcon><i className={'fa fo-alert-octagon'}></i></WarningIcon>Wrong Network</WarningWrapper> :
+          (!inited || !apiConnected)? <WarningInfoComp></WarningInfoComp> :
           myInfo.address === '' ? 
             <ConnectButtonWrapper>
               <WalletConnectComp btnStyle='top' onWalletClose={onWalletSelectDialogClose}></WalletConnectComp> 

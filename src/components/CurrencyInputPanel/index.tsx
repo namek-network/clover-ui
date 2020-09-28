@@ -89,7 +89,6 @@ const NumericalInput = styled.input`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.5);
   padding: 0px;
 
   -webkit-appearance: textfield;

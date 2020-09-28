@@ -1,6 +1,6 @@
 {
-  "name": "@bithumb/interface",
-  "description": "Clover Interface",
+  "name": "@clover/clover-ui",
+  "description": "Clover UI",
   "homepage": ".",
   "version": "0.1.0",
   "private": true,

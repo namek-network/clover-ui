@@ -80,6 +80,8 @@ export default function Swap(): React.ReactElement {
 
   const [toToken, setToToken] = useState<TokenType | null>(null);
   const [toTokenAmount, setToTokenAmount] = useState('');
+  // TODO: consider using rx subject to trigger price refresh
+  const [shouldFetchPrice, setShouldFetchPrice] = useState<boolean>(false);
 
   const [autoCalAmount, setAutoCalAmount] = useState<AutoCalAmount>(AutoCalAmount.ToTokenAmount);
 
@@ -90,17 +92,22 @@ export default function Swap(): React.ReactElement {
     setFromTokenAmount(amount);
     setToTokenAmount('');
     setAutoCalAmount(AutoCalAmount.ToTokenAmount);
+
+    setShouldFetchPrice(true);
   }
 
   const handleSetToTokenAmount = (amount: string) => {
     setToTokenAmount(amount);
     setFromTokenAmount('');
     setAutoCalAmount(AutoCalAmount.FromTokenAmount);
+
+    setShouldFetchPrice(true);
   }
 
   const handleSwitchFromToToken = () => {
     setFromToken(toToken);
-    setToToken(fromToken)
+    setToToken(fromToken);
+
     handleSetFromTokenAmount(toTokenAmount);
   }
 
@@ -147,6 +154,8 @@ export default function Swap(): React.ReactElement {
 
   // on user input, dynamically fetch price & reverse price, calculate mimimal received and price impact, etc
   useEffect(() => {
+    if (!shouldFetchPrice) return;
+
     const validFromTokenAmount = _.toNumber(fromTokenAmount) > 0;
     const validToTokenAmount = _.toNumber(toTokenAmount) > 0;
     if (!apiInited || fromToken == null || toToken == null || (fromToken.id === toToken.id)
@@ -162,14 +171,14 @@ export default function Swap(): React.ReactElement {
         const { balance: targetAmount, routes } = await api.targetAmountAvailable((fromToken as TokenType).name, (toToken as TokenType).name, supplyAmountBN.bigNum);
         targetAmountBN = BigNum.fromBigNum(targetAmount);
         swapRoutes = routes;
-        setToTokenAmount(targetAmountBN.toBN().toFixed(sysConfig.decimalPlaces));
+        setToTokenAmount(targetAmountBN.toBN().toFixed(sysConfig.decimalPlacesInput));
       }
       else {
         targetAmountBN = BigNum.fromRealNum(toTokenAmount);
         const { balance: supplyAmount, routes } = await api.supplyAmountNeeded((fromToken as TokenType).name, (toToken as TokenType).name, targetAmountBN.bigNum);
         supplyAmountBN = BigNum.fromBigNum(supplyAmount);
         swapRoutes = routes;
-        setFromTokenAmount(supplyAmountBN.toBN().toFixed(sysConfig.decimalPlaces));
+        setFromTokenAmount(supplyAmountBN.toBN().toFixed(sysConfig.decimalPlacesInput));
       }
 
       const price: BigNum = targetAmountBN.div(supplyAmountBN);
@@ -184,7 +193,8 @@ export default function Swap(): React.ReactElement {
     }
 
     calSwapInfo();
-  }, [apiInited, fromToken, toToken, fromTokenAmount, toTokenAmount, autoCalAmount, myTokenTypesByName]);
+    setShouldFetchPrice(false);
+  }, [apiInited, fromToken, toToken, shouldFetchPrice, fromTokenAmount, toTokenAmount, autoCalAmount, myTokenTypesByName]);
 
   // update price info
   useEffect(() => {
@@ -192,13 +202,13 @@ export default function Swap(): React.ReactElement {
       if (price == null || fromToken == null || toToken == null) {
         setPriceInfo('');
       } else {
-        setPriceInfo(`${price.toBN().toFixed(sysConfig.decimalPlaces)} ${toToken.name} per ${fromToken.name}`);
+        setPriceInfo(`${price.toBN().toFixed(sysConfig.decimalPlacesInfo)} ${toToken.name} per ${fromToken.name}`);
       }
     } else {
       if (priceReverse == null || fromToken == null || toToken == null) {
         setPriceInfo('');
       } else {
-        setPriceInfo(`${priceReverse.toBN().toFixed(sysConfig.decimalPlaces)} ${fromToken.name} per ${toToken.name}`);
+        setPriceInfo(`${priceReverse.toBN().toFixed(sysConfig.decimalPlacesInfo)} ${fromToken.name} per ${toToken.name}`);
       }
     }
 
@@ -314,7 +324,7 @@ export default function Swap(): React.ReactElement {
                   <TransactionInfoLabel>Minimum Received:</TransactionInfoLabel>
                   <i className='fo-info clover-info' onClick={() => {''}}></i>
                 </RowFixed>
-                <TransactionInfo>{minReceived == null ? '' : `${minReceived.toFixed(sysConfig.decimalPlaces)} ${toToken?.name}`}</TransactionInfo>
+                <TransactionInfo>{minReceived == null ? '' : `${minReceived.toFixed(sysConfig.decimalPlacesInfo)} ${toToken?.name}`}</TransactionInfo>
               </AutoRow>
 
               <AutoRow justify='space-between'>
@@ -322,7 +332,7 @@ export default function Swap(): React.ReactElement {
                   <TransactionInfoLabel>Price Impact:</TransactionInfoLabel>
                   <i className='fo-info clover-info' onClick={() => {''}}></i>
                 </RowFixed>
-                <TransactionInfo>{priceImpact == null ? '' : `${priceImpact.times(100).toFixed(sysConfig.decimalPlaces)}%`}</TransactionInfo>
+                <TransactionInfo>{priceImpact == null ? '' : `${priceImpact.times(100).toFixed(sysConfig.decimalPlacesInfo)}%`}</TransactionInfo>
               </AutoRow>
 
               <AutoRow justify='space-between'>
@@ -330,7 +340,7 @@ export default function Swap(): React.ReactElement {
                   <TransactionInfoLabel>Liquidity Provder Fee:</TransactionInfoLabel>
                   <i className='fo-info clover-info' onClick={() => {''}}></i>
                 </RowFixed>
-                <TransactionInfo>{liquidityProviderFee.toFixed(sysConfig.decimalPlaces)} {fromToken?.name}</TransactionInfo>
+                <TransactionInfo>{liquidityProviderFee.toFixed(sysConfig.decimalPlacesInfo)} {fromToken?.name}</TransactionInfo>
               </AutoRow>
 
               <TransactionInfoLabel>Route:</TransactionInfoLabel>

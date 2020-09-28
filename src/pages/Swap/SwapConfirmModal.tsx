@@ -248,22 +248,22 @@ export default function SwapConfirmModal({
             <TransactionInfoPanel gap='6px'>
               <AutoRow justify='space-between'>
                 <TransactionInfoLabel>Price</TransactionInfoLabel>
-                <TransactionInfo>{price == null ? '' : `${price.toFixed(sysConfig.decimalPlaces)} ${toToken?.name}/${fromToken?.name}`}</TransactionInfo>
+                <TransactionInfo>{price == null ? '' : `${price.toFixed(sysConfig.decimalPlacesInfo)} ${toToken?.name}/${fromToken?.name}`}</TransactionInfo>
               </AutoRow>
 
               <AutoRow justify='space-between'>
                 <TransactionInfoLabel>Minimum received</TransactionInfoLabel>
-                <TransactionInfo>{minReceived == null ? '' : `${minReceived.toFixed(sysConfig.decimalPlaces)} ${toToken?.name}`}</TransactionInfo>
+                <TransactionInfo>{minReceived == null ? '' : `${minReceived.toFixed(sysConfig.decimalPlacesInfo)} ${toToken?.name}`}</TransactionInfo>
               </AutoRow>
 
               <AutoRow justify='space-between'>
                 <TransactionInfoLabel>Price Impact</TransactionInfoLabel>
-                <TransactionInfo>{priceImpact == null ? '' : `${priceImpact.times(100).toFixed(sysConfig.decimalPlaces)}%`}</TransactionInfo>
+                <TransactionInfo>{priceImpact == null ? '' : `${priceImpact.times(100).toFixed(sysConfig.decimalPlacesInfo)}%`}</TransactionInfo>
               </AutoRow>
 
               <AutoRow justify='space-between'>
                 <TransactionInfoLabel>Liquidity Provder Fee</TransactionInfoLabel>
-                <TransactionInfo>{liquidityProviderFee == null ? '' : liquidityProviderFee.toFixed(sysConfig.decimalPlaces)} {fromToken?.name}</TransactionInfo>
+                <TransactionInfo>{liquidityProviderFee == null ? '' : liquidityProviderFee.toFixed(sysConfig.decimalPlacesInfo)} {fromToken?.name}</TransactionInfo>
               </AutoRow>
 
             </TransactionInfoPanel>

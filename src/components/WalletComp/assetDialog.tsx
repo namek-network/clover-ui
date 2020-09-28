@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useState, useMemo} from 'react';
 import {getAddress} from './utils'
 import styled from 'styled-components'
 import _ from 'lodash'
@@ -9,6 +9,8 @@ import BigNum from '../../types/bigNum'
 
 import './index.css'
 import { WalletType } from '../../utils/AccountUtils';
+import { TokenType } from '../../state/token/types';
+import {SerializableBigNum} from '../../types/bigNum';
 
 const BodyWrapper = styled(Column)`
   overflow: auto;
@@ -75,6 +77,17 @@ export default function AssetDialog({ account, wallet, onClose, open }: AssetDia
       setPositionLeft(leftPosition + 'px')
     }
   }, []);
+  const showData = useMemo(() => {
+    return _.map(tokenAmounts, (tokenAmount: TokenAmount) => {
+      if (tokenAmount.tokenType.name === 'CLV' || tokenAmount.tokenType.name === 'DOT') {
+        return {...tokenAmount, convertTo: ''}
+      } else {
+        return {
+          ...tokenAmount, convertTo: tokenAmount.tokenType.name.substring(1)
+        }
+      }
+    })
+  }, [tokenAmounts])
 
   const customStyle = 'border-radius: 16px; max-width: 530px; width: 528px;'
   return (
@@ -102,15 +115,18 @@ export default function AssetDialog({ account, wallet, onClose, open }: AssetDia
           <div className="asset-token-title">My assets</div>
           <div className="asset-token-list">
             {
-              tokenAmounts.map((tokenAmount: TokenAmount, index: number) => (
+              showData.map((tokenAmount: {tokenType: TokenType, amount: string, amountBN: SerializableBigNum, convertTo: string}, index: number) => (
                 <div className='asset-token-amount-item' key={index}>
                   <div className="row-container">
                     <img alt={''} src={tokenAmount.tokenType.logo}></img>
                     <div className="margin-left-9">
                       <div className="asset-token-name">{tokenAmount.tokenType.name}</div>
                       <div className="asset-deposit-name">
-                        <span>Deposit</span>
-                        <span className="margin-left-15">Convert to ETH</span>
+                        <span>Deposit</span> 
+                        {
+                          !_.isEmpty(tokenAmount.convertTo) && <span className="margin-left-15">{`Convert to ${tokenAmount.convertTo}`}</span>
+
+                        }
                       </div>
                     </div>
                   </div>
@@ -123,13 +139,13 @@ export default function AssetDialog({ account, wallet, onClose, open }: AssetDia
           <div className="asset-token-title margin-top-20">Recent Transactions</div>
           <div className="asset-token-list asset-trans-text padding-16 margin-bottom-16 ">
             <div className='asset-trans-item'>
-              <span>Swap 14 BxETH for 12.6743553 DOT</span>
+              <span>Swap 14 CLV for 12.6743553 DOT</span>
             </div>
             <div className='asset-trans-item margin-top-10'>
-              <span>Swap 14 BxETH for 12.6743553 DOT</span>
+              <span>Swap 14 CLV for 12.6743553 DOT</span>
             </div>
             <div className='asset-trans-item margin-top-10'>
-              <span>Swap 14 BxETH for 12.6743553 DOT</span>
+              <span>Swap 14 CLV for 12.6743553 DOT</span>
             </div>
           </div>
         </div>

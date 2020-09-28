@@ -1,8 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import styled from 'styled-components';
 import Column, {ColumnCenter} from '../../components/Column'
-import { darken } from 'polished';
-import { Button as RebassButton } from 'rebass/styled-components'
 import {RowBetween} from '../../components/Row'
 import { PairTransContent, PairIconTitle } from './poolPairItem'
 import _ from 'lodash'
@@ -16,6 +14,7 @@ import { useApiInited } from '../../state/api/hooks';
 import { useAccountInfo } from '../../state/wallet/hooks'
 import { doAddLiqudityTrans } from '../../utils/transUtils'
 import { toast } from 'react-toastify';
+import { PrimitiveButton } from '../../components/Button'
 
 
 const customStyle = "position: relative; overflow: visible; max-width:472px;"
@@ -43,26 +42,8 @@ const Wrapper = styled(ColumnCenter)`
   padding: 0 27px 16px 24px;
 `
 
-export const Button = styled(RebassButton)`
-  color: white;
-  border: 0;
-  background: #FF6E12;
-  border-radius: 8px;
-  font-size: 18px;
-  outline: none;
-  height: 49px;
-  width: 100%;
+export const Button = styled(PrimitiveButton)`
   margin-top: 12px;
-
-  &:focus {
-    outline: none;
-  }
-  &:hover {
-    background-color: ${({ disabled }) => !disabled && darken(0.08, '#FF6E12')};
-  }
-  :disabled {
-    opacity: 0.4;
-  }
 }`
 
 const PairContentWrapper = styled.div`

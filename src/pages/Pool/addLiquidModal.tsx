@@ -2,8 +2,6 @@ import React, { useEffect, useState, useCallback } from 'react';
 import styled from 'styled-components';
 import { TokenType } from '../../state/token/types';
 import Column, {ColumnCenter} from '../../components/Column'
-import { darken } from 'polished';
-import { Button as RebassButton } from 'rebass/styled-components'
 import Row, {RowBetween} from '../../components/Row'
 import Circle from '../../components/Circle'
 import { PairTransContent, PairIconTitle } from './poolPairItem'
@@ -17,6 +15,7 @@ import { PoolPairItem as PoolPairItemType } from '../../state/pool/types'
 import { DataFromAddLiquid } from './index'
 import {selectedPairExists, findPairItem} from './utils'
 import { showTextType } from './types'
+import {PrimitiveButton} from '../../components/Button'
 
 
 const customStyle = "position: relative;overflow: visible;max-width:472px;"
@@ -60,26 +59,8 @@ const CirclePlus = styled.div`
   z-index: 2;
 `
 
-export const Button = styled(RebassButton)`
-  color: white;
-  border: 0;
-  background: #FF6E12;
-  border-radius: 8px;
-  font-size: 18px;
-  outline: none;
-  height: 49px;
-  width: 100%;
+export const Button = styled(PrimitiveButton)`
   margin-top: 12px;
-
-  &:focus {
-    outline: none;
-  }
-  &:hover {
-    background-color: ${({ disabled }) => !disabled && darken(0.08, '#FF6E12')};
-  }
-  :disabled {
-    opacity: 0.4;
-  }
 }`
 
 const ContentWrapper = styled(Column)`
@@ -90,16 +71,19 @@ const ContentWrapper = styled(Column)`
   padding: 16px 16px 0 16px;
 `
 
-const RightWrapper = styled(Column)`
+const RightWrapper = styled(({ startAnimation, ...rest }) => (
+  <Column {...rest} />
+))`
   position: absolute;
   bottom: 0;
-  right: -435px;
+  right: ${({ startAnimation }) => (startAnimation ? '-435px' : '0')};
   width: 420px;
   background: #FFFFFF;
   box-shadow: 0px 0px 20px 0px rgba(17, 26, 52, 0.1);
   border-radius: 16px;
-  opacity: 0.75;
+  opacity: ${({ startAnimation }) => (startAnimation ? '0.75' : '0')};
   padding: 22px 52px 0 42px;
+  transition:  right 0.3s, opacity 0.3s;
 `
 
 const PairTitleWrapper = styled.div`
@@ -157,6 +141,8 @@ interface AddLiquidModalProps {
 export default function AddLiquidModal({isOpen, onClose, fromTokenType, toTokenType}: AddLiquidModalProps): React.ReactElement {
   const [fromToken, setFromToken] = useState<TokenType | undefined>(fromTokenType);
   const [fromTokenAmount, setFromTokenAmount] = useState<string>('');
+
+  const [startAnimation, setStartAnimation] = useState(false);
 
   const [toToken, setToToken] = useState<TokenType | undefined>(toTokenType);
   const [toTokenAmount, setToTokenAmount] = useState('');
@@ -358,6 +344,7 @@ export default function AddLiquidModal({isOpen, onClose, fromTokenType, toTokenT
   }, [chainPoolItems, userPoolItems, fromToken, toToken, fromTokenAmount, toTokenAmount])
 
   useEffect(() => {
+    setStartAnimation(false)
     const itemInPool = findPairItem(userPoolItems, fromToken, toToken)
     if (_.isEmpty(itemInPool)) {
       return
@@ -390,7 +377,17 @@ export default function AddLiquidModal({isOpen, onClose, fromTokenType, toTokenT
         amount: `${div(item?.userShare ?? '', item?.totalShare ?? '', true)}%`
       }
     ])
+    
   }, [fromToken, toToken, userPoolItems])
+
+  useEffect(() => {
+    if (isOpen) {
+      setTimeout(() => {setStartAnimation(true)}, 0)
+    } else {
+      setStartAnimation(false)
+    }
+    
+  }, [isOpen])
 
     return (
       <Modal isOpen={isOpen} onDismiss={() => {''}} maxHeight={90} customStyle={customStyle}>
@@ -459,7 +456,7 @@ export default function AddLiquidModal({isOpen, onClose, fromTokenType, toTokenT
         </BodyWrapper>
         {
           selectedPairExists(userPoolItems, fromToken, toToken) && 
-          <RightWrapper>
+          <RightWrapper startAnimation={startAnimation}>
             <Column>
               <Title>My position</Title>
               <PairTitleWrapper>

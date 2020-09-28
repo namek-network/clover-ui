@@ -41,7 +41,7 @@ const StyledDialogOverlay = styled(AnimatedDialogOverlay)`
     justify-content: center;
     min-width: 650px;
 
-    background-color: rgba(0,0,0,0.3);
+    background-color: rgba(0,0,0,0.65);
   }
 `
 const AnimatedDialogContent = animated(DialogContent)

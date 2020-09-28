@@ -1,7 +1,5 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Button as RebassButton } from 'rebass/styled-components'
-import { darken } from 'polished';
 import { Text } from 'rebass'
 import { X } from 'react-feather'
 import { toast } from 'react-toastify';
@@ -12,6 +10,7 @@ import { useSwapTransStateUpdate } from '../../state/swap/hooks';
 import Modal from '../../components/Modal'
 import Column, { AutoColumn } from '../../components/Column'
 import { AutoRow, RowBetween, RowFixed } from '../../components/Row'
+import { ButtonBigCommon } from '../../components/Button';
 import CurrencyLogo from '../../components/CurrencyLogo'
 import sysConfig from '../../configs/sysConfig';
 import swapUtils from '../../utils/swapUtils';
@@ -31,56 +30,6 @@ const CloseIcon = styled(X)<{ onClick: () => void }>`
 const ContentWrapper = styled(AutoColumn)`
   margin: 10px; 15px;
 `;
-
-const ConfirmSwapButton = styled(RebassButton)`
-  padding: 18px;
-  height: 49px;
-  width: 100%;
-  text-align: center;
-  border-radius: 8px;
-  outline: none;
-  border: 1px solid transparent;
-  text-decoration: none;
-  background: #FF6E12;
-  color: #FFFFFF;
-  font-size: 18px;
-  font-weight: 500;
-  font-family: Helvetica;
-
-  display: flex;
-  justify-content: center;
-  flex-wrap: nowrap;
-  align-items: center;
-
-  cursor: pointer;
-  position: relative;
-  z-index: 1;
-  &:disabled {
-    cursor: auto;
-  }
-
-  > * {
-    user-select: none;
-  }
-
-  &:focus {
-    background-color: ${({ disabled }) => !disabled && darken(0.08, '#FF6E12')};
-    outline: none;
-  }
-  &:hover {
-    background-color: ${({ disabled }) => !disabled && darken(0.08, '#FF6E12')};
-  }
-  :disabled {
-    opacity: 0.4;
-    :hover {
-      cursor: auto;
-      background-color: #FDEAF1;
-      box-shadow: none;
-      border: 1px solid transparent;
-      outline: none;
-    }
-  }
-`
 
 const FromToText = styled(Text)`
   height: 16px;
@@ -269,8 +218,7 @@ export default function SwapConfirmModal({
             </TransactionInfoPanel>
           </ContentWrapper>
 
-
-          <ConfirmSwapButton onClick={handleConfirmSwap}>Confirm Swap</ConfirmSwapButton>
+          <ButtonBigCommon onClick={handleConfirmSwap}>Confirm Swap</ButtonBigCommon>
 
         </PaddedColumn>
       </Column>

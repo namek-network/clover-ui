@@ -5,7 +5,6 @@ import { FixedSizeList } from 'react-window'
 import { Text } from 'rebass'
 import { X } from 'react-feather'
 import Column from '../Column'
-import QuestionHelper from '../QuestionHelper'
 import { RowBetween } from '../Row'
 import CurrencyList from './CurrencyList'
 import { filterTokens, filterPairs } from './filtering'
@@ -96,7 +95,6 @@ export function CurrencySearch({
               forPair ? 'Select a pair' : 'Select a token'
             }
           </Text>
-          <QuestionHelper text="Find a token by searching for its name or symbol." />
           <CloseIcon onClick={onDismiss} />
         </RowBetween>
         <SearchInput

@@ -13,11 +13,15 @@ const PopoverContainer = styled.div<{ show: boolean }>`
   opacity: ${props => (props.show ? 1 : 0)};
   transition: visibility 150ms linear, opacity 150ms linear;
 
-  background: #F7F8FA;
   border: 1px solid #EDEEF2;
   box-shadow: 0 4px 8px 0 ${transparentize(0.9, '#2F80ED')};
-  color: #565A69;
-  border-radius: 8px;
+
+  background: rgba(17, 26, 52, 0.85);
+  border-radius: 4px;
+  font-size: 12px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: #FFFFFF;
 `;
 
 const ReferenceElement = styled.div`
@@ -38,7 +42,7 @@ const Arrow = styled.div`
     content: '';
     border: 1px solid #EDEEF2;
     transform: rotate(45deg);
-    background: #F7F8FA;
+    background: rgba(17, 26, 52, 0.85);
   }
 
   &.arrow-top {

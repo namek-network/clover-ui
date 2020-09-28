@@ -1,5 +1,4 @@
 import React, { useCallback, useState } from 'react';
-import { HelpCircle as Question } from 'react-feather';
 import styled from 'styled-components';
 import Tooltip from '../Tooltip';
 
@@ -11,16 +10,12 @@ const QuestionWrapper = styled.div`
   border: none;
   background: none;
   outline: none;
-  cursor: default;
-  border-radius: 36px;
-  background-color: #F7F8FA;
-  color: #565A69;
 
-  :hover,
-  :focus {
-    opacity: 0.7;
-  }
-`;
+  font-size: 16px;
+  font-family: fontoed;
+  color: #F5A623;
+  cursor: pointer;
+`
 
 export default function QuestionHelper({ text }: { text: string }): React.ReactElement {
   const [show, setShow] = useState<boolean>(false)
@@ -29,12 +24,10 @@ export default function QuestionHelper({ text }: { text: string }): React.ReactE
   const close = useCallback(() => setShow(false), [setShow])
 
   return (
-    <span style={{ marginLeft: 4 }}>
-      <Tooltip text={text} show={show}>
-        <QuestionWrapper onClick={open} onMouseEnter={open} onMouseLeave={close}>
-          <Question size={16} color='#F5A623' />
-        </QuestionWrapper>
-      </Tooltip>
-    </span>
+    <Tooltip text={text} show={show}>
+      <QuestionWrapper onClick={open} onMouseEnter={open} onMouseLeave={close}>
+        <i className='fo-info'></i>
+      </QuestionWrapper>
+    </Tooltip>
   )
 }

@@ -85,12 +85,12 @@ export const ButtonBigCommon = styled(RebassButton)<{
     user-select: none;
   }
 
-  &:hover {
-    background-color: ${({ disabled }) => !disabled && '#FF9712'};
-  }
   &:focus {
     background-color: ${({ disabled }) => !disabled && '#FF6E12'};
     outline: none;
+  }
+  &:hover {
+    background-color: ${({ disabled }) => !disabled && '#FF9712'};
   }
   :disabled {
     background-color: #E2E4EA;
@@ -134,12 +134,12 @@ export const ButtonSmallPrimary = styled(RebassButton)<{
     user-select: none;
   }
 
-  &:hover {
-    background-color: ${({ disabled }) => !disabled && '#FF9712'};
-  }
   &:focus {
     background-color: ${({ disabled }) => !disabled && '#FF8212'};
     outline: none;
+  }
+  &:hover {
+    background-color: ${({ disabled }) => !disabled && '#FF9712'};
   }
   :disabled {
     background-color: #E2E4EA;
@@ -183,12 +183,12 @@ export const ButtonSmallSecondary = styled(RebassButton)<{
     user-select: none;
   }
 
-  &:hover {
-    background-color: ${({ disabled }) => !disabled && '#FCF0DC'};
-  }
   &:focus {
     background-color: ${({ disabled }) => !disabled && '#FFE8BF'};
     outline: none;
+  }
+  &:hover {
+    background-color: ${({ disabled }) => !disabled && '#FCF0DC'};
   }
   :disabled {
     background-color: #E2E4EA;

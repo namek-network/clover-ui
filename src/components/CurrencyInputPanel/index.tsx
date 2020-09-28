@@ -59,7 +59,10 @@ const Aligner = styled.span`
 
 const StyledTokenName = styled.span<{ active?: boolean }>`
   ${({ active }) => (active ? '  margin: 0 0.25rem 0 0.75rem;' : '  margin: 0 0.25rem 0 0.25rem;')}
-  font-size:  ${({ active }) => (active ? '20px' : '15px')};
+
+  font-size: 18px;
+  font-family: Helvetica;
+  color: #111A34;
 `
 
 const StyledDropDown = styled(DropDown)`

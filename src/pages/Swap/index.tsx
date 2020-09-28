@@ -1,26 +1,27 @@
-import _ from 'lodash';
-import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
-import { BigNumber as BN } from "bignumber.js";
-import { ButtonBigCommon } from '../../components/Button';
-import { AutoColumn } from '../../components/Column';
-import { AutoRow, RowFixed } from '../../components/Row';
-import { SwapPoolTabs } from '../../components/NavigationTabs';
-import CurrencyInputPanel from '../../components/CurrencyInputPanel';
-import { Wrapper, BottomGrouping, SwapRoutes } from '../../components/Swap/styleds';
-import SwapConfirmhModal from './SwapConfirmModal';
-import SwapTransStateModal from './SwapTransStateModal';
-import { TokenType } from '../../state/token/types';
-import { useTokenTypes } from '../../state/token/hooks';
-import { useAccountInfo } from '../../state/wallet/hooks';
-import { useApiInited } from '../../state/api/hooks';
-import { useSlippageTol } from '../../state/settings/hooks';
-import BigNum  from '../../types/bigNum';
+import _ from 'lodash'
+import React, { useState, useEffect } from 'react'
+import styled from 'styled-components'
+import { BigNumber as BN } from "bignumber.js"
+import { ButtonBigCommon } from '../../components/Button'
+import { AutoColumn } from '../../components/Column'
+import { AutoRow, RowFixed } from '../../components/Row'
+import { SwapPoolTabs } from '../../components/NavigationTabs'
+import CurrencyInputPanel from '../../components/CurrencyInputPanel'
+import { Wrapper, BottomGrouping, SwapRoutes } from '../../components/Swap/styleds'
+import QuestionHelper from '../../components/QuestionHelper'
+import SwapConfirmhModal from './SwapConfirmModal'
+import SwapTransStateModal from './SwapTransStateModal'
+import { TokenType } from '../../state/token/types'
+import { useTokenTypes } from '../../state/token/hooks'
+import { useAccountInfo } from '../../state/wallet/hooks'
+import { useApiInited } from '../../state/api/hooks'
+import { useSlippageTol } from '../../state/settings/hooks'
+import BigNum  from '../../types/bigNum'
 import WalletConnectComp from '../../components/WalletComp/walletConnectComp'
-import { api } from '../../utils/apiUtils';
-import numUtils from '../../utils/numUtils';
-import swapUtils from '../../utils/swapUtils';
-import sysConfig from '../../configs/sysConfig';
+import { api } from '../../utils/apiUtils'
+import numUtils from '../../utils/numUtils'
+import swapUtils from '../../utils/swapUtils'
+import sysConfig from '../../configs/sysConfig'
 import '../../assets/vendors/font-bxb/bxb-font.css'
 import ImgSwitch from '../../assets/images/switch.svg'
 import './index.css'
@@ -320,17 +321,14 @@ export default function Swap(): React.ReactElement {
               </AutoRow>
 
               <AutoRow justify='space-between'>
-                <RowFixed>
-                  <TransactionInfoLabel>Minimum Received:</TransactionInfoLabel>
-                  <i className='fo-info clover-info' onClick={() => {''}}></i>
-                </RowFixed>
+                <TransactionInfoLabel>Minimum Received:</TransactionInfoLabel>
                 <TransactionInfo>{minReceived == null ? '' : `${minReceived.toFixed(sysConfig.decimalPlacesInfo)} ${toToken?.name}`}</TransactionInfo>
               </AutoRow>
 
               <AutoRow justify='space-between'>
                 <RowFixed>
                   <TransactionInfoLabel>Price Impact:</TransactionInfoLabel>
-                  <i className='fo-info clover-info' onClick={() => {''}}></i>
+                  <QuestionHelper text="The difference between the market price and estimated price due to trade size" />
                 </RowFixed>
                 <TransactionInfo>{priceImpact == null ? '' : `${priceImpact.times(100).toFixed(sysConfig.decimalPlacesInfo)}%`}</TransactionInfo>
               </AutoRow>
@@ -338,7 +336,7 @@ export default function Swap(): React.ReactElement {
               <AutoRow justify='space-between'>
                 <RowFixed>
                   <TransactionInfoLabel>Liquidity Provder Fee:</TransactionInfoLabel>
-                  <i className='fo-info clover-info' onClick={() => {''}}></i>
+                  <QuestionHelper text="A portion of each trade (0.25%) goes to liquidity providers as a protocol incentive" />
                 </RowFixed>
                 <TransactionInfo>{liquidityProviderFee.toFixed(sysConfig.decimalPlacesInfo)} {fromToken?.name}</TransactionInfo>
               </AutoRow>

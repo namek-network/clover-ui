@@ -9,6 +9,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import App from './pages/App';
 import store from './state';
 import * as serviceWorker from './serviceWorker';
+import './index.css';
 
 import ImgBg from './assets/images/bg.svg';
 

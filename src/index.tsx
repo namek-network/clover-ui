@@ -28,8 +28,9 @@ const BithumbGlobalStyle = createGlobalStyle`
     min-height: 100vh;
 
     background-image: url(${ImgBg});
-    background-size: 90% 100%;
+    background-size: cover;
     background-repeat: no-repeat;
+    background-position: top left;
   }
 `;
 

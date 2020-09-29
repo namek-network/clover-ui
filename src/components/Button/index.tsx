@@ -184,13 +184,17 @@ export const ButtonSmallSecondary = styled(RebassButton)<{
   }
 
   &:focus {
-    background-color: ${({ disabled }) => !disabled && '#FFE8BF'};
+    background-color: ${({ disabled }) => !disabled && '#FFFFFF'};
     outline: none;
   }
   &:hover {
     background-color: ${({ disabled }) => !disabled && '#FCF0DC'};
   }
-  :disabled {
+  &:active {
+    background-color: ${({ disabled }) => !disabled && '#FFE8BF'};
+    outline: none;
+  }
+  &:disabled {
     background-color: #E2E4EA;
     :hover {
       cursor: auto;

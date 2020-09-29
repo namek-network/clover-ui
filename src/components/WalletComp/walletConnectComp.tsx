@@ -53,12 +53,12 @@ export default function WalletConnectComp({
 
     async function getAcount() {
       if (!apiInited) {
-        toast('Api is not ready, please try later!')
+        // toast('Api is not ready, please try later!')
         return 
       }
       const msg = await loadAccount(value, myTokenTypes, updateAccountInfo);
       if (msg !== 'ok') {
-        toast(t(msg))
+        // toast(t(msg))
       }
     }
 

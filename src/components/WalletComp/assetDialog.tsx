@@ -103,7 +103,7 @@ export default function AssetDialog({ account, wallet, onClose, open }: AssetDia
 
   const copyAddress = (addr: string) => {
     navigator.clipboard.writeText(addr)
-    toast(t('copySuccess'))
+    // toast(t('copySuccess'))
   }
 
   const customStyle = 'border-radius: 16px; max-width: 530px; width: 528px;'

@@ -120,7 +120,7 @@ export default function SwapConfirmModal({
     onConfirmSwap();
 
     const onError = (msg: string) => {
-      toast(msg)
+      // toast(msg)
     }
 
     const amountText = `Swapping ${fromTokenAmount} ${fromToken.name} to ${toTokenAmount} ${toToken.name}`

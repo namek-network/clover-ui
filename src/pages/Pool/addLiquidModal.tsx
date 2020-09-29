@@ -9,7 +9,7 @@ import _ from 'lodash'
 import Modal from '../../components/Modal'
 import CurrencyInputPanel from '../../components/CurrencyInputPanel';
 import { useAccountInfo } from '../../state/wallet/hooks';
-import BigNum, {div, times}  from '../../types/bigNum';
+import BigNum, {div, times, add}  from '../../types/bigNum';
 import { useUserPoolPairItems, useChainPoolPairItems } from '../../state/pool/hooks';
 import { PoolPairItem as PoolPairItemType } from '../../state/pool/types'
 import { DataFromAddLiquid } from './index'
@@ -307,18 +307,25 @@ export default function AddLiquidModal({isOpen, onClose, fromTokenType, toTokenT
       const amountFromBig = BigNum.fromBigNum(fAmount ?? '')
       const amountToBig = BigNum.fromBigNum(tAmount ?? '')
 
+      const amountFromInputBig = BigNum.fromRealNum(fromTokenAmount ?? '')
+
+      const estimateTotleBig = BigNum.fromBigNum(add(amountFromBig.bigNum, amountFromInputBig.bigNum))
+      if (!estimateTotleBig.eq(BigNum.Zero)) {
+        percent =  div(amountFromInputBig.bigNum, add(amountFromBig.bigNum, amountFromInputBig.bigNum), true)
+      }
+
       if (!amountFromBig.eq(BigNum.Zero)&& !amountToBig.eq(BigNum.Zero)) {
         r1to2 = div(amountFromBig.bigNum.toString(), amountToBig.bigNum.toString())
         r2to1 = div(amountToBig.bigNum.toString(), amountFromBig.bigNum.toString())
 
-        const userItem = findPairItem(userPoolItems, fromToken, toToken)
-        if (_.isEmpty(userItem)) {
-          percent = '0%'
-        } else {
-          const userShareAmount = BigNum.fromBigNum(userItem?.userShare ?? '')
-          const totalShareAmount = BigNum.fromBigNum(userItem?.totalShare ?? '')
-          percent = div(userShareAmount.bigNum.toString(), totalShareAmount.bigNum.toString(), true) + '%'
-        }
+        // const userItem = findPairItem(userPoolItems, fromToken, toToken)
+        // if (_.isEmpty(userItem)) {
+        //   percent = '0%'
+        // } else {
+        //   const userShareAmount = BigNum.fromBigNum(userItem?.userShare ?? '')
+        //   const totalShareAmount = BigNum.fromBigNum(userItem?.totalShare ?? '')
+        //   percent = div(userShareAmount.bigNum.toString(), totalShareAmount.bigNum.toString(), true) + '%'
+        // }
       }
     } else {
       const amountFromBig = BigNum.fromRealNum(fromTokenAmount)
@@ -341,7 +348,7 @@ export default function AddLiquidModal({isOpen, onClose, fromTokenType, toTokenT
         amount: `${r2to1}`
       },
       {
-        label: `pool share`,
+        label: `Pool share`,
         amount: `${percent}`
       },
     ])

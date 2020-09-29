@@ -39,7 +39,6 @@ const StateTextWrapper = styled(Column)`
   margin-bottom: 30px;
 `
 const AmountText = styled.div`
-  height: 16px;
   font-size: 16px;
   font-family: Helvetica;
   color: #111A34;

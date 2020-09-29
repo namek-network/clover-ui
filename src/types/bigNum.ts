@@ -2,6 +2,13 @@ import { BigNumber as BN } from "bignumber.js";
 import { isNum } from '../utils/numUtils';
 import { trimEnd0 } from '../utils/balanceUtils'
 
+
+export function add(bigNum1: string, bigNum2: string): string {
+  const bn1 = new BN(bigNum1, 10);
+  const bn2 = new BN(bigNum2, 10);
+
+  return bn1.plus(bn2).toFixed()
+}
 export function times(bigNum1: string, bigNum2: string): string {
   const bn1 = new BN(bigNum1, 10);
   const bn2 = new BN(bigNum2, 10);

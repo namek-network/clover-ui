@@ -188,7 +188,7 @@ export default function RemoveLiquidModal({isOpen, onClose, fromTokenType, toTok
       return
     }
     const onError = (msg: string) => {
-      toast(msg)
+      // toast(msg)
     }
 
     const amountText = `Withdrawing ${fromTokenType?.name ?? ''}/${toTokenType?.name ?? ''} Tokens ${amountBN.realNum}`

@@ -139,7 +139,7 @@ export default function LiquidAddConfirmModal({isOpen, onClose, fromToken, toTok
       return
     }
     const onError = (msg: string) => {
-      toast(msg)
+      // toast(msg)
     }
 
     const amountText = `Supplying ${fromAmount.realNum} ${fromToken.name} and  ${toAmount.realNum} ${toToken.name}`

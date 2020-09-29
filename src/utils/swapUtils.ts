@@ -40,7 +40,7 @@ export async function swapCurrency(
   accountInfo: AccountInfo,
   supplyCurrencyId: number, supplyAmount: BigNum, targetCurrencyId: number, targetAmount: BigNum,
   routes: number[],
-  onError: (msg: string) => void, onStart: () => void, onEnd: (state: string) => void) {
+  onError: (msg: string) => void, onStart: () => void, onEnd: (state: string, hash?: string) => void) {
 
   onStart()
 
@@ -68,7 +68,7 @@ export async function swapCurrency(
         params.events.forEach((event: any/*{ phase, event: { data, method, section } }*/) => {
           console.log(`${event.phase.toString()}, ${event.event.methohd}, ${event.event.section},${event.event.data.toString()}` );
         });
-        onEnd('complete')
+        onEnd('complete', `${params.status.asInBlock.toHex()}`)
         unsub()
       }
       });

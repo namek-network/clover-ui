@@ -117,39 +117,25 @@ export default function SwapConfirmModal({
 
   const handleConfirmSwap = () => {
     onConfirmSwap();
-
-    const onError = (msg: string) => {
-      // toast(msg)
-    }
-
+    
     const amountText = `Swapping ${fromTokenAmount} ${fromToken.name} to ${toTokenAmount} ${toToken.name}`
     const onStart = () => {
       transStateUpdate({stateText: 'Waiting for Confrimation', amountText, status: 'start'})
     }
 
-    const onEnd = (state: string, blockHash?: string) => {
-      let stateText = ''
-      let status = ''
-      let hash
-      if (state === 'complete') {
-        stateText = 'Transaction Submitted'
-        status = 'end'
-        hash = blockHash
-      } else if (state === 'rejected') {
-        stateText = 'Transaction Rejected'
-        status = 'rejected'
-      } else {
-        stateText = 'Transaction Failed'
-        status = 'error'
-      }
-      transStateUpdate({stateText: stateText, amountText, status: status, hash})
+    const onSuccess = (blockHash?: string) => {
+      transStateUpdate({stateText: 'Transaction Submitted', amountText, status: 'success', hash: blockHash})
+    }
+
+    const onFailed = (message?: string) => {
+      transStateUpdate({stateText: 'Transaction Failed', amountText, status: 'failed'})
     }
 
     swapUtils.swapCurrency(
       accountInfo,
       fromToken.id, BigNum.fromRealNum(fromTokenAmount), toToken.id, minReceived == null ? BigNum.Zero : BigNum.fromRealNum(minReceived.toString()),
       swapRoutes,
-      onError, onStart, onEnd);
+      onStart, onSuccess, onFailed);
   }
 
   return (

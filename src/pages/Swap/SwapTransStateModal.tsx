@@ -122,7 +122,7 @@ export default function TransferStateModal({isOpen, onClose}: TransferStateModal
               transState.status === 'start' ? <ReactLoading type={'bubbles'} color="#F68C2F" /> 
               : <SubmitIcon>
                   {
-                    transState.status === 'end' ? <i className="fa fo-check-circle"></i> 
+                    transState.status === 'success' ? <i className="fa fo-check-circle"></i> 
                       : <i className="fa fo-x-circle" style={{color: 'red'}}></i>
                   }
                 </SubmitIcon>
@@ -132,12 +132,12 @@ export default function TransferStateModal({isOpen, onClose}: TransferStateModal
             <StateText>{transState.stateText}</StateText>
             <AmountText>{transState.amountText}</AmountText>
             {
-              transState.status === 'end' && <TransLink href={getBlockBrowserAddress(transState.hash)} target="_blank">View on Subscan</TransLink>
+              transState.status === 'success' && <TransLink href={getBlockBrowserAddress(transState.hash)} target="_blank">View on Subscan</TransLink>
             }
           </StateTextWrapper>
 
             {
-              (transState.status === 'end' || transState.status === 'rejected' || transState.status === 'error') && <Button onClick={() => {
+              (transState.status === 'failed') && <Button onClick={() => {
                 onClose()
               }}>Close</Button>
             }

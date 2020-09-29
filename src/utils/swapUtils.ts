@@ -1,5 +1,5 @@
-import _ from 'lodash';
 import { BigNumber as BN } from "bignumber.js";
+import { SubmittableResult } from '@polkadot/api';
 import { web3FromAddress } from '@polkadot/extension-dapp';
 import { AccountInfo } from '../state/wallet/types';
 import { api } from './apiUtils'; 
@@ -30,8 +30,9 @@ async function getSigner(addr: string) {
   try {
     const injected = await web3FromAddress(addr)
     return injected.signer || null
-  } catch (e) {
-    console.log("error"+e)
+  }
+  catch (e) {
+    console.log("error", e)
     return null
   }
 }
@@ -40,47 +41,60 @@ export async function swapCurrency(
   accountInfo: AccountInfo,
   supplyCurrencyId: number, supplyAmount: BigNum, targetCurrencyId: number, targetAmount: BigNum,
   routes: number[],
-  onError: (msg: string) => void, onStart: () => void, onEnd: (state: string, hash?: string) => void) {
+  onStart: () => void, onSuccess: (hash?: string) => void, onFailed: (message?: string) => void) {
 
   onStart()
 
   const signer = await getSigner(accountInfo.address)
   if (signer == null) {
-    onError('no available wallet')
+    onFailed('no available wallet')
     return
   }
 
   api.getApi().setSigner(signer)
 
-  console.log(supplyCurrencyId, supplyAmount.bigNum, targetCurrencyId, targetAmount.bigNum, routes);
-
+  // Create a extrinsic
+  const swapCurrency = api.getApi().tx.bithumbDex.swapCurrency(supplyCurrencyId, supplyAmount.bigNum, targetCurrencyId, targetAmount.bigNum, routes)
+  
+  // Sign and Send the transaction
   let unsub: any;
-
   try {
-    unsub = await api.getApi().tx.bithumbDex.swapCurrency(supplyCurrencyId, supplyAmount.bigNum, targetCurrencyId, targetAmount.bigNum, routes)
-      .signAndSend(accountInfo.address, (params: any) => {
-        console.log('Transaction status:', params.status.type);
-  
-      if (params.status.isInBlock) {
-        console.log('Completed at block hash', params.status.asInBlock.toHex());
-        console.log('Events:');
-  
-        params.events.forEach((event: any/*{ phase, event: { data, method, section } }*/) => {
-          console.log(`${event.phase.toString()}, ${event.event.methohd}, ${event.event.section},${event.event.data.toString()}` );
-        });
-        onEnd('complete', `${params.status.asInBlock.toHex()}`)
-        unsub()
+    /* eslint-disable  @typescript-eslint/no-explicit-any */
+    unsub = await swapCurrency.signAndSend(accountInfo.address, (result: SubmittableResult) => {
+      console.log('swapCurrency result: ', result.toHuman(true));
+
+      if (result.status.isFinalized || result.status.isInBlock) {
+        let success = true;
+        result.events
+          .filter(({ event: { section } }) => section === 'system')
+          .forEach(({ event: { method } }): void => {
+            if (method === 'ExtrinsicFailed') {
+              // TODO: get the error emssage and pass to onFailed
+              success = false;
+            }
+            else if (method === 'ExtrinsicSuccess') {
+
+            }
+          });
+          success ? onSuccess(result.status.isInBlock ? result.status.asInBlock.toHex() : '') : onFailed()
       }
-      });
-  } catch (e) {
+      // isError = status.isDropped || status.isFinalityTimeout || status.isInvalid || status.isUsurped;
+      else if (result.isError) {
+        onFailed()
+      }
+  
+      // isCompleted = isError || status.isInBlock || status.isFinalized;
+      if (result.isCompleted) {
+        unsub();
+      }
+    });
+  }
+  catch (e) {
     console.log('swapCurrency failed', e);
-    if (e.type === 'signature_rejected') {
-      onEnd('rejected')
-    } else {
-      onEnd('error')
-    }
+
+    onFailed(e.toString())
     
-    if (!_.isEmpty(unsub)) {
+    if (unsub) {
       unsub()
     } 
   }

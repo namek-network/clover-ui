@@ -183,7 +183,9 @@ export default function Swap(): React.ReactElement {
         targetAmountBN = BigNum.fromRealNum(toTokenAmount);
         const { balance: supplyAmount, routes } = await api.supplyAmountNeeded((fromToken as TokenType).name, (toToken as TokenType).name, targetAmountBN.bigNum);
         supplyAmountBN = BigNum.fromBigNum(supplyAmount);
-        swapRoutes = routes;
+        // Note: api returns the swap route from 'target' to 'supply' token, need to reverse it
+        const reversedCompleteRoutes = _.reverse([(toToken as TokenType).name, ...routes]);
+        swapRoutes = _.slice(reversedCompleteRoutes, 1);
         setFromTokenAmount(supplyAmountBN.toBN().toFixed(sysConfig.decimalPlacesInput));
         setInsufficientLiquidity(supplyAmountBN.toBN().isZero());
       }

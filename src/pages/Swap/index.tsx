@@ -117,6 +117,7 @@ export default function Swap(): React.ReactElement {
       handleSwitchFromToToken();
     } else {
       setFromToken(selectedToken);
+      setShouldFetchPrice(true);
     }
     setPriceInfoReverse(false);
   };
@@ -126,6 +127,7 @@ export default function Swap(): React.ReactElement {
       handleSwitchFromToToken();
     } else {
       setToToken(selectedToken);
+      setShouldFetchPrice(true);
     }
     setPriceInfoReverse(false);
   };
@@ -142,6 +144,7 @@ export default function Swap(): React.ReactElement {
 
   const insufficientBalance =  walletConnected && (BigNum.fromRealNum(fromTokenAmount ?? '').gt(fromTokenBalance));
 
+  const [insufficientLiquidity, setInsufficientLiquidity] = useState<boolean>(false);
   const [price, setPrice] = useState<BigNum | null>(null);
   const [priceReverse, setPriceReverse] = useState<BigNum | null>(null);
   const [swapRoutes, setSwapRoutes] = useState<string[]>();
@@ -149,7 +152,7 @@ export default function Swap(): React.ReactElement {
 
   const [priceInfo, setPriceInfo] = useState('');
   const [priceInfoReverse, setPriceInfoReverse] = useState<boolean>(false);
-  const showSwapInfo = fromToken && toToken && (fromToken.id !== toToken.id) && (_.toNumber(fromTokenAmount) > 0);
+  const showSwapInfo = fromToken && toToken && (fromToken.id !== toToken.id) && (_.toNumber(fromTokenAmount) > 0) && (_.toNumber(toTokenAmount) > 0);
 
   const slippage = useSlippageTol();
 
@@ -162,6 +165,7 @@ export default function Swap(): React.ReactElement {
     if (!apiInited || fromToken == null || toToken == null || (fromToken.id === toToken.id)
       || (autoCalAmount === AutoCalAmount.ToTokenAmount && !validFromTokenAmount)
       || (autoCalAmount === AutoCalAmount.FromTokenAmount && !validToTokenAmount)) {
+      setInsufficientLiquidity(false);
       return;
     }
 
@@ -173,6 +177,7 @@ export default function Swap(): React.ReactElement {
         targetAmountBN = BigNum.fromBigNum(targetAmount);
         swapRoutes = routes;
         setToTokenAmount(targetAmountBN.toBN().toFixed(sysConfig.decimalPlacesInput));
+        setInsufficientLiquidity(targetAmountBN.toBN().isZero());
       }
       else {
         targetAmountBN = BigNum.fromRealNum(toTokenAmount);
@@ -180,6 +185,7 @@ export default function Swap(): React.ReactElement {
         supplyAmountBN = BigNum.fromBigNum(supplyAmount);
         swapRoutes = routes;
         setFromTokenAmount(supplyAmountBN.toBN().toFixed(sysConfig.decimalPlacesInput));
+        setInsufficientLiquidity(supplyAmountBN.toBN().isZero());
       }
 
       const price: BigNum = targetAmountBN.div(supplyAmountBN);
@@ -299,10 +305,13 @@ export default function Swap(): React.ReactElement {
         </AutoColumn>
 
         <BottomGrouping>
-          {!walletConnected &&
+          {insufficientLiquidity &&
+            <ButtonBigCommon disabled={true}>Insufficient Liquidity</ButtonBigCommon>
+          }
+          {!insufficientLiquidity && !walletConnected &&
             <WalletConnectComp></WalletConnectComp>
           }
-          {walletConnected &&
+          {!insufficientLiquidity && walletConnected &&
             <ButtonBigCommon disabled={!swapEnabled} onClick={() => setSwapConfirmModalOpen(true)}>Swap</ButtonBigCommon>
           }
         </BottomGrouping>

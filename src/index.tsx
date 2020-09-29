@@ -6,10 +6,10 @@ import { isMobile } from 'react-device-detect';
 import { createGlobalStyle } from 'styled-components';
 import { defaultFontSizeParagraph, defaultFontFamilyEn } from './styles';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './index.css';
 import App from './pages/App';
 import store from './state';
 import * as serviceWorker from './serviceWorker';
-import './index.css';
 
 import ImgBg from './assets/images/bg.svg';
 

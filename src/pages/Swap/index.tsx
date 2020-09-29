@@ -33,7 +33,9 @@ const BodyWrapper = styled.div`
 `;
 
 const TransactionInfoPanel = styled(BottomGrouping)`
-  padding: 0px 15px;
+  padding: 15px 15px;
+  background: #F9FAFB;
+  border-radius: 8px;
 `;
 
 const TransactionInfoLabel = styled.span`

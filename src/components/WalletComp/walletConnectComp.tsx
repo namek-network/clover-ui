@@ -6,7 +6,6 @@ import styled from 'styled-components';
 import { supportedWalletTypes, loadAccount } from '../../utils/AccountUtils'
 import WalletSelectDialog from './walletSelectDialog'
 import _ from 'lodash'
-import { toast } from 'react-toastify';
 import { useAccountInfoUpdate } from '../../state/wallet/hooks'
 import { useTokenTypes } from '../../state/token/hooks';
 import { useApiInited } from '../../state/api/hooks'
@@ -64,7 +63,7 @@ export default function WalletConnectComp({
 
     getAcount()
     onWalletClose && onWalletClose(value)
-  }, [apiInited, myTokenTypes, onWalletClose, t, updateAccountInfo]);
+  }, [apiInited, myTokenTypes, onWalletClose, updateAccountInfo]);
 
   return (
     <Wrapper>

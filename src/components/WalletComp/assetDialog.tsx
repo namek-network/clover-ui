@@ -6,8 +6,6 @@ import { TokenAmount, AccountInfo } from '../../state/wallet/types'
 import Modal from '../../components/Modal'
 import Column from '../../components/Column'
 import BigNum from '../../types/bigNum'
-import { toast } from 'react-toastify';
-import { useTranslation } from 'react-i18next'
 
 import './index.css'
 import { WalletType } from '../../utils/AccountUtils';
@@ -76,8 +74,6 @@ interface AssetDialogPropTypes {
 export default function AssetDialog({ account, wallet, onClose, open }: AssetDialogPropTypes): React.ReactElement {
   const { tokenAmounts } = account
   const [positionLeft, setPositionLeft] = useState('0')
-
-  const {t} = useTranslation()
 
   const handleClose = () => {
     onClose();

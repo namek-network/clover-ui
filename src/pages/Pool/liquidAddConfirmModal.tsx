@@ -13,7 +13,6 @@ import { api } from '../../utils/apiUtils'
 import { useApiInited } from '../../state/api/hooks';
 import { useAccountInfo } from '../../state/wallet/hooks'
 import { doAddLiqudityTrans } from '../../utils/transUtils'
-import { toast } from 'react-toastify';
 import { PrimitiveButton } from '../../components/Button'
 
 

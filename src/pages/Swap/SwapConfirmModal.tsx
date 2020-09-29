@@ -2,7 +2,6 @@ import React from 'react'
 import styled from 'styled-components'
 import { Text } from 'rebass'
 import { X } from 'react-feather'
-import { toast } from 'react-toastify';
 import { BigNumber as BN } from "bignumber.js";
 import { TokenType } from '../../state/token/types'
 import { useAccountInfo } from '../../state/wallet/hooks';

@@ -11,7 +11,6 @@ import { TokenType, defaultTokenType } from '../../state/token/types';
 import { PoolPairItem as PoolPairItemType } from '../../state/pool/types'
 import BigNum, {div, times}  from '../../types/bigNum';
 import { useAccountInfo } from '../../state/wallet/hooks';
-import { toast } from 'react-toastify';
 import { doRemoveLiqudityTrans } from '../../utils/transUtils'
 
 import { findPairItem } from './utils';

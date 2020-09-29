@@ -36,7 +36,10 @@ const CloseButton = styled.div`
   cursor: pointer;
 `
 const BodyWrapper = styled(Column)`
-  width: 100%
+  width: 100%;
+  z-index: 1000;
+  background: white;
+  border-radius: 16px;
 `
 
 const Wrapper = styled(ColumnCenter)`
@@ -84,6 +87,7 @@ const RightWrapper = styled(({ startAnimation, ...rest }) => (
   opacity: ${({ startAnimation }) => (startAnimation ? '0.75' : '0')};
   padding: 22px 52px 0 42px;
   transition:  right 0.3s, opacity 0.3s;
+  z-index: 500;
 `
 
 const PairTitleWrapper = styled.div`
@@ -391,6 +395,20 @@ export default function AddLiquidModal({isOpen, onClose, fromTokenType, toTokenT
 
     return (
       <Modal isOpen={isOpen} onDismiss={() => {''}} maxHeight={90} customStyle={customStyle}>
+        {
+          selectedPairExists(userPoolItems, fromToken, toToken) && 
+          <RightWrapper startAnimation={startAnimation}>
+            <Column>
+              <Title>My position</Title>
+              <PairTitleWrapper>
+                <PairIconTitle left={fromToken?.logo ?? ''} right={toToken?.logo ?? ''} title={`${fromToken?.name ?? ''}/${toToken?.name ?? ''}`}></PairIconTitle>
+              </PairTitleWrapper>
+              <PairContentWrapper>
+                <PairTransContent contents={mpShowData}></PairTransContent>
+              </PairContentWrapper>
+            </Column>
+          </RightWrapper>
+        }
         <BodyWrapper>
           <Head>
             <Title>Add liquidity</Title>
@@ -454,20 +472,6 @@ export default function AddLiquidModal({isOpen, onClose, fromTokenType, toTokenT
             
           </Wrapper>
         </BodyWrapper>
-        {
-          selectedPairExists(userPoolItems, fromToken, toToken) && 
-          <RightWrapper startAnimation={startAnimation}>
-            <Column>
-              <Title>My position</Title>
-              <PairTitleWrapper>
-                <PairIconTitle left={fromToken?.logo ?? ''} right={toToken?.logo ?? ''} title={`${fromToken?.name ?? ''}/${toToken?.name ?? ''}`}></PairIconTitle>
-              </PairTitleWrapper>
-              <PairContentWrapper>
-                <PairTransContent contents={mpShowData}></PairTransContent>
-              </PairContentWrapper>
-            </Column>
-          </RightWrapper>
-        }
       </Modal>
     );
 }

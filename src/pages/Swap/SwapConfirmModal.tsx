@@ -27,7 +27,7 @@ const CloseIcon = styled(X)<{ onClick: () => void }>`
 `
 
 const ContentWrapper = styled(AutoColumn)`
-  margin: 10px; 15px;
+  margin: 15px; 15px;
 `;
 
 const FromToText = styled(Text)`
@@ -65,6 +65,7 @@ const HintText = styled(Text)`
 const TransactionInfoPanel = styled(AutoColumn)`
   background: #F9FAFB;
   border-radius: 8px;
+  padding: 16px;
 `;
 
 const TransactionInfoLabel = styled.span`
@@ -181,29 +182,30 @@ export default function SwapConfirmModal({
 
             <HintText>Output is estimated. If the price changes by more than 0.5%. your transaction will revert.</HintText>
 
-            <TransactionInfoPanel gap='6px'>
-              <AutoRow justify='space-between'>
-                <TransactionInfoLabel>Price</TransactionInfoLabel>
-                <TransactionInfo>{price == null ? '' : `${price.toFixed(sysConfig.decimalPlacesInfo)} ${toToken?.name}/${fromToken?.name}`}</TransactionInfo>
-              </AutoRow>
-
-              <AutoRow justify='space-between'>
-                <TransactionInfoLabel>Minimum received</TransactionInfoLabel>
-                <TransactionInfo>{minReceived == null ? '' : `${minReceived.toFixed(sysConfig.decimalPlacesInfo)} ${toToken?.name}`}</TransactionInfo>
-              </AutoRow>
-
-              <AutoRow justify='space-between'>
-                <TransactionInfoLabel>Price Impact</TransactionInfoLabel>
-                <TransactionInfo>{priceImpact == null ? '' : `${priceImpact.times(100).toFixed(sysConfig.decimalPlacesInfo)}%`}</TransactionInfo>
-              </AutoRow>
-
-              <AutoRow justify='space-between'>
-                <TransactionInfoLabel>Liquidity Provder Fee</TransactionInfoLabel>
-                <TransactionInfo>{liquidityProviderFee == null ? '' : liquidityProviderFee.toFixed(sysConfig.decimalPlacesInfo)} {fromToken?.name}</TransactionInfo>
-              </AutoRow>
-
-            </TransactionInfoPanel>
           </ContentWrapper>
+
+          <TransactionInfoPanel gap='6px'>
+            <AutoRow justify='space-between'>
+              <TransactionInfoLabel>Price</TransactionInfoLabel>
+              <TransactionInfo>{price == null ? '' : `${price.toFixed(sysConfig.decimalPlacesInfo)} ${toToken?.name}/${fromToken?.name}`}</TransactionInfo>
+            </AutoRow>
+
+            <AutoRow justify='space-between'>
+              <TransactionInfoLabel>Minimum received</TransactionInfoLabel>
+              <TransactionInfo>{minReceived == null ? '' : `${minReceived.toFixed(sysConfig.decimalPlacesInfo)} ${toToken?.name}`}</TransactionInfo>
+            </AutoRow>
+
+            <AutoRow justify='space-between'>
+              <TransactionInfoLabel>Price Impact</TransactionInfoLabel>
+              <TransactionInfo>{priceImpact == null ? '' : `${priceImpact.times(100).toFixed(sysConfig.decimalPlacesInfo)}%`}</TransactionInfo>
+            </AutoRow>
+
+            <AutoRow justify='space-between'>
+              <TransactionInfoLabel>Liquidity Provder Fee</TransactionInfoLabel>
+              <TransactionInfo>{liquidityProviderFee == null ? '' : liquidityProviderFee.toFixed(sysConfig.decimalPlacesInfo)} {fromToken?.name}</TransactionInfo>
+            </AutoRow>
+
+          </TransactionInfoPanel>
 
           <ButtonBigCommon onClick={handleConfirmSwap}>Confirm Swap</ButtonBigCommon>
 

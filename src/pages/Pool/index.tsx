@@ -81,7 +81,7 @@ const NoLiquidFount = styled.div`
 `
 
 const PoolPaireList = styled.div`
-  max-height: 240px;
+  max-height: calc(100vh - 400px);
   overflow: auto;
   width: 100%;
 `

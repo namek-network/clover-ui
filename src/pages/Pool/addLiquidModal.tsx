@@ -317,15 +317,6 @@ export default function AddLiquidModal({isOpen, onClose, fromTokenType, toTokenT
       if (!amountFromBig.eq(BigNum.Zero)&& !amountToBig.eq(BigNum.Zero)) {
         r1to2 = div(amountFromBig.bigNum.toString(), amountToBig.bigNum.toString())
         r2to1 = div(amountToBig.bigNum.toString(), amountFromBig.bigNum.toString())
-
-        // const userItem = findPairItem(userPoolItems, fromToken, toToken)
-        // if (_.isEmpty(userItem)) {
-        //   percent = '0%'
-        // } else {
-        //   const userShareAmount = BigNum.fromBigNum(userItem?.userShare ?? '')
-        //   const totalShareAmount = BigNum.fromBigNum(userItem?.totalShare ?? '')
-        //   percent = div(userShareAmount.bigNum.toString(), totalShareAmount.bigNum.toString(), true) + '%'
-        // }
       }
     } else {
       const amountFromBig = BigNum.fromRealNum(fromTokenAmount)

@@ -139,8 +139,6 @@ export default function Pool(): React.ReactElement {
 
     const loadPoolItems = async () => {
       const items = await api.getLiquidity(myInfo.address)
-      console.log(`item: ${items}`)
-      
 
       userPoolItemsUpdate(_.map(items, ([fromTokenName, toTokenName, fromAmount, toAmount, userShare, userStaked, totalShare]) => {
         return {
@@ -155,7 +153,6 @@ export default function Pool(): React.ReactElement {
       }))
 
       const chainItems = await api.getLiquidity()
-      console.log(`chain item: ${chainItems}`)
       chainPoolItemsUpdate(_.map(chainItems, ([fromTokenName, toTokenName, fromAmount, toAmount, userShare, userStaked, totalShare]) => {
         return {
           fromToken: _.find(tokenTypes, (tt) => tt.name === fromTokenName.toString()) ?? defaultTokenType,

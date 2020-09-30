@@ -1,4 +1,5 @@
 import React, { Suspense, useEffect, useCallback } from 'react';
+import _ from 'lodash'
 import { HashRouter, Route, Switch } from 'react-router-dom';
 import styled from 'styled-components';
 import { initApi } from '../utils/apiUtils'
@@ -7,6 +8,7 @@ import { useTokenTypesUpdate, useCurrencyPairUpdate } from '../state/token/hooks
 import { ToastContainer, Slide } from 'react-toastify';
 
 import {useApiConnectedUpdate, useApiInited, useApiInitedUpdate} from '../state/api/hooks'
+import { useAccountInfo } from '../state/wallet/hooks'
 
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -42,6 +44,7 @@ export default function App(): React.ReactElement {
   const apiInited = useApiInited()
   const apiInitedUpdate = useApiInitedUpdate()
   const updateApiConnected = useApiConnectedUpdate()
+  const accountInfo = useAccountInfo();
 
   const onApiInited = useCallback(() => {
     apiInitedUpdate(true)
@@ -50,6 +53,7 @@ export default function App(): React.ReactElement {
 
   const updateTokenTypeList = useTokenTypesUpdate()
   const updateCurrencyPair = useCurrencyPairUpdate()
+
 
   const initPolkaApi = useCallback(async () => {
     await initApi(onApiInited, () => {updateApiConnected(true)}, () => {updateApiConnected(false)})
@@ -67,6 +71,13 @@ export default function App(): React.ReactElement {
     loadTokenTypes(updateTokenTypeList)
     loadCurrencyPair(updateCurrencyPair)
   }, [apiInited, updateCurrencyPair, updateTokenTypeList])
+
+  useEffect(() => {
+    if (_.isEmpty(accountInfo.address)) {
+      return
+    }
+    
+  }, [accountInfo])
   
   return (
     <Suspense fallback={null}>

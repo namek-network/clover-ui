@@ -1,4 +1,4 @@
-import React, {useCallback, useState, useMemo} from 'react';
+import React, {useCallback, useState, useMemo, useEffect} from 'react';
 import {getAddress} from './utils'
 import styled from 'styled-components'
 import _ from 'lodash'
@@ -11,8 +11,19 @@ import './index.css'
 import { WalletType } from '../../utils/AccountUtils';
 import { TokenType } from '../../state/token/types';
 import {SerializableBigNum} from '../../types/bigNum';
+import { useRecentTransaction } from '../../state/transaction/hooks';
+import Row, { RowBetween } from '../Row'
+import { transShowTextFromTransRecord } from '../../utils/transShowUtils'
+import { useTokenTypes } from '../../state/token/hooks';
+import {getBlockBrowserAddress} from '../../utils/httpServices'
+import {getRecentTransaction} from '../../utils/blockUtils'
+import { useRecentTransactionUpdate } from '../../state/transaction/hooks'
+import { TransactionRecord } from '../../state/transaction/types'
+import { useAccountInfo } from '../../state/wallet/hooks';
+
 
 const BodyWrapper = styled(Column)`
+  padding-bottom: 16px;
 `
 
 const ContentWrapper = styled.div`
@@ -22,6 +33,7 @@ const ContentWrapper = styled.div`
   margin-left: 24px;
   margin-right: 24px;
   margin-top: 20px;
+  min-height: 260px;
 `
 
 const AddressWrapper = styled.div`
@@ -63,6 +75,59 @@ const ChangeBtn = styled.div<{left: string}>`
   width: 58px;
   text-align: center;
 `
+const RecentTransactionWrapper = styled.div`
+  margin-top: 20px;
+`
+
+const TextGrey = styled.span`
+  font-size: 16px;
+  font-family: Helvetica-Light, Helvetica;
+  font-weight: 300;
+  color: #666F83;
+`
+
+ const TitleWrapper = styled.div``
+
+ const RecentTransactionContentWrapper = styled(Column)`
+  background: #F9FAFB;
+  border-radius: 8px;
+  margin-top: 8px;
+  padding: 10px 16px;
+ `
+
+ const TransactionItem = styled(RowBetween)`
+  align-items: center;
+  padding: 6px 0;
+ `
+
+ const TransLeft = styled(Row)`
+ `
+ const ItemText = styled.div`
+  font-size: 14px;
+  font-family: Helvetica;
+  color: #41485D;
+  line-height: 14px;
+ `
+
+ const TransLink = styled.a`
+  height: 15px;
+  font-size: 15px;
+  color: #C5CAD5;
+  line-height: 15px;
+  cursor: pointer;
+  margin-left: 4px;
+
+  &:hover {
+    color: #C5CAD5;
+    text-decoration: none;
+  }
+`
+const ResultIcon = styled.div`
+  height: 16px;
+  font-size: 16px;
+  color: #56CB8F;
+  line-height: 16px;
+`
 
 interface AssetDialogPropTypes {
   account: AccountInfo,
@@ -74,6 +139,12 @@ interface AssetDialogPropTypes {
 export default function AssetDialog({ account, wallet, onClose, open }: AssetDialogPropTypes): React.ReactElement {
   const { tokenAmounts } = account
   const [positionLeft, setPositionLeft] = useState('0')
+
+  const recentTransactions = useRecentTransaction()
+  const tokenTypes = useTokenTypes()
+  const accountInfo = useAccountInfo();
+
+  const updateRecentTransaction = useRecentTransactionUpdate()
 
   const handleClose = () => {
     onClose();
@@ -96,6 +167,29 @@ export default function AssetDialog({ account, wallet, onClose, open }: AssetDia
       }
     })
   }, [tokenAmounts])
+
+  useEffect(() => {
+    if (_.isEmpty(accountInfo.address) || !open) {
+      return
+    }
+
+    const loadRecentTrasaction = async () => {
+      const recentTransactions = await getRecentTransaction(accountInfo.address)
+      const records: TransactionRecord[] = _.map(recentTransactions, ({ data, method, $blockHash }) => {
+        return {
+          method: method.toString(),
+          data: _.map(data, (d) => d.toString()),
+          $blockHash
+        }
+      })
+
+      console.log(`${JSON.stringify(records)}`)
+
+      updateRecentTransaction(records)
+    }
+
+    loadRecentTrasaction()
+  }, [accountInfo, updateRecentTransaction, open])
 
   const copyAddress = (addr: string) => {
     navigator.clipboard.writeText(addr)
@@ -149,18 +243,33 @@ export default function AssetDialog({ account, wallet, onClose, open }: AssetDia
               }
           </div>
 
-          <div className="asset-token-title margin-top-20">Recent Transactions</div>
-          <div className="asset-token-list asset-trans-text padding-16 margin-bottom-16 ">
-            <div className='asset-trans-item'>
-              <span>Swap 14 CLV for 12.6743553 DOT</span>
-            </div>
-            <div className='asset-trans-item margin-top-10'>
-              <span>Swap 14 CLV for 12.6743553 DOT</span>
-            </div>
-            <div className='asset-trans-item margin-top-10'>
-              <span>Swap 14 CLV for 12.6743553 DOT</span>
-            </div>
-          </div>
+          {
+            !_.isEmpty(recentTransactions) &&
+            <RecentTransactionWrapper>
+              <TitleWrapper>
+                <TextGrey>Recent Transactions</TextGrey>
+              </TitleWrapper>
+              <RecentTransactionContentWrapper>
+                {
+                  _.map(recentTransactions, (trans, index) => {
+                    return (
+                    <TransactionItem key={index}>
+                      <TransLeft>
+                        <ItemText>
+                          {transShowTextFromTransRecord(trans, tokenTypes)}
+                        </ItemText>
+                        <TransLink href={getBlockBrowserAddress(trans.$blockHash)} target="_blank"><i className={'fa fo-external-link'}></i></TransLink>
+                      </TransLeft>
+                      
+                      <ResultIcon><i className={'fa fo-check-circle'}></i></ResultIcon>
+                    </TransactionItem>)
+                    
+                  })
+                }
+              </RecentTransactionContentWrapper>
+            </RecentTransactionWrapper>
+          }
+          
         </ContentWrapper>
       </BodyWrapper>
     </Modal>

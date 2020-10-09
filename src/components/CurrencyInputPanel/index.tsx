@@ -1,11 +1,12 @@
 import React, { useState, useCallback } from 'react'
 import styled, { css }  from 'styled-components'
 import { darken } from 'polished'
-import { TokenType } from '../../state/token/types';
+import { useTranslation } from 'react-i18next'
+import { TokenType } from '../../state/token/types'
 import CurrencySearchModal from '../SearchModal/CurrencySearchModal'
-import { ButtonSmallSecondary } from '../Button';
+import { ButtonSmallSecondary } from '../Button'
 import CurrencyLogo from '../CurrencyLogo'
-import { ReactComponent as DropDown }  from '../../assets/images/dropdown.svg';
+import { ReactComponent as DropDown }  from '../../assets/images/dropdown.svg'
 import { escapeRegExp } from '../../utils'
 
 const InputPanel = styled.div<{ customStyle: string|undefined }>`
@@ -193,6 +194,7 @@ export default function CurrencyInputPanel({
   forPair = false,
   tokenPair
 }: CurrencyInputPanelProps): React.ReactElement {
+  const { t } = useTranslation()
 
   const [modalOpen, setModalOpen] = useState(false)
 
@@ -208,7 +210,7 @@ export default function CurrencyInputPanel({
           onClick={() => { setModalOpen(true) }}
         >
         {(forPair !== true && !(currency && currency !== null)) &&
-          <ButtonSmallSecondary>Select a token</ButtonSmallSecondary>
+          <ButtonSmallSecondary>{t('selectAToken')}</ButtonSmallSecondary>
         }
 
         {(forPair !== true && currency && currency !== null) &&
@@ -262,7 +264,7 @@ export default function CurrencyInputPanel({
         />
 
         {showMaxButton && (
-          <StyledBalanceMax onClick={onMax}>MAX</StyledBalanceMax>
+          <StyledBalanceMax onClick={onMax}>{t('max')}</StyledBalanceMax>
         )}
       </InputRow>
 
@@ -271,11 +273,11 @@ export default function CurrencyInputPanel({
       <BalanceRow>
         <div>
           {insufficientBalance && (
-            <InsufficientBalance>Insufficient Balance</InsufficientBalance> 
+            <InsufficientBalance>{t('insufficientBalance')}</InsufficientBalance> 
           )}
         </div>
         {showBalance && (
-          <Balance>Balance: {balance}</Balance>
+          <Balance>{t('balance')}: {balance}</Balance>
         )}
       </BalanceRow>
 

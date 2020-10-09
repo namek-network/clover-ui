@@ -1,6 +1,7 @@
-import React from 'react';
-import styled, { css } from 'styled-components';
-import { NavLink } from 'react-router-dom';
+import React from 'react'
+import styled, { css } from 'styled-components'
+import { NavLink } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 const Tabs = styled.div<{ customStyle?: string|undefined }>`
   display: flex;
@@ -44,13 +45,15 @@ const StyledNavLink = styled(NavLink).attrs({
 `;
 
 export function SwapPoolTabs({ active, customStyle }: { active: 'swap' | 'pool', customStyle?: string | undefined }): React.ReactElement {
+  const { t } = useTranslation();
+
   return (
     <Tabs style={{ marginBottom: '20px' }} customStyle={customStyle}>
       <StyledNavLink id={`swap-nav-link`} to={'/swap'} isActive={() => active === 'swap'}>
-        Swap
+        {t('swap')}
       </StyledNavLink>
       <StyledNavLink id={`pool-nav-link`} to={'/pool'} isActive={() => active === 'pool'}>
-        Pool
+        {t('pool')}
       </StyledNavLink>
     </Tabs>
   )

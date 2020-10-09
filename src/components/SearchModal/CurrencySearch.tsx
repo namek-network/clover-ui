@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import { FixedSizeList } from 'react-window'
 import { Text } from 'rebass'
 import { X } from 'react-feather'
+import { useTranslation } from 'react-i18next'
 import Column from '../Column'
 import { RowBetween } from '../Row'
 import CurrencyList from './CurrencyList'
@@ -42,7 +43,9 @@ export function CurrencySearch({
   selectedPair,
   onPairSelect
 }: CurrencySearchProps): React.ReactElement {
-  const allTokens = useTokenTypes();
+  const { t } = useTranslation()
+
+  const allTokens = useTokenTypes()
 
   const fixedList = useRef<FixedSizeList>()
   const [searchQuery, setSearchQuery] = useState<string>('')
@@ -92,7 +95,7 @@ export function CurrencySearch({
         <RowBetween>
           <Text fontWeight={500} fontSize={16} color='#777777'>
             {
-              forPair ? 'Select a pair' : 'Select a token'
+              forPair ? 'Select a pair' : t('selectAToken')
             }
           </Text>
           <CloseIcon onClick={onDismiss} />
@@ -100,7 +103,7 @@ export function CurrencySearch({
         <SearchInput
           type="text"
           id="token-search-input"
-          placeholder={'Search token pair'}
+          placeholder={t('searchToken')}
           value={searchQuery}
           ref={inputRef as RefObject<HTMLInputElement>}
           onChange={handleInput}

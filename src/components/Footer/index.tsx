@@ -1,4 +1,5 @@
-import React, { Component } from 'react';
+import React, { ReactElement } from 'react';
+import { useTranslation } from 'react-i18next'
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import styled from 'styled-components';
@@ -17,19 +18,18 @@ const Link = styled.a`
   }
 `;
 
-export default class Footer extends Component {
-  render(): React.ReactElement {
-    return (
-      <Navbar variant="light" className="justify-content-center">
-        <Nav>
-          <Link href="#/home">Home</Link>
-          <Link href="#/developers">Developers</Link>
-          <Link href="#/network">Network</Link>
-          <Link href="#/community">Community</Link>
-          <Link href="#/info">Info</Link>
-        </Nav>
-      </Navbar>
-    );
-  }
+export default function Footer(): ReactElement {
+  const { t } = useTranslation();
 
+  return (
+    <Navbar variant="light" className="justify-content-center">
+      <Nav>
+        <Link href="#/home">{t('footerHome')}</Link>
+        <Link href="#/developers">{t('footerDevelopers')}</Link>
+        <Link href="#/network">{t('footerNetwork')}</Link>
+        <Link href="#/community">{t('footerCommunity')}</Link>
+        <Link href="#/info">{t('footerInfo')}</Link>
+      </Nav>
+    </Navbar>
+  )
 }

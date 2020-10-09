@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
+import { useTranslation } from 'react-i18next'
 import { BigNumber as BN } from "bignumber.js"
 import { ButtonBigCommon } from '../../components/Button'
 import { AutoColumn } from '../../components/Column'
@@ -76,6 +77,8 @@ enum AutoCalAmount {
 }
 
 export default function Swap(): React.ReactElement {
+  const { t } = useTranslation();
+
   const apiInited = useApiInited();
 
   const [fromToken, setFromToken] = useState<TokenType | null>(null);
@@ -310,13 +313,13 @@ export default function Swap(): React.ReactElement {
 
         <BottomGrouping>
           {insufficientLiquidity &&
-            <ButtonBigCommon disabled={true}>Insufficient Liquidity</ButtonBigCommon>
+            <ButtonBigCommon disabled={true}>{t('insufficientLiquidity')}</ButtonBigCommon>
           }
           {!insufficientLiquidity && !walletConnected &&
             <WalletConnectComp></WalletConnectComp>
           }
           {!insufficientLiquidity && walletConnected &&
-            <ButtonBigCommon disabled={!swapEnabled} onClick={() => setSwapConfirmModalOpen(true)}>Swap</ButtonBigCommon>
+            <ButtonBigCommon disabled={!swapEnabled} onClick={() => setSwapConfirmModalOpen(true)}>{t('swap')}</ButtonBigCommon>
           }
         </BottomGrouping>
 
@@ -324,7 +327,7 @@ export default function Swap(): React.ReactElement {
           <TransactionInfoPanel>
             <AutoColumn gap={'sm'}>
               <AutoRow justify='space-between'>
-                <TransactionInfoLabel>Price:</TransactionInfoLabel>
+                <TransactionInfoLabel>{t('price')}:</TransactionInfoLabel>
                 <RowFixed>
                   <TransactionInfo>{priceInfo}</TransactionInfo>
                   <TransactionPriceRefreshWapper onClick={() => setPriceInfoReverse(!priceInfoReverse)}>
@@ -334,27 +337,27 @@ export default function Swap(): React.ReactElement {
               </AutoRow>
 
               <AutoRow justify='space-between'>
-                <TransactionInfoLabel>Minimum Received:</TransactionInfoLabel>
+                <TransactionInfoLabel>{t('minimumReceived')}:</TransactionInfoLabel>
                 <TransactionInfo>{minReceived == null ? '' : `${minReceived.toFixed(sysConfig.decimalPlacesInfo)} ${toToken?.name}`}</TransactionInfo>
               </AutoRow>
 
               <AutoRow justify='space-between'>
                 <RowFixed>
-                  <TransactionInfoLabel>Price Impact:</TransactionInfoLabel>
-                  <QuestionHelper text="The difference between the market price and estimated price due to trade size" />
+                  <TransactionInfoLabel>{t('priceImpact')}:</TransactionInfoLabel>
+                  <QuestionHelper text={t('priceImpactDescription')} />
                 </RowFixed>
                 <TransactionInfo>{priceImpact == null ? '' : `${priceImpact.times(100).toFixed(sysConfig.decimalPlacesInfo)}%`}</TransactionInfo>
               </AutoRow>
 
               <AutoRow justify='space-between'>
                 <RowFixed>
-                  <TransactionInfoLabel>Liquidity Provder Fee:</TransactionInfoLabel>
-                  <QuestionHelper text="A portion of each trade (0.25%) goes to liquidity providers as a protocol incentive" />
+                  <TransactionInfoLabel>{t('liquidityProviderFee')}:</TransactionInfoLabel>
+                  <QuestionHelper text={t('liquidityProviderFeeDescription')} />
                 </RowFixed>
                 <TransactionInfo>{liquidityProviderFee.toFixed(sysConfig.decimalPlacesInfo)} {fromToken?.name}</TransactionInfo>
               </AutoRow>
 
-              <TransactionInfoLabel>Route:</TransactionInfoLabel>
+              <TransactionInfoLabel>{t('route')}:</TransactionInfoLabel>
               {swapRoutes && (
                 <SwapRoutes routes={fromToken == null ? swapRoutes : [fromToken.name, ...swapRoutes]} tokenTypesByName={myTokenTypesByName} />
               )}

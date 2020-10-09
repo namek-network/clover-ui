@@ -1,48 +1,48 @@
-import React, { Component } from 'react';
-import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
+import React, { ReactElement } from 'react'
+import { useTranslation } from 'react-i18next'
+import Nav from 'react-bootstrap/Nav'
+import Navbar from 'react-bootstrap/Navbar'
 import WalletComp from '../WalletComp'
 import SettingsComp from '../Settings'
 import LanguageComp from '../Language'
-import './index.css';
-import ImgLogo from '../../assets/images/logo.svg';
+import './index.css'
+import ImgLogo from '../../assets/images/logo.svg'
 
-export default class Header extends Component {
-  render(): React.ReactElement {
-    return (
-      <Navbar variant="light">
-        <Navbar.Brand href="#/swap">
-          <img
-            src={ImgLogo}
-            className="d-inline-block align-top"
-            alt="Bithumb logo"
-          />
-        </Navbar.Brand>
+export default function Header(): ReactElement {
+  const { t } = useTranslation();
 
-        <Nav variant="pills" defaultActiveKey="swap" className="ml-auto mr-auto">
-          <Nav.Item>
-            <Nav.Link href="#/swap" eventKey="swap">Swap</Nav.Link>
-          </Nav.Item>
-          <Nav.Item>
-            <Nav.Link href="#/lending" eventKey="lending">Lending</Nav.Link>
-          </Nav.Item>
-          <Nav.Item> 
-            <Nav.Link href="#/aggregator" eventKey="aggregator">Aggregator</Nav.Link>
-          </Nav.Item>
-          <Nav.Item><Nav.Link disabled>|</Nav.Link></Nav.Item>
-          <Nav.Item>
-            <Nav.Link href="#/governance" eventKey="governance">Governance</Nav.Link>
-          </Nav.Item>
-          <Nav.Item>
-            <Nav.Link href="#/market" eventKey="market">Market</Nav.Link>
-          </Nav.Item>
-        </Nav>
+  return (
+    <Navbar variant="light">
+      <Navbar.Brand href="#/swap">
+        <img
+          src={ImgLogo}
+          className="d-inline-block align-top"
+          alt="clover logo"
+        />
+      </Navbar.Brand>
 
-        <WalletComp></WalletComp>
-        <SettingsComp></SettingsComp>
-        <LanguageComp></LanguageComp>
-      </Navbar>
-    );
-  }
+      <Nav variant="pills" defaultActiveKey="swap" className="ml-auto mr-auto">
+        <Nav.Item>
+          <Nav.Link href="#/swap" eventKey="swap">{t('headerSwap')}</Nav.Link>
+        </Nav.Item>
+        <Nav.Item>
+          <Nav.Link href="#/lending" eventKey="lending">{t('headerLending')}</Nav.Link>
+        </Nav.Item>
+        <Nav.Item> 
+          <Nav.Link href="#/aggregator" eventKey="aggregator">{t('headerAggregator')}</Nav.Link>
+        </Nav.Item>
+        <Nav.Item><Nav.Link disabled>|</Nav.Link></Nav.Item>
+        <Nav.Item>
+          <Nav.Link href="#/governance" eventKey="governance">{t('headerGovernance')}</Nav.Link>
+        </Nav.Item>
+        <Nav.Item>
+          <Nav.Link href="#/market" eventKey="market">{t('headerMarket')}</Nav.Link>
+        </Nav.Item>
+      </Nav>
 
+      <WalletComp></WalletComp>
+      <SettingsComp></SettingsComp>
+      <LanguageComp></LanguageComp>
+    </Navbar>
+  )
 }

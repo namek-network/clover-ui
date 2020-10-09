@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import ReactLoading from "react-loading"
+import { useTranslation } from 'react-i18next'
 import Column, {ColumnCenter} from '../../components/Column'
 import { darken } from 'polished'
 import { Button as RebassButton } from 'rebass/styled-components'
@@ -108,6 +109,7 @@ interface TransferStateModalProps {
 }
 
 export default function TransferStateModal({isOpen, onClose}: TransferStateModalProps): React.ReactElement {
+  const { t } = useTranslation()
   const transState = useSwapTransState()
 
     return (
@@ -132,7 +134,7 @@ export default function TransferStateModal({isOpen, onClose}: TransferStateModal
             <StateText>{transState.stateText}</StateText>
             <AmountText>{transState.amountText}</AmountText>
             {
-              transState.status === 'success' && <TransLink href={getBlockBrowserAddress(transState.hash)} target="_blank">View on Subscan</TransLink>
+              transState.status === 'success' && <TransLink href={getBlockBrowserAddress(transState.hash)} target="_blank">{t('viewOnSubscan')}</TransLink>
             }
           </StateTextWrapper>
 

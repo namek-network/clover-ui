@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
+import { useTranslation } from 'react-i18next'
 import { Text } from 'rebass'
 import { X } from 'react-feather'
 import { BigNumber as BN } from "bignumber.js";
@@ -112,6 +113,8 @@ export default function SwapConfirmModal({
   swapRoutes
 }: SwapConfirmhModalProps): React.ReactElement {
 
+  const { t } = useTranslation();
+
   const accountInfo = useAccountInfo();
 
   const transStateUpdate = useSwapTransStateUpdate();
@@ -119,17 +122,18 @@ export default function SwapConfirmModal({
   const handleConfirmSwap = () => {
     onConfirmSwap();
     
+    // TODO: localize the string
     const amountText = `Swapping ${fromTokenAmount} ${fromToken.name} to ${toTokenAmount} ${toToken.name}`
     const onStart = () => {
-      transStateUpdate({stateText: 'Waiting for Confrimation', amountText, status: 'start'})
+      transStateUpdate({stateText: t('swapTransactionStarted'), amountText, status: 'start'})
     }
 
     const onSuccess = (blockHash?: string) => {
-      transStateUpdate({stateText: 'Transaction Submitted', amountText, status: 'success', hash: blockHash})
+      transStateUpdate({stateText: t('swapTransactionSuccess'), amountText, status: 'success', hash: blockHash})
     }
 
     const onFailed = (message?: string) => {
-      transStateUpdate({stateText: 'Transaction Failed', amountText, status: 'failed'})
+      transStateUpdate({stateText: t('swapTransactionFailed'), amountText, status: 'failed'})
     }
 
     swapUtils.swapCurrency(
@@ -146,14 +150,14 @@ export default function SwapConfirmModal({
 
           <RowBetween>
             <Text fontWeight={500} fontSize={16} color='#777777'>
-              Confirm Swap
+              {t('confirmSwap')}
             </Text>
             <CloseIcon onClick={onDismiss} />
           </RowBetween>
 
           <ContentWrapper gap='14px'>
             <AutoColumn gap='5px'>
-              <FromToText>From</FromToText>
+              <FromToText>{t('confirmSwapFrom')}</FromToText>
               <AutoRow justify='start'>
                 <RowFixed style={{minWidth: '120px'}}>
                   <CurrencyLogo currency={fromToken} size={'24px'} />
@@ -166,7 +170,7 @@ export default function SwapConfirmModal({
             </AutoColumn>
 
             <AutoColumn gap='5px'>
-              <FromToText>To</FromToText>
+              <FromToText>{t('confirmSwapTo')}</FromToText>
               <AutoRow justify='start'>
                 <RowFixed style={{minWidth: '120px'}}>
                   <CurrencyLogo currency={toToken} size={'24px'} />
@@ -180,34 +184,34 @@ export default function SwapConfirmModal({
 
             <AutoRow justify='space-between'></AutoRow>
 
-            <HintText>Output is estimated. If the price changes by more than 0.5%. your transaction will revert.</HintText>
+            <HintText>{t('confirmSwapHint')}</HintText>
 
           </ContentWrapper>
 
           <TransactionInfoPanel gap='6px'>
             <AutoRow justify='space-between'>
-              <TransactionInfoLabel>Price</TransactionInfoLabel>
+              <TransactionInfoLabel>{t('price')}</TransactionInfoLabel>
               <TransactionInfo>{price == null ? '' : `${price.toFixed(sysConfig.decimalPlacesInfo)} ${toToken?.name}/${fromToken?.name}`}</TransactionInfo>
             </AutoRow>
 
             <AutoRow justify='space-between'>
-              <TransactionInfoLabel>Minimum received</TransactionInfoLabel>
+              <TransactionInfoLabel>{t('minimumReceived')}</TransactionInfoLabel>
               <TransactionInfo>{minReceived == null ? '' : `${minReceived.toFixed(sysConfig.decimalPlacesInfo)} ${toToken?.name}`}</TransactionInfo>
             </AutoRow>
 
             <AutoRow justify='space-between'>
-              <TransactionInfoLabel>Price Impact</TransactionInfoLabel>
+              <TransactionInfoLabel>{t('priceImpact')}</TransactionInfoLabel>
               <TransactionInfo>{priceImpact == null ? '' : `${priceImpact.times(100).toFixed(sysConfig.decimalPlacesInfo)}%`}</TransactionInfo>
             </AutoRow>
 
             <AutoRow justify='space-between'>
-              <TransactionInfoLabel>Liquidity Provder Fee</TransactionInfoLabel>
+              <TransactionInfoLabel>{t('liquidityProviderFee')}</TransactionInfoLabel>
               <TransactionInfo>{liquidityProviderFee == null ? '' : liquidityProviderFee.toFixed(sysConfig.decimalPlacesInfo)} {fromToken?.name}</TransactionInfo>
             </AutoRow>
 
           </TransactionInfoPanel>
 
-          <ButtonBigCommon onClick={handleConfirmSwap}>Confirm Swap</ButtonBigCommon>
+          <ButtonBigCommon onClick={handleConfirmSwap}>{t('confirmSwap')}</ButtonBigCommon>
 
         </PaddedColumn>
       </Column>

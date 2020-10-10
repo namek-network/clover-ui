@@ -1,9 +1,13 @@
 {
+  "logoImageDescription": "clover logo",
+
   "headerSwap": "Swap",
   "headerLending": "Lending",
   "headerAggregator": "Aggregator",
   "headerGovernance": "Governance",
   "headerMarket": "Market",
+  "headerPool": "Pool",
+  "headerFarm": "Farm",
   "footerHome": "Home",
   "footerDevelopers": "Developers",
   "footerNetwork": "Network",

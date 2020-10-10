@@ -20,3 +20,7 @@ export function useTransDeadlineUpdate(): (td: number) => void {
     const dispatch = useDispatch()
     return useCallback((td: number) => dispatch(transDeadline(td)), [dispatch])
   }
+
+export function useDarkMode(): boolean {
+  return useSelector((state: AppState) => state.settings.darkMode)
+}

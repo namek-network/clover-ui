@@ -1,9 +1,13 @@
 {
+  "logoImageDescription": "clover的徽标",
+
   "headerSwap": "交易",
   "headerLending": "借贷",
   "headerAggregator": "聚合",
   "headerGovernance": "治理",
   "headerMarket": "市场",
+  "headerPool": "资金池",
+  "headerFarm": "农场",
   "footerHome": "首页",
   "footerDevelopers": "开发者",
   "footerNetwork": "网络",

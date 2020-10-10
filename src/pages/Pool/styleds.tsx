@@ -28,43 +28,6 @@ export const BottomGrouping = styled.div`
   margin-top: 1rem;
 `;
 
-export const ErrorText = styled(Text)<{ severity?: 0 | 1 | 2 | 3 | 4 }>`
-  color: ${({ theme, severity }) =>
-    severity === 3 || severity === 4
-      ? theme.red1
-      : severity === 2
-      ? theme.yellow2
-      : severity === 1
-      ? theme.text1
-      : theme.green1};
-`;
-
-export const StyledBalanceMaxMini = styled.button`
-  height: 22px;
-  width: 22px;
-  background-color: ${({ theme }) => theme.bg2};
-  border: none;
-  border-radius: 50%;
-  padding: 0.2rem;
-  font-size: 0.875rem;
-  font-weight: 400;
-  margin-left: 0.4rem;
-  cursor: pointer;
-  color: #565A69;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  float: right;
-
-  :hover {
-    background-color: #EDEEF2;
-  }
-  :focus {
-    background-color: #EDEEF2;
-    outline: none;
-  }
-`;
-
 export const TruncatedText = styled(Text)`
   text-overflow: ellipsis;
   width: 220px;

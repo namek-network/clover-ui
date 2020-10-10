@@ -3,43 +3,25 @@ import ReactDOM from 'react-dom';
 import ReactGA from 'react-ga';
 import { Provider } from 'react-redux';
 import { isMobile } from 'react-device-detect';
-import { createGlobalStyle } from 'styled-components';
-import { defaultFontSizeParagraph, defaultFontFamilyEn } from './styles';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
+import ThemeProvider, { ThemedGlobalStyle } from './theme';
 import App from './pages/App';
 import store from './state';
 import * as serviceWorker from './serviceWorker';
-
-import ImgBg from './assets/images/bg.svg';
 
 import './i18n';
 
 ReactGA.initialize("UA-177617249-1");
 ReactGA.set({customBrowserType: isMobile ? 'mobile' : 'desktop'});
 
-const BithumbGlobalStyle = createGlobalStyle`
-  body {
-    ${defaultFontSizeParagraph}
-    ${defaultFontFamilyEn}
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-
-    margin: 0;
-    min-height: 100vh;
-
-    background-image: url(${ImgBg});
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: top left;
-  }
-`;
-
 ReactDOM.render(
   <StrictMode>
     <Provider store={store}>
-      <BithumbGlobalStyle />
-      <App />
+      <ThemeProvider>
+        <ThemedGlobalStyle />
+        <App />
+      </ThemeProvider>
     </Provider>
   </StrictMode>,
   document.getElementById('root')

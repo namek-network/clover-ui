@@ -1,17 +1,18 @@
-import React, { Suspense, useEffect, useCallback } from 'react';
+import React, { Suspense, useEffect, useCallback } from 'react'
 import _ from 'lodash'
-import { HashRouter, Route, Switch } from 'react-router-dom';
-import styled from 'styled-components';
+import { HashRouter, Route, Switch } from 'react-router-dom'
+import styled from 'styled-components'
+import { isMobile } from 'react-device-detect'
 import { initApi } from '../utils/apiUtils'
 import { loadCurrencyPair, loadTokenTypes } from '../utils/tokenUtils'
 import { useTokenTypesUpdate, useCurrencyPairUpdate } from '../state/token/hooks'
-import { ToastContainer, Slide } from 'react-toastify';
+import { ToastContainer, Slide } from 'react-toastify'
 
-import {useApiConnectedUpdate, useApiInited, useApiInitedUpdate} from '../state/api/hooks'
+import { useApiConnectedUpdate, useApiInited, useApiInitedUpdate } from '../state/api/hooks'
 import { useAccountInfo } from '../state/wallet/hooks'
 
-import Header from '../components/Header';
-import Footer from '../components/Footer';
+import Header from '../components/Header'
+import Footer from '../components/Footer'
 
 import Swap from './Swap';
 import Pool from './Pool'
@@ -83,7 +84,9 @@ export default function App(): React.ReactElement {
     <Suspense fallback={null}>
       <HashRouter>
         <AppWrapper>
-          <Header />
+          {!isMobile &&
+            <Header />
+          }
           <BodyWrapper>
             <Switch>
               <Route exact strict path="/" component={Swap} />
@@ -92,7 +95,9 @@ export default function App(): React.ReactElement {
               <Route exact strict path="/lending" component={Lending} />
             </Switch>
           </BodyWrapper>
-          <Footer />
+          {!isMobile &&
+            <Footer />
+          }
           <ToastContainer 
             position="top-center"
             autoClose={3000}

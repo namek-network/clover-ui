@@ -13,8 +13,7 @@ export interface WalletType {
   icon: string
 }
 
-export const supportedWalletTypes = [
-  {
+export const supportedWalletTypes = [{
     name: 'Math Wallet',
     showName: 'Math',
     icon: require('../assets/images/icon-math.svg')
@@ -26,6 +25,10 @@ export const supportedWalletTypes = [
     name: 'Lunie Wallet',
     showName: 'Lunie',
     icon: require('../assets/images/icon-lunie.svg')
+  }, {
+    name: 'Clover Wallet',
+    showName: 'Clover',
+    icon: require('../assets/images/icon-clover.svg')
   }];
 
 export function getAddress (addr: string): string {
@@ -71,6 +74,10 @@ export async function loadAllTokenAmount(addr: string, tokenTypes: TokenType[]):
   return _.filter(types, (t) => t.tokenType.id >= 0)
 }
 
+function isCloverWallet(injectedWallet: any) {
+  return injectedWallet.name === 'enzyme'
+}
+
 export async function loadAccount(wallet: WalletType | undefined, tokenTypes: TokenType[], updateAccountInfo: (info: AccountInfo) => void): Promise<string> {
   const injected = await web3Enable(originName);
 
@@ -80,7 +87,8 @@ export async function loadAccount(wallet: WalletType | undefined, tokenTypes: To
 
   /* eslint-disable  @typescript-eslint/no-explicit-any */
   const mathWallet = _.find(injected, (w: any) => w.isMathWallet === true)
-  if (_.isEmpty(mathWallet)) {
+  const cloverWallet: any = _.find(injected, (w: any) => isCloverWallet(w))
+  if (_.isEmpty(mathWallet) && _.isEmpty(cloverWallet)) {
     return "notFoundWallet";
   }
 
@@ -115,7 +123,7 @@ async function findMathAccount(allAccounts: InjectedAccountWithMeta[]) {
     return await web3FromAddress(acc.address)
   })).then((wallets: InjectedExtension[]) => {
     return _.filter(_.zipWith(allAccounts, wallets, (a: InjectedAccountWithMeta, w: any) => {
-      if (w && w.isMathWallet) {
+      if (w && (w.isMathWallet || isCloverWallet(w))) {
         return a
       } else {
         return {}

@@ -8,8 +8,11 @@ import { transparentize } from 'polished'
 import { useGesture } from 'react-use-gesture'
 
 const AnimatedDialogOverlay = animated(DialogOverlay)
+// destructure to not pass custom props to Dialog DOM element
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const StyledDialogOverlay = styled(AnimatedDialogOverlay)<{mobile?: boolean}>`
+const StyledDialogOverlay = styled(({ mobile, ...rest }) => (
+  <AnimatedDialogOverlay {...rest} />
+))`
   &[data-reach-dialog-overlay] {
     z-index: 2;
     background-color: transparent;

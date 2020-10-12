@@ -6,9 +6,10 @@ import { BigNumber as BN } from "bignumber.js"
 import { ButtonBigCommon } from '../../components/Button'
 import { AutoColumn } from '../../components/Column'
 import { AutoRow, RowFixed } from '../../components/Row'
-import { SwapPoolTabs } from '../../components/NavigationTabs'
+import AppBody, { AppContentWrapper } from '../AppBody'
+import NavigationTabs from '../../components/NavigationTabs'
 import CurrencyInputPanel from '../../components/CurrencyInputPanel'
-import { Wrapper, BottomGrouping, SwapRoutes } from '../../components/Swap/styleds'
+import { BottomGrouping, SwapRoutes } from '../../components/Swap/styleds'
 import QuestionHelper from '../../components/QuestionHelper'
 import SwapConfirmhModal from './SwapConfirmModal'
 import SwapTransStateModal from './SwapTransStateModal'
@@ -26,12 +27,6 @@ import sysConfig from '../../configs/sysConfig'
 import '../../assets/vendors/font-bxb/bxb-font.css'
 import ImgSwitch from '../../assets/images/switch.svg'
 import './index.css'
-
-const BodyWrapper = styled.div`
-  position: relative;
-  width: 100%;
-  max-width: 460px;
-`;
 
 const TransactionInfoPanel = styled(BottomGrouping)`
   padding: 15px 15px;
@@ -268,10 +263,10 @@ export default function Swap(): React.ReactElement {
   }, [accountInfo])
 
   return (
-    <BodyWrapper>
-      <SwapPoolTabs active={'swap'} />
+    <AppBody>
+      <NavigationTabs active={'swap'} />
 
-      <Wrapper id="swap-page">
+      <AppContentWrapper id="swap-page">
         <AutoColumn gap={'md'}>
           <CurrencyInputPanel
             id="swap-currency-input"
@@ -366,7 +361,7 @@ export default function Swap(): React.ReactElement {
           </TransactionInfoPanel>
         )}
 
-      </Wrapper>
+      </AppContentWrapper>
 
       {swapEnabled && (
         <SwapConfirmhModal
@@ -390,6 +385,6 @@ export default function Swap(): React.ReactElement {
         onDismiss={() => {''}}
         onClose={() => setSwapTransStateModalOpen(false)} />
 
-    </BodyWrapper>
+    </AppBody>
   );
 }

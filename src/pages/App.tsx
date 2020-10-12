@@ -13,10 +13,12 @@ import { useAccountInfo } from '../state/wallet/hooks'
 
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+import FooterMobile from '../components/Footer/FooterMobile'
 
-import Swap from './Swap';
+import Swap from './Swap'
 import Pool from './Pool'
-import Lending from './Lending';
+import Farm from './Farm'
+import Lending from './Lending'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -38,6 +40,11 @@ const BodyWrapper = styled.div`
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    padding-top: 0;
+  `};
+
   z-index: 1;
 `;
 
@@ -92,12 +99,11 @@ export default function App(): React.ReactElement {
               <Route exact strict path="/" component={Swap} />
               <Route exact strict path="/swap" component={Swap} />
               <Route exact strict path="/pool" component={Pool} />
+              <Route exact strict path="/farm" component={Farm} />
               <Route exact strict path="/lending" component={Lending} />
             </Switch>
           </BodyWrapper>
-          {!isMobile &&
-            <Footer />
-          }
+          {isMobile ? <FooterMobile /> : <Footer />}
           <ToastContainer 
             position="top-center"
             autoClose={3000}

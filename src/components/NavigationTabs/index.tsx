@@ -9,7 +9,13 @@ const Tabs = styled.div<{ customStyle?: string|undefined }>`
   align-items: center;
   border-radius: 3rem;
   justify-content: space-evenly;
+
   ${({ customStyle }) => customStyle && css`${customStyle}`}
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    border-radius: 0;
+    background: #FFFFFF; 
+  `};
 `;
 
 const activeClassName = 'ACTIVE';
@@ -44,7 +50,7 @@ const StyledNavLink = styled(NavLink).attrs({
   }
 `;
 
-export function SwapPoolTabs({ active, customStyle }: { active: 'swap' | 'pool', customStyle?: string | undefined }): React.ReactElement {
+export default function NavigationTabs({ active, customStyle }: { active: 'swap' | 'pool' | 'farm', customStyle?: string | undefined }): React.ReactElement {
   const { t } = useTranslation();
 
   return (
@@ -54,6 +60,9 @@ export function SwapPoolTabs({ active, customStyle }: { active: 'swap' | 'pool',
       </StyledNavLink>
       <StyledNavLink id={`pool-nav-link`} to={'/pool'} isActive={() => active === 'pool'}>
         {t('pool')}
+      </StyledNavLink>
+      <StyledNavLink id={`pool-nav-link`} to={'/farm'} isActive={() => active === 'farm'}>
+        {t('farm')}
       </StyledNavLink>
     </Tabs>
   )

@@ -1,6 +1,7 @@
-import React, { useEffect, useState, MouseEvent } from 'react';
+import React, { useEffect, useState, MouseEvent } from 'react'
 import '../../assets/vendors/font-bxb/bxb-font.css'
-import styled from 'styled-components';
+import styled from 'styled-components'
+import { isMobile } from 'react-device-detect'
 import Column from '../Column'
 import _ from 'lodash'
 
@@ -24,10 +25,9 @@ const TextButton = styled.div`
   }
 `
 
-const DropDown = styled(Column)`
-  position: absolute;
-  top: 35px;
-  right: 0; 
+const DropDown = styled(Column)<{isMobile?: boolean}>`
+  ${({ isMobile }) => (isMobile ? 'position: absolute; bottom: 35px; right: 0px;' : 'position: absolute; top: 35px; right: 0px;')}
+
   width: 78px;
   align-items: center;
   background: #FFFFFF;
@@ -84,7 +84,7 @@ export default function LanguageComp(): React.ReactElement {
         <TextButton onClick={handleClick}>{selectedLanguage}</TextButton>
         {
           open && 
-          <DropDown>
+          <DropDown isMobile={isMobile}>
             {
               _.map(languageList, (l) => {
                 return <LangBtn actived={l === selectedLanguage} onClick={() => {onItemClick(l, selectedLanguage)}} key={l}>{l}</LangBtn>

@@ -6,8 +6,6 @@
   "headerAggregator": "聚合",
   "headerGovernance": "治理",
   "headerMarket": "市场",
-  "headerPool": "资金池",
-  "headerFarm": "农场",
   "footerHome": "首页",
   "footerDevelopers": "开发者",
   "footerNetwork": "网络",
@@ -41,6 +39,7 @@
 
   "swap": "兑换",
   "pool": "资金池",
+  "farm": "农场",
   "connectToWallet": "连接钱包",
   "notFoundWallet": "未检测到钱包，请安装麦子钱包插件!",
   "addWallet": "未发现钱包，请添加一个钱包!"

@@ -3,9 +3,6 @@
 }
 
 .panel-container {
-  position: absolute;
-  top: 35px;
-  right: 0;
   width: 264px;
   height: 137px;
   display: flex;

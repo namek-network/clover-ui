@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { SwapPoolTabs } from '../../components/NavigationTabs'
-import Column from '../../components/Column'
+import NavigationTabs from '../../components/NavigationTabs'
+import Column, { ColumnCenter } from '../../components/Column'
 import { PrimitiveButton } from '../../components/Button'
 import PoolPairItem from './poolPairItem'
 import _ from 'lodash'
@@ -30,6 +30,13 @@ const BodyWrapper = styled.div`
   align-items: center;
   width: 100%;
   max-width: 620px;
+`;
+
+const ContentWrapper = styled(ColumnCenter)`
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    padding-left: 16px;
+    padding-right: 16px;
+  `};
 `;
 
 export const Wrapper = styled.div`
@@ -203,7 +210,8 @@ export default function Pool(): React.ReactElement {
   }
     return (
       <BodyWrapper>
-        <SwapPoolTabs active={'pool'} customStyle={'width: 100%;max-width: 460px;'}/>
+        <NavigationTabs active={'pool'} customStyle={'width: 100%;max-width: 460px;'}/>
+        <ContentWrapper>
         <TipWrapper>
           <StyledCircle><i className="fa fo-info"></i></StyledCircle>
           <InfoText>Liquidity Providers earn 0.3% of all trades on this pair proportional to their share of the pool. Fees are added to the pool, and can be claimed by withdrawing liquidity.</InfoText>
@@ -254,6 +262,7 @@ export default function Pool(): React.ReactElement {
           toTokenType={selectedItem.toToken}
           onClose={onRemoveLiquidModalClose}></RemoveLiquidModal>
         <TransferStateModal isOpen={transferStateModalOpen} onClose={() => setTransferStateModalOpen(false)}></TransferStateModal>
+        </ContentWrapper>
       </BodyWrapper>
     );
 }

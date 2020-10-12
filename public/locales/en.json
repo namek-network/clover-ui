@@ -6,8 +6,6 @@
   "headerAggregator": "Aggregator",
   "headerGovernance": "Governance",
   "headerMarket": "Market",
-  "headerPool": "Pool",
-  "headerFarm": "Farm",
   "footerHome": "Home",
   "footerDevelopers": "Developers",
   "footerNetwork": "Network",
@@ -41,6 +39,7 @@
 
   "swap": "Swap",
   "pool": "Pool",
+  "farm": "Farm",
   "connectToWallet": "Connect to a wallet",
   "notFoundWallet": "Not Found Wallet, please install math wallet!",
   "addWallet": "Not Found Wallet, please create a wallet!",

@@ -46,6 +46,7 @@ const StyledTokenName = styled.span<{ active?: boolean }>`
 
 const TokenAmountText = styled(Text)`
   height: 50px;
+  width: 0px;
   font-size: 40px;
   font-family: Roboto-Medium, Roboto;
   font-weight: 500;

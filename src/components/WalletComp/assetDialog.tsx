@@ -23,6 +23,7 @@ import { useAccountInfo } from '../../state/wallet/hooks';
 
 
 const BodyWrapper = styled(Column)`
+  width: 100%;
   padding-bottom: 16px;
 `
 
@@ -200,7 +201,7 @@ export default function AssetDialog({ account, wallet, onClose, open }: AssetDia
   return (
     <Modal isOpen={open} onDismiss={handleClose} maxHeight={90} customStyle={customStyle}>
       <BodyWrapper>
-        <div className="content-width asset-content-width">
+        <div className="content-width">
           <div>My account</div>
           <div className="wallet-dia-close-btn" onClick={() => handleClose()}><i className="fa fo-x"></i></div>
         </div>

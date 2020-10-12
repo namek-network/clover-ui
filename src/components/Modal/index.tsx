@@ -7,39 +7,23 @@ import '@reach/dialog/styles.css'
 import { transparentize } from 'polished'
 import { useGesture } from 'react-use-gesture'
 
-const MEDIA_WIDTHS = {
-  upToExtraSmall: 500,
-  upToSmall: 600,
-  upToMedium: 960,
-  upToLarge: 1280
-}
-
-/* eslint-disable  @typescript-eslint/no-explicit-any */
-
-const mediaWidthTemplates: { [width in keyof typeof MEDIA_WIDTHS]: typeof css } = Object.keys(MEDIA_WIDTHS).reduce(
-  (accumulator, size) => {
-    (accumulator as any)[size] = (a: any, b: any, c: any) => css`
-      @media (max-width: ${(MEDIA_WIDTHS as any)[size]}px) {
-        ${css(a, b, c)}
-      }
-    `
-    return accumulator
-  },
-  {}
-) as any
-
 const AnimatedDialogOverlay = animated(DialogOverlay)
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const StyledDialogOverlay = styled(AnimatedDialogOverlay)`
+const StyledDialogOverlay = styled(AnimatedDialogOverlay)<{mobile?: boolean}>`
   &[data-reach-dialog-overlay] {
     z-index: 2;
     background-color: transparent;
-    overflow: auto;
+    overflow: hidden;
+
+    ${({ mobile }) => (!mobile) &&
+    css`
+      overflow: auto;
+      min-width: 650px;
+    `}
 
     display: flex;
     align-items: center;
     justify-content: center;
-    min-width: 650px;
 
     background-color: rgba(0,0,0,0.65);
   }
@@ -61,7 +45,7 @@ const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpen, cust
     width: 50vw;
     overflow: hidden;
 
-    align-self: ${({ mobile }) => (mobile ? 'flex-end' : 'center')};
+    align-self: center;
 
     max-width: 480px;
     ${({ maxHeight }) =>
@@ -78,18 +62,17 @@ const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpen, cust
     border-radius: 20px;
 
     ${({ customStyle }) => customStyle && css`${customStyle}`}
-    ${() => mediaWidthTemplates.upToMedium`
+
+    ${({ theme }) => theme.mediaWidth.upToMedium`
       width: 65vw;
       margin: 0;
     `}
-    ${({ mobile }) => mediaWidthTemplates.upToSmall`
+    ${({ theme, mobile }) => theme.mediaWidth.upToSmall`
       width:  85vw;
       ${mobile &&
         css`
           width: 100vw;
           border-radius: 20px;
-          border-bottom-left-radius: 0;
-          border-bottom-right-radius: 0;
         `}
     `}
   }
@@ -138,7 +121,7 @@ export default function Modal({
       {fadeTransition.map(
         ({ item, key, props }) =>
           item && (
-            <StyledDialogOverlay key={key} style={props} onDismiss={onDismiss} initialFocusRef={initialFocusRef}>
+            <StyledDialogOverlay key={key} style={props} mobile={isMobile} onDismiss={onDismiss} initialFocusRef={initialFocusRef}>
               <StyledDialogContent
                 {...(isMobile
                   ? {

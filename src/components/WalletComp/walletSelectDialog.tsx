@@ -1,10 +1,15 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { isMobile } from 'react-device-detect'
 import './index.css'
 import { useTranslation } from 'react-i18next'
 import Modal from '../../components/Modal'
 import Column from '../../components/Column'
-import {WalletType} from '../../utils/AccountUtils'
+import { WalletType } from '../../utils/AccountUtils'
+
+const ContentWrapper = styled(Column)`
+  width: 100%;
+`;
 
 const Wrapper = styled.div`
   overflow: auto;
@@ -33,7 +38,7 @@ export default function WalletSelectDialog({ onClose, open, walletTypes }: Walle
   const customStyle = 'border-radius: 16px; max-width: 470px; width: 469px;'
   return (
     <Modal isOpen={open} onDismiss={handleClose} maxHeight={90} customStyle={customStyle}>
-      <Column>
+      <ContentWrapper>
         <div className="content-width">
           <div>{t('connectToWallet')}</div>
           <div className="wallet-dia-close-btn" onClick={() => handleClose()}><i className="fa fo-x"></i></div>
@@ -55,12 +60,20 @@ export default function WalletSelectDialog({ onClose, open, walletTypes }: Walle
                 ))
               }
           </div>
-          <div className="bottom-text">
-            By connecting, I accept bithumb’s <span className="bottom-text-right">Terms of Service</span>
-          </div>
+          {isMobile ? (
+            <div className="bottom-text-container">
+              <span>By connecting, I accept bithumb’s</span>
+              <span className="bottom-text-right">Terms of Service</span>
+            </div>
+          ) : (
+            <div className="bottom-text">
+              By connecting, I accept bithumb’s <span className="bottom-text-right">Terms of Service</span>
+            </div>
+          )}
+
         </Wrapper>
         
-      </Column>
+      </ContentWrapper>
     </Modal>
   );
 }

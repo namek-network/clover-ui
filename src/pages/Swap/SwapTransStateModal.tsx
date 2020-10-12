@@ -71,12 +71,14 @@ const AmountText = styled.div`
 `
 
 const StateText = styled.div`
-  height: 32px;
   font-size: 32px;
   font-family: Helvetica;
   color: #111A34;
-  line-height: 32px;
   margin-top: 20px;
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    font-size: 28px;
+  `};
 `
 
 const SubmitIcon = styled.div` 

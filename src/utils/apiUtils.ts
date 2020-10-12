@@ -26,7 +26,8 @@ const types = {
   Ratio: 'u128',
   Price: 'u128',
   Share: 'u128',
-  OracleKey: 'u8'
+  OracleKey: 'u8',
+  Amount: 'i128'
 }
 
 /* eslint-disable  @typescript-eslint/no-explicit-any */

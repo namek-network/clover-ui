@@ -15,9 +15,9 @@ const ImageRight = styled.img`
   margin-left: -10px;
 `
 
-const PairTitle = styled.span`
+const PairTitle = styled.span<{fontSize: string}>`
   margin-left: 8px;
-  font-size: 18px;
+  font-size: ${({ fontSize }) => fontSize};
   font-family: Helvetica;
   color: #111A34;
 `
@@ -72,6 +72,11 @@ const ButtonLeftWrapper = styled(Button)`
   margin-right: 8px;
 `
 
+const PairIconTitleWrapper = styled.div`
+  display: flex;
+  align-items: center;
+`
+
 interface ItemWrapperProps {
   isOpen: boolean
   children?: React.ReactNode
@@ -86,18 +91,19 @@ export interface PairIconTitleProps {
   right: string,
   title: string,
   size?: string,
-  showTitle?: boolean
+  showTitle?: boolean,
+  fontSize?: string
 }
 
-export const PairIconTitle = ({left, right, title, size='32px', showTitle=true}: PairIconTitleProps): React.ReactElement => {
+export const PairIconTitle = ({left, right, title, size='32px', showTitle=true, fontSize='18px'}: PairIconTitleProps): React.ReactElement => {
   return (
-    <div>
+    <PairIconTitleWrapper>
       <ImageLeft src={left} width={size}></ImageLeft>
       <ImageRight src={right} width={size}></ImageRight>
       {
-        showTitle && <PairTitle>{title}</PairTitle>
+        showTitle && <PairTitle fontSize={fontSize}>{title}</PairTitle>
       }
-    </div>)
+    </PairIconTitleWrapper>)
 }
 
 interface Content {

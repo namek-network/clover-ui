@@ -104,7 +104,7 @@ export interface DataFromAddLiquid {
   toAmount: BigNum
 }
 
-const defaultDataFromAddLiquid = {
+export const defaultDataFromAddLiquid = {
   fromToken: defaultTokenType,
   toToken: defaultTokenType,
   fromAmount: BigNum.fromRealNum(''),
@@ -214,12 +214,12 @@ export default function Pool(): React.ReactElement {
         <ContentWrapper>
         <TipWrapper>
           <StyledCircle><i className="fa fo-info"></i></StyledCircle>
-          <InfoText>Liquidity Providers earn 0.3% of all trades on this pair proportional to their share of the pool. Fees are added to the pool, and can be claimed by withdrawing liquidity.</InfoText>
+          <InfoText>{t('liquidityProviderEarn')}</InfoText>
         </TipWrapper>
         <Wrapper>
           <Column>
             <Title>
-              My Liquidity List
+              {t('myLiquidityList')}
             </Title>
             {
               _.isEmpty(userPoolItems) ? <NoLiquidFount>{t('noLiquidity')}</NoLiquidFount> 

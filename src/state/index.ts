@@ -9,6 +9,7 @@ import api from './api/reducer'
 import swap from './swap/reducer'
 import pool from './pool/reducer'
 import transaction from './transaction/reducer'
+import farm from './farm/reducer'
 
 // states that are auto persisted to localstorage and reloade
 const PERSISTED_KEYS: string[] = ['application', 'settings'];
@@ -22,7 +23,8 @@ const store = configureStore({
     api,
     swap,
     pool,
-    transaction
+    transaction,
+    farm
   },
   middleware: [...getDefaultMiddleware({ thunk: false }), save({ states: PERSISTED_KEYS })],
   preloadedState: load({ states: PERSISTED_KEYS })

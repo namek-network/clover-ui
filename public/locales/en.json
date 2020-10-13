@@ -45,5 +45,17 @@
   "addWallet": "Not Found Wallet, please create a wallet!",
   "addLiquidity": "Add Liquidity",
   "noLiquidity": "No liquidity found. You can provide liquidity by click Add Liquidity button below.",
-  "copySuccess": "Copy Success."
+  "copySuccess": "Copy Success.",
+
+  "liquidityProviderEarn": "Liquidity Providers earn 0.3% of all trades on this pair proportional to their share of the pool. Fees are added to the pool, and can be claimed by withdrawing liquidity.",
+  "myLiquidityList": "My Liquidity List",
+
+  "depositTip":"Deposit your Liquidity Provider tokens to receive CLV, the Clover protocol governance token.",
+  "rewardsEndIn": "Rewards end in",
+  "deposit": "Deposit",
+  "withdrawAndClaim": "Withdraw & Claim",
+  "claim": "Claim",
+  "AvailableToDeposit": "Available to deposit",
+  "AvailableToWithdraw": "Available to Withdraw",
+  "clvRewards": "CLV Rewards"
 }

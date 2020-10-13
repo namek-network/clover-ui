@@ -4,9 +4,10 @@ import { HashRouter, Route, Switch } from 'react-router-dom'
 import styled from 'styled-components'
 import { isMobile } from 'react-device-detect'
 import { initApi } from '../utils/apiUtils'
-import { loadCurrencyPair, loadTokenTypes } from '../utils/tokenUtils'
+import { loadAllPools, loadCurrencyPair, loadTokenTypes, subscribeToEvents } from '../utils/tokenUtils'
 import { useTokenTypesUpdate, useCurrencyPairUpdate } from '../state/token/hooks'
-import { ToastContainer, Slide } from 'react-toastify'
+import { useStakePoolItemsUpdate } from '../state/farm/hooks'
+import { ToastContainer, Slide } from 'react-toastify';
 
 import { useApiConnectedUpdate, useApiInited, useApiInitedUpdate } from '../state/api/hooks'
 import { useAccountInfo } from '../state/wallet/hooks'
@@ -61,6 +62,7 @@ export default function App(): React.ReactElement {
 
   const updateTokenTypeList = useTokenTypesUpdate()
   const updateCurrencyPair = useCurrencyPairUpdate()
+  const udateStakePoolItems = useStakePoolItemsUpdate()
 
 
   const initPolkaApi = useCallback(async () => {
@@ -78,7 +80,16 @@ export default function App(): React.ReactElement {
 
     loadTokenTypes(updateTokenTypeList)
     loadCurrencyPair(updateCurrencyPair)
-  }, [apiInited, updateCurrencyPair, updateTokenTypeList])
+    loadAllPools(udateStakePoolItems)
+  }, [apiInited, updateCurrencyPair, updateTokenTypeList, udateStakePoolItems])
+
+  useEffect(() => {
+    if (!apiInited) {
+      return
+    }
+    
+    subscribeToEvents(udateStakePoolItems).catch((e) => {console.log(e)})
+  }, [apiInited, udateStakePoolItems])
 
   useEffect(() => {
     if (_.isEmpty(accountInfo.address)) {

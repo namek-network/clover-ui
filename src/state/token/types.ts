@@ -19,3 +19,10 @@ export type TokenState = {
   currencyPairs: CurrencyPair[]
 }
 
+export type StakePoolItem = {
+  fromTokenType: TokenType,
+  toTokenType: TokenType,
+  totalAmount: string,
+  totalIncentive: string
+}
+

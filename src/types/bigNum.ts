@@ -27,6 +27,23 @@ export function div(bigNum1: string, bigNum2: string, usePercentage = false): st
   return trimEnd0(bigNum1BN.div(bigNum2BN).toFixed(12))
 }
 
+export function minus(bigNum1: string, bigNum2: string) {
+  const bn1 = new BN(bigNum1, 10);
+  const bn2 = new BN(bigNum2, 10);
+
+  return bn1.minus(bn2).toFixed()
+}
+
+export function toFixed(number: string, fixedNum: number): string {
+  const bn = new BN(number, 10)
+  return bn.toFixed(fixedNum)
+}
+
+export function toFixedWithTrim(number: string, fixedNum: number): string {
+  const bn = new BN(number, 10)
+  return trimEnd0(bn.toFixed(fixedNum))
+}
+
 export const defaultBase = '1000000000000';
 
 // seriable BigNum obj that could put to store

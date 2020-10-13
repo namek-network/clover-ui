@@ -1,4 +1,4 @@
-import BigNum, { div, defaultBase } from './bigNum';
+import BigNum, { div, toFixed, toFixedWithTrim } from './bigNum';
 
 describe('BigNum test suites', () => {
 
@@ -23,6 +23,8 @@ describe('BigNum test suites', () => {
     expect(div('6666', '2000000006666', true)).toEqual('0.0000003333');
     expect(div('1', '2')).toEqual('0.5');
     expect(div('10000', '2')).toEqual('5000.0');
+    expect(toFixed('1.3423423453245', 6)).toEqual('1.342342')
+    expect(toFixedWithTrim('1.342000000000', 6)).toEqual('1.342')
   });
 
 });

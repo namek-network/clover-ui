@@ -8,6 +8,7 @@ import { ButtonSmallSecondary } from '../Button'
 import CurrencyLogo from '../CurrencyLogo'
 import { ReactComponent as DropDown }  from '../../assets/images/dropdown.svg'
 import { escapeRegExp } from '../../utils'
+import { PairIconTitle } from '../../pages/Pool/poolPairItem'
 
 const InputPanel = styled.div<{ customStyle: string|undefined }>`
   display: flex;
@@ -175,6 +176,8 @@ interface CurrencyInputPanelProps {
   insufficientBalance?: boolean | null
   customStyle?: string,
   forPair?: boolean,
+  forPairUnclickable?: boolean,
+  balancePrefix?: string,
   tokenPair?: TokenPair
 }
 
@@ -192,6 +195,8 @@ export default function CurrencyInputPanel({
   insufficientBalance,
   customStyle, 
   forPair = false,
+  forPairUnclickable = false,
+  balancePrefix = 'balance',
   tokenPair
 }: CurrencyInputPanelProps): React.ReactElement {
   const { t } = useTranslation()
@@ -209,11 +214,11 @@ export default function CurrencyInputPanel({
           selected={true}
           onClick={() => { setModalOpen(true) }}
         >
-        {(forPair !== true && !(currency && currency !== null)) &&
+        {(forPair !== true && !forPairUnclickable && !(currency && currency !== null)) &&
           <ButtonSmallSecondary>{t('selectAToken')}</ButtonSmallSecondary>
         }
 
-        {(forPair !== true && currency && currency !== null) &&
+        {(forPair !== true && !forPairUnclickable && currency && currency !== null) &&
           <Aligner>
             <CurrencyLogo currency={currency} size={'24px'} />
             <StyledTokenName className="token-symbol-container" active={Boolean(currency && currency.name)}>
@@ -225,7 +230,11 @@ export default function CurrencyInputPanel({
           </Aligner>
         }
 
-
+        {
+          forPairUnclickable && <Aligner>
+            <PairIconTitle left={tokenPair?.fromToken.logo ?? ''} right={tokenPair?.toToken.logo ?? ''} title={`${tokenPair?.fromToken.name ?? ''}-${tokenPair?.toToken.name ?? ''}`} size={'32px'} fontSize={'18px'}></PairIconTitle>
+          </Aligner>
+        }
           {
             forPair && <Aligner>
             <StyledTokenName className="token-symbol-container" active={Boolean(forPair && tokenPair)}>
@@ -277,7 +286,7 @@ export default function CurrencyInputPanel({
           )}
         </div>
         {showBalance && (
-          <Balance>{t('balance')}: {balance}</Balance>
+          <Balance>{t(balancePrefix)}: {balance}</Balance>
         )}
       </BalanceRow>
 

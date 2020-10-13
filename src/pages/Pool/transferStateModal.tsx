@@ -44,6 +44,8 @@ const AmountText = styled.div`
   color: #111A34;
   line-height: 16px;
   margin-top: 8px;
+  white-space: pre-line;
+  text-align: center;
 `
 
 const StateText = styled.div`

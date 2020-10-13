@@ -42,6 +42,15 @@ class ApiWrapper {
     return this.api
   }
 
+  getTransFunction(transName: string) {
+    switch(transName) {
+      case 'unstakePoolShares': return this.api.tx.bithumbDex.unstakePoolShares
+      case 'stakePoolShares': return this.api.tx.bithumbDex.stakePoolShares
+      case 'withdrawRewards': return this.api.tx.bithumbDex.withdrawRewards
+    }
+    return null
+  }
+
   getTokenTypes() {
     return this.api.rpc.bitdex.getCurrencies()
   }
@@ -80,6 +89,14 @@ class ApiWrapper {
   toAddLiquidity(from: string, to: string, amountFrom: string, amountTo: string) {
     return this.api.rpc.bitdex.toAddLiquidity(from, to, amountFrom, amountTo)
   }
+
+  getAccountStakingInfo(account: string, token1: string, token2: string) {
+    return this.api.rpc.bitdex.getAccountStakingInfo(account, token1, token2)
+  }
+
+  getAllPools() {
+    return this.api.rpc.incentive.getAllPools()
+  }
 }
 
 export const api = new ApiWrapper()
@@ -91,12 +108,21 @@ export const initApi = async (onInited: () => void, onConnected: () => void, onD
 
   const wsProvider = new WsProvider('wss://api.ownstack.cn');
   const theApi = await ApiPromise.create({ provider: wsProvider, types, rpc: {
+    incentive: {
+      getAllPools: {
+        description: 'get all pools',
+          params: [
+          ],
+          type: 'Vec<(CurrencyTypeEnum, CurrencyTypeEnum, String, String)>'
+      }
+
+    },
     bitdex: {
         getCurrencies: {
           description: 'get currencies',
           params: [
           ],
-          type: 'Vec<CurrencyInfo>'
+          type: 'Vec<(CurrencyInfo)>'
         },
         getBalance: {
           description: 'get balance',
@@ -184,6 +210,25 @@ export const initApi = async (onInited: () => void, onConnected: () => void, onD
             {
               name: 'amountTo',
               type: 'Balance'
+            }
+          ],
+          type: 'Vec<String>'
+        },
+
+        getAccountStakingInfo: {
+          description: 'deposited token',
+          params: [
+            {
+              name: 'account',
+              type: 'String'
+            },
+            {
+              name: 'currency_first',
+              type: 'CurrencyTypeEnum'
+            },
+            {
+              name: 'currency_second',
+              type: 'CurrencyTypeEnum'
             }
           ],
           type: 'Vec<String>'

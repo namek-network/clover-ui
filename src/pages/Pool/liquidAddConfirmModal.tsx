@@ -12,7 +12,7 @@ import { useChainPoolPairItems, useTransStateUpdate } from '../../state/pool/hoo
 import { api } from '../../utils/apiUtils'
 import { useApiInited } from '../../state/api/hooks';
 import { useAccountInfo } from '../../state/wallet/hooks'
-import { doAddLiqudityTrans } from '../../utils/transUtils'
+import { doTransaction } from '../../utils/transUtils'
 import { PrimitiveButton } from '../../components/Button'
 
 
@@ -141,16 +141,29 @@ export default function LiquidAddConfirmModal({isOpen, onClose, fromToken, toTok
       // toast(msg)
     }
 
-    const amountText = `Supplying ${fromAmount.realNum} ${fromToken.name} and  ${toAmount.realNum} ${toToken.name}`
+    let amountText = `Supplying ${fromAmount.realNum} ${fromToken.name} and  ${toAmount.realNum} ${toToken.name}`
     const onStart = () => {
       transStateUpdate({stateText: 'Waiting for Confrimation', amountText, status: 'start'})
     }
-    const onEnd = (state: string, blockHash?: string) => {
+    const onEnd = (state: string, blockHash?: string, payload?: any) => {
       let stateText = ''
       let status = ''
       let hash
+
+      let amountFrom = '-'
+      let amountTo = '-'
+
+      if (fromToken.id.toString() === payload?.amountPair?.id1) {
+        amountFrom = payload?.amountPair?.amount1.realNum ?? '-'
+        amountTo = payload?.amountPair?.amount2.realNum ?? '-'
+      } else if (fromToken.id.toString() === payload?.amountPair?.id2) {
+        amountFrom = payload?.amountPair?.amount2.realNum ?? '-'
+        amountTo = payload?.amountPair?.amount1.realNum ?? '-'
+      }
+
       if (state === 'complete') {
         stateText = 'Transaction Submitted'
+        amountText = `Supplying ${amountFrom} ${fromToken.name} and  ${amountTo} ${toToken.name}`
         status = 'end'
         hash = blockHash
       } else if (state === 'rejected') {
@@ -163,7 +176,7 @@ export default function LiquidAddConfirmModal({isOpen, onClose, fromToken, toTok
       transStateUpdate({stateText: stateText, amountText, status: status, hash})
     }
 
-    doAddLiqudityTrans(fromToken, toToken, fromAmount, toAmount, accountInfo, onError, onStart, onEnd)
+    doTransaction('addLiquidity', [fromToken?.id ?? -1, toToken?.id ?? -1, fromAmount.bigNum, toAmount.bigNum], accountInfo.address, onError, onStart, onEnd)
 
   }, [fromToken, toToken, fromAmount, toAmount, accountInfo, onClose, transStateUpdate])
 

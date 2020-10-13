@@ -47,6 +47,8 @@ class ApiWrapper {
       case 'unstakePoolShares': return this.api.tx.bithumbDex.unstakePoolShares
       case 'stakePoolShares': return this.api.tx.bithumbDex.stakePoolShares
       case 'withdrawRewards': return this.api.tx.bithumbDex.withdrawRewards
+      case 'addLiquidity': return this.api.tx.bithumbDex.addLiquidity
+      case 'withdrawLiquidity': return this.api.tx.bithumbDex.withdrawLiquidity
     }
     return null
   }

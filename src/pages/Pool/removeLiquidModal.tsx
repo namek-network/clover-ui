@@ -11,7 +11,7 @@ import { TokenType, defaultTokenType } from '../../state/token/types';
 import { PoolPairItem as PoolPairItemType } from '../../state/pool/types'
 import BigNum, {div, times}  from '../../types/bigNum';
 import { useAccountInfo } from '../../state/wallet/hooks';
-import { doRemoveLiqudityTrans } from '../../utils/transUtils'
+import { doTransaction } from '../../utils/transUtils'
 
 import { findPairItem } from './utils';
 import { showTextType } from './types'
@@ -190,16 +190,17 @@ export default function RemoveLiquidModal({isOpen, onClose, fromTokenType, toTok
       // toast(msg)
     }
 
-    const amountText = `Withdrawing ${fromTokenType?.name ?? ''}/${toTokenType?.name ?? ''} Tokens ${amountBN.realNum}`
+    let amountText = `Withdrawing ${fromTokenType?.name ?? ''}/${toTokenType?.name ?? ''} Tokens ${amountBN.realNum}`
     const onStart = () => {
       transStateUpdate({stateText: 'Waiting for Confrimation', amountText, status: 'start'})
     }
-    const onEnd = (state: string, blockHash?: string) => {
+    const onEnd = (state: string, blockHash?: string, payload?: any) => {
       let stateText = ''
       let status = ''
       let hash
       if (state === 'complete') {
         stateText = 'Transaction Submitted'
+        amountText = `Withdrawing ${fromTokenType?.name ?? ''}/${toTokenType?.name ?? ''} Tokens ${payload?.amountPair?.shareAmount.realNum ?? '-'}`
         status = 'end'
         hash = blockHash
       } else if (state === 'rejected') {
@@ -212,7 +213,7 @@ export default function RemoveLiquidModal({isOpen, onClose, fromTokenType, toTok
       transStateUpdate({stateText: stateText, amountText, status: status, hash})
     }
 
-    doRemoveLiqudityTrans(fromTokenType ?? defaultTokenType, toTokenType ?? defaultTokenType, amountBN, accountInfo, onError, onStart, onEnd)
+    doTransaction('withdrawLiquidity', [fromTokenType?.id ?? -1, toTokenType?.id ?? -1, amountBN.bigNum], accountInfo.address, onError, onStart, onEnd)
 
   }, [fromTokenType, toTokenType, inputShareAmount, accountInfo, onClose, transStateUpdate])
   

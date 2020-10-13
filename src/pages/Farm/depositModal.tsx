@@ -78,23 +78,26 @@ export default function DepositModal({isOpen, onClose, fromTokenType, toTokenTyp
       // toast(msg)
     }
 
-    const amountText = `Depositing LP ${amountBN.realNum} ${fromTokenType?.name ?? ''}-${toTokenType?.name ?? ''}`
+    let amountText = `Depositing LP ${amountBN.realNum} ${fromTokenType?.name ?? ''}-${toTokenType?.name ?? ''}`
     const onStart = () => {
       transStateUpdate({stateText: 'Waiting for Confirmation', amountText, status: 'start'})
     }
-    const onEnd = (state: string, blockHash?: string) => {
+    const onEnd = (state: string, blockHash?: string, payload?: any) => {
       let stateText = ''
       let status = ''
       let hash
       if (state === 'complete') {
         stateText = 'Transaction Submitted'
+        amountText = `Depositing LP ${payload?.shareAmount?.realNum ?? '-'} ${fromTokenType?.name ?? ''}-${toTokenType?.name ?? ''}`
         status = 'end'
         hash = blockHash
       } else if (state === 'rejected') {
         stateText = 'Transaction Rejected'
+        amountText = ''
         status = 'rejected'
       } else {
         stateText = 'Transaction Failed'
+        amountText = ''
         status = 'error'
       }
       transStateUpdate({stateText: stateText, amountText, status: status, hash})

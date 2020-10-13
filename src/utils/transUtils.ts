@@ -1,6 +1,4 @@
 import { web3FromAddress } from '@polkadot/extension-dapp';
-import { TokenType } from '../state/token/types'
-import { AccountInfo } from '../state/wallet/types';
 import BigNum from '../types/bigNum'
 import { api } from './apiUtils'
 import _ from 'lodash'
@@ -15,140 +13,115 @@ async function getSigner(addr: string) {
   }
 }
 
-export async function doAddLiqudityTrans(fromToken: TokenType, 
-  toToken: TokenType, fromAmount: BigNum, 
-  toAmount: BigNum, accountInfo: AccountInfo, 
-  onError: (msg: string) => void, onStart: () => void, onEnd: (state: string, hash?: string) => void): Promise<void> {
-
-  onStart()
-
-  const signer = await getSigner(accountInfo.address)
-  if (signer == null) {
-    onError('no available wallet')
-    return
-  }
-
-  api.getApi().setSigner(signer)
-
-  let unsub: ()=>void = () => {''};
-
-  try {
-    /* eslint-disable  @typescript-eslint/no-explicit-any */
-    unsub = await api.getApi().tx.bithumbDex.addLiquidity(fromToken.id, toToken.id, fromAmount.bigNum, toAmount.bigNum)
-    .signAndSend(accountInfo.address, (params: any) => {
-      console.log('Transaction status:', params.status.type);
-  
-      if (params.status.isInBlock) {
-        console.log('Completed at block hash', params.status.asInBlock.toHex());
-        console.log('Events:');
-  
-        params.events.forEach((event: any/*{ phase, event: { data, method, section } }*/) => {
-          console.log(`${event.phase.toString()}, ${event.event.methohd}, ${event.event.section},${event.event.data.toString()}` );
-        });
-        onEnd('complete', `${params.status.asInBlock.toHex()}`)
-        unsub()
+function extractAmountPair(event: any, address: string) {
+  if (event.event.section === 'bithumbDex' && event.event.data.length === 6) {
+    //["address",0,1,1000000000000,1000000000000,999999999999]
+    const [recieveAddress, token1Id, token2Id, token1Amount, token2Amount, shareAmount] = event.event.data
+    if (recieveAddress.toString() === address) {
+      return {
+        id1: token1Id.toString(),
+        id2: token2Id.toString(),
+        amount1: BigNum.fromBigNum(token1Amount.toString()),
+        amount2: BigNum.fromBigNum(token2Amount.toString()),
+        shareAmount: BigNum.fromBigNum(shareAmount.toString())
       }
-    });
-  } catch (e) {
-    if (e.type === 'signature_rejected') {
-      onEnd('rejected')
-    } else {
-      onEnd('error')
     }
-    
-    if (!_.isEmpty(unsub)) {
-      unsub()
-    } 
   }
+
+  return undefined
 }
 
-export async function doRemoveLiqudityTrans(fromToken: TokenType, 
-  toToken: TokenType, shareAmount: BigNum,  accountInfo: AccountInfo, 
-  onError: (msg: string) => void, onStart: () => void, onEnd: (state: string, hash?: string) => void): Promise<void> {
-
-  onStart()
-
-  const signer = await getSigner(accountInfo.address)
-  if (signer == null) {
-    onError('no available wallet')
-    return
+function extractShareAmount(event: any, address: string) {
+  if (event.event.section === 'bithumbDex' && event.event.data.length === 5) {
+    const [recieveAddress, , ,shareAmount, ] = event.event.data
+    if (recieveAddress.toString() === address) {
+      return BigNum.fromBigNum(shareAmount.toString())
+    }
   }
 
-  api.getApi().setSigner(signer)
+  return undefined
+}
 
-  let unsub: () => void = () => {''};
-
-  try {
-    unsub = await api.getApi().tx.bithumbDex.withdrawLiquidity(fromToken.id, toToken.id, shareAmount.bigNum)
-    .signAndSend(accountInfo.address, (params: any) => {
-      console.log('Transaction status:', params.status.type);
-  
-      if (params.status.isInBlock) {
-        console.log('Completed at block hash', params.status.asInBlock.toHex());
-        console.log('Events:');
-  
-        params.events.forEach((event: any/*{ phase, event: { data, method, section } }*/) => {
-          console.log(`${event.phase.toString()}, ${event.event.methohd}, ${event.event.section},${event.event.data.toString()}` );
-        });
-        onEnd('complete', `${params.status.asInBlock.toHex()}`)
-        unsub()
-      }
-    });
-  } catch (e) {
-    if (e.type === 'signature_rejected') {
-      onEnd('rejected')
-    } else {
-      onEnd('error')
+function extractClaimAmount(event: any, address: string) {
+  if (event.event.section === 'currencies' && event.event.data.length === 4) {
+    const [,,recieveAddress, claimAmount] = event.event.data
+    if (recieveAddress.toString() === address) {
+      return BigNum.fromBigNum(claimAmount.toString())
     }
-    
-    if (!_.isEmpty(unsub)) {
-      unsub()
-    } 
+  }
+
+  return undefined
+}
+
+function extractError(event: any) {
+  if (event.event.section === 'system' && event.event.data.length === 2) {
+    const [info, ] = event.event.data
+    const s = info.toHuman()
+    if (s.Module.error) {
+      throw new Error('transaction failed')
+    }
   }
 }
 
 function extractPayload(transName: string, events: any, address: string): any {
   let payload: any = {}
   switch(transName) {
+    case 'addLiquidity': {
+      events.forEach((event: any/*{ phase, event: { data, method, section } }*/) => {
+        if (event.event.section === 'bithumbDex' && event.event.data.length === 6) {
+          payload.amountPair = extractAmountPair(event, address)
+        } else if (event.event.section === 'system' && event.event.data.length === 2) {
+          extractError(event)
+        }
+      })
+
+      break;
+    }
+    case 'withdrawLiquidity': {
+      events.forEach((event: any/*{ phase, event: { data, method, section } }*/) => {
+        if (event.event.section === 'bithumbDex' && event.event.data.length === 6) {
+          payload.amountPair = extractAmountPair(event, address)
+        } else if (event.event.section === 'system' && event.event.data.length === 2) {
+          extractError(event)
+        }
+      })
+
+      break;
+    }
+    case 'stakePoolShares': {
+      events.forEach((event: any/*{ phase, event: { data, method, section } }*/) => {
+        if (event.event.section === 'bithumbDex' && event.event.data.length === 5) {
+          payload.shareAmount = extractShareAmount(event, address)
+        } else if (event.event.section === 'system' && event.event.data.length === 2) {
+          extractError(event)
+        }
+      });
+
+      break;
+    }
     case 'unstakePoolShares': {
       events.forEach((event: any/*{ phase, event: { data, method, section } }*/) => {
         if (event.event.section === 'currencies' && event.event.data.length === 4) {
-          const [,,recieveAddress, claimAmount] = event.event.data
-          if (recieveAddress.toString() === address) {
-            payload.claimAmount = BigNum.fromBigNum(claimAmount.toString())
-          }
-        } else if (event.event.section === 'bithumbDex' && event.event.data.length === 5) {
-          const [recieveAddress, , ,shareAmount, ] = event.event.data
-          if (recieveAddress.toString() === address) {
-            payload.shareAmount = BigNum.fromBigNum(shareAmount.toString())
-          }
-        } else if (event.event.section === 'system' && event.event.data.length === 2) {
-          const [info, ] = event.event.data
-          const s = info.toHuman()
-          if (s.Module.error === '1') {
-            throw new Error('transaction failed')
-          }
+          payload.claimAmount = extractClaimAmount(event, address)
         }
-        console.log(`${event.phase.toString()}, ${event.event.methohd}, ${event.event.section},${event.event.data.toString()}` );
-      });
+        else if (event.event.section === 'bithumbDex' && event.event.data.length === 5) {
+          payload.shareAmount = extractShareAmount(event, address)
+        }
+        else if (event.event.section === 'system' && event.event.data.length === 2) {
+          extractError(event)
+        }
+      })
       break;
     }
 
     case 'withdrawRewards': {
       events.forEach((event: any/*{ phase, event: { data, method, section } }*/) => {
         if (event.event.section === 'currencies' && event.event.data.length === 4) {
-          const [,,recieveAddress, claimAmount] = event.event.data
-          if (recieveAddress.toString() === address) {
-            payload.claimAmount = BigNum.fromBigNum(claimAmount.toString())
-          }
-        } else if (event.event.section === 'system' && event.event.data.length === 2) {
-          const [info, ] = event.event.data
-          const s = info.toHuman()
-          if (s.Module.error === '1') {
-            throw new Error('transaction failed')
-          }
+          payload.claimAmount = extractClaimAmount(event, address)
         }
-        console.log(`${event.phase.toString()}, ${event.event.methohd}, ${event.event.section},${event.event.data.toString()}` );
+        else if (event.event.section === 'system' && event.event.data.length === 2) {
+          extractError(event)
+        }
       });
       break;
     }
@@ -179,19 +152,20 @@ export async function doTransaction(transName: string, args:any[], accountAddr: 
   try {
     unsub = await api.getTransFunction(transName)(...args)
     .signAndSend(accountAddr, (params: any) => {
-      // console.log('Transaction status:', params.status.type);
+      console.log('Transaction status:', params.status.type);
   
       if (params.status.isInBlock) {
-        // console.log('Completed at block hash', params.status.asInBlock.toHex());
-        // console.log('Events:');
+        console.log('Completed at block hash', params.status.asInBlock.toHex());
+        console.log('Events:');
   
-        // params.events.forEach((event: any/*{ phase, event: { data, method, section } }*/) => {
-        //   console.log(`${event.phase.toString()}, ${event.event.methohd}, ${event.event.section},${event.event.data.toString()}` );
-        // });
+        params.events.forEach((event: any/*{ phase, event: { data, method, section } }*/) => {
+          console.log(`${event.phase.toString()}, ${event.event.methohd}, ${event.event.section},${event.event.data.toString()}` );
+        });
         try {
           const payload = extractPayload(transName, params.events, accountAddr)
           onEnd('complete', `${params.status.asInBlock.toHex()}`, payload)
         } catch (e) {
+          console.log(e)
           onEnd('error')
         }
         

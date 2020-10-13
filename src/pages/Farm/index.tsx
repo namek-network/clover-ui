@@ -4,6 +4,7 @@ import NavigationTabs from '../../components/NavigationTabs'
 import Row, { RowBetween } from '../../components/Row'
 import Column from '../../components/Column'
 import Circle from '../../components/Circle'
+import { isMobile } from 'react-device-detect'
 import { useTranslation } from 'react-i18next'
 import { PrimitiveButton, SecondaryLittleButton } from '../../components/Button'
 import { PairIconTitle, PairTransContent } from '../Pool/poolPairItem'
@@ -40,6 +41,10 @@ const BodyWrapper = styled.div`
 const TipWrapper = styled(Row)`
   justify-content: center;
   margin-bottom: 32px;
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    padding-left: 16px;
+    padding-right: 16px;
+  `};
 `
 
 const StyledCircle = styled(Circle)`
@@ -73,6 +78,9 @@ const ListWrapper = styled.div`
   max-height: calc(100vh - 350px);
   min-height: 350px;
   overflow: auto;
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+      width: 100%;
+  `};
 `
 
 const List = styled.div`
@@ -86,6 +94,11 @@ const List = styled.div`
 const SingleWrapper = styled.div`
   width: 470px;
   padding: 20px;
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+      width: 100%;
+      max-width: 470px;
+  `};
 `
 
 const ItemWrapper = styled(Column)`
@@ -111,6 +124,10 @@ const PairTransContentWrapper = styled.div`
 
 const FarmPlantWrapper = styled(Column)`
   padding-bottom: 20px;
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+      width: 100%;
+      padding: 0 16px;
+  `};
 `
 
 const PlantItemWrapper = styled(Column)`
@@ -119,15 +136,25 @@ const PlantItemWrapper = styled(Column)`
   background: white;
   box-shadow: 0px 2px 20px 0px rgba(0, 0, 0, 0.1);
   border-radius: 16px;
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    width: 100%;
+    max-width: 470px;
+  `};
 `
 
 const PoolInfoWrapper = styled(Column)`
   width: 470px;
-  height: 232px;
   background: #FFFFFF;
   box-shadow: 0px 0px 20px 0px rgba(17, 26, 52, 0.1);
   border-radius: 16px;
   margin-top: 16px;
+  padding-bottom: 16px;
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    width: 100%;
+    max-width: 470px;
+  `};
 `
 
 const PlantPairIconTitleWrapper = styled(Row)`
@@ -214,6 +241,10 @@ const ButtonGroup = styled.div`
   grid-column-gap: 8px;
   padding: 0 25px;
   margin-top: 40px;
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    grid-template-columns: 33% 33% 33%;
+  `};
 `
 
 const LittleButton = styled(PrimitiveButton)`
@@ -221,6 +252,10 @@ const LittleButton = styled(PrimitiveButton)`
   border-radius: 4px;
   padding: 0;
   height: 32px;
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    line-height: 1em;
+  `};
 `
 
 const LastRow = styled(RowBetween)`
@@ -244,6 +279,7 @@ export default function Farm(): React.ReactElement {
   const [claimDisabled, setClaimDisabled] = useState(true)
   const [dataFromAddLiquid, setDataFromAddLiquid] = useState<DataFromAddLiquid>(defaultDataFromAddLiquid)
   const [transferStateModalOpen, setTransferStateModalOpen] = useState(false)
+  const [singleTitleSize, setSingleTitleSize] = useState({width: '40px', fontSize: '32px'})
 
   const { t } = useTranslation()
   const tokenTypes = useTokenTypes()
@@ -412,6 +448,12 @@ export default function Farm(): React.ReactElement {
     loadMyDepositInfo()
   }, [selectedItem, userPoolItems, tokenTypes, myInfo.address])
 
+  useEffect(() => {
+    if (isMobile) {
+      setSingleTitleSize({width: '32px', fontSize: '16px'})
+    }
+  }, [])
+
   return (
     <BodyWrapper>
       <NavigationTabs active={'farm'} customStyle={'width: 100%;max-width: 460px;'}/>
@@ -426,7 +468,7 @@ export default function Farm(): React.ReactElement {
         _.isEmpty(selectedItem) && !_.isEmpty(stakePoolItems) &&
         <ListWrapper>
           {
-            stakePoolItems && stakePoolItems.length > 1 ?
+            stakePoolItems && stakePoolItems.length > 1 && !isMobile ?
             <List>
             {
               _.map(stakePoolItems, (d: StakePoolItem, i) => {
@@ -473,7 +515,7 @@ export default function Farm(): React.ReactElement {
         <FarmPlantWrapper>
           <PlantItemWrapper>
             <PlantPairIconTitleWrapper>
-              <PairIconTitle left={selectedItem.fromTokenType.logo ?? ''} right={selectedItem.toTokenType.logo ?? ''} title={fromToken?.name ? `${fromToken?.name}-${toToken?.name}` : ''} size={'40px'} fontSize={'32px'}></PairIconTitle>
+              <PairIconTitle left={selectedItem.fromTokenType.logo ?? ''} right={selectedItem.toTokenType.logo ?? ''} title={fromToken?.name ? `${fromToken?.name}-${toToken?.name}` : ''} size={singleTitleSize.width} fontSize={singleTitleSize.fontSize}></PairIconTitle>
               <AddLiquidityButton onClick={addLiquidityClick}>{t('addLiquidity')}</AddLiquidityButton>
             </PlantPairIconTitleWrapper>
             <PairTransContentWrapper>

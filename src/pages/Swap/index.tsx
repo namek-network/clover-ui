@@ -262,6 +262,17 @@ export default function Swap(): React.ReactElement {
     setWalletConnected(!_.isEmpty(_.get(accountInfo, 'address', '')))
   }, [accountInfo])
 
+  useEffect(() => {
+    if ((_.isUndefined(fromToken) || _.isNull(fromToken))
+      && (_.isUndefined(toToken) || _.isNull(toToken))
+      && !_.isEmpty(myTokenTypes)) {
+      const clv = _.get(myTokenTypesByName, 'CLV')
+      if (clv) {
+        setFromToken(clv)
+      }
+    }
+  }, [myTokenTypes, myTokenTypesByName, fromToken, toToken])
+
   return (
     <AppBody>
       <NavigationTabs active={'swap'} />

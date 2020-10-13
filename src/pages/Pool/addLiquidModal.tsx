@@ -9,6 +9,7 @@ import { PairTransContent, PairIconTitle } from './poolPairItem'
 import _ from 'lodash'
 import Modal from '../../components/Modal'
 import CurrencyInputPanel from '../../components/CurrencyInputPanel';
+import { useTokenTypes } from '../../state/token/hooks'
 import { useAccountInfo } from '../../state/wallet/hooks';
 import BigNum, {div, times, add}  from '../../types/bigNum';
 import { useUserPoolPairItems, useChainPoolPairItems } from '../../state/pool/hooks';
@@ -418,6 +419,21 @@ export default function AddLiquidModal({isOpen, onClose, fromTokenType, toTokenT
     }
     
   }, [isOpen])
+
+  const myTokenTypes = useTokenTypes()
+  const myTokenTypesByName = _.keyBy(myTokenTypes, 'name')
+
+  useEffect(() => {
+    if (isOpen 
+      && (_.isUndefined(fromToken) || _.isNull(fromToken))
+      && (_.isUndefined(toToken) || _.isNull(toToken))
+      && !_.isEmpty(myTokenTypes)) {
+      const clv = _.get(myTokenTypesByName, 'CLV')
+      if (clv) {
+        setFromToken(clv)
+      }
+    }
+  }, [isOpen, myTokenTypes, myTokenTypesByName, fromToken, toToken])
 
     return (
       <Modal isOpen={isOpen} onDismiss={() => {''}} maxHeight={90} customStyle={customStyle}>

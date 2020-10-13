@@ -49,6 +49,12 @@ export const SecondaryLittleButton = styled(RebassButton)`
   &:focus  {
     outline:none;
   }
+
+  &:disabled {
+    background: #E2E4EA;
+    border: 0;
+    color: white;
+  }
 }`
 
 export const ButtonBigCommon = styled(RebassButton)<{

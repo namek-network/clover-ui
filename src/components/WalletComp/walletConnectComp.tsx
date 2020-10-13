@@ -8,7 +8,7 @@ import WalletSelectDialog from './walletSelectDialog'
 import _ from 'lodash'
 import { useAccountInfoUpdate } from '../../state/wallet/hooks'
 import { useTokenTypes } from '../../state/token/hooks';
-import { useApiInited } from '../../state/api/hooks'
+import { useApiInited, useApiConnected } from '../../state/api/hooks'
 import { WalletType } from '../../utils/AccountUtils'
 
 export const Wrapper = styled.div`
@@ -18,6 +18,12 @@ export const Wrapper = styled.div`
 const LittleConnectButton = styled(SecondaryLittleButton)`
   padding: 6px 10px;
   line-height: 16px;
+
+  &:disabled {
+    color: #F99E3C;
+    border: 1px solid #F99E3C;
+    background-color: transparent;
+  }
 `
 
 interface WalletConnectCompProps {
@@ -38,6 +44,7 @@ export default function WalletConnectComp({
   const myTokenTypes = useTokenTypes()
 
   const apiInited = useApiInited()
+  const apiConnected = useApiConnected()
 
   const handleClick = () => {
     setOpen(true)
@@ -68,10 +75,10 @@ export default function WalletConnectComp({
   return (
     <Wrapper>
       {
-        btnStyle === 'bottom' && <PrimitiveButton onClick={handleClick} >{t('connectToWallet')}</PrimitiveButton>
+        btnStyle === 'bottom' && <PrimitiveButton onClick={handleClick} disabled={!apiInited || !apiConnected}>{t('connectToWallet')}</PrimitiveButton>
       } 
       {
-        btnStyle === 'top' && <LittleConnectButton onClick={handleClick} >{t('connectToWallet')}</LittleConnectButton>
+        btnStyle === 'top' && <LittleConnectButton onClick={handleClick} disabled={!apiInited}>{apiInited ? t('connectToWallet') : t('connecting')}</LittleConnectButton>
       }
       
       <WalletSelectDialog 

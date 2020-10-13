@@ -175,7 +175,7 @@ export default function WalletComp(): React.ReactElement {
     return (
       <div>
         {
-          (!inited || !apiConnected)? <WarningInfoComp></WarningInfoComp> :
+          (inited && !apiConnected)? <WarningInfoComp></WarningInfoComp> :
           myInfo.address === '' ? 
             <ConnectButtonWrapper>
               <WalletConnectComp btnStyle='top' onWalletClose={onWalletSelectDialogClose}></WalletConnectComp> 

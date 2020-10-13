@@ -41,6 +41,7 @@
   "pool": "Pool",
   "farm": "Farm",
   "connectToWallet": "Connect to a wallet",
+  "connecting": "Connecting...",
   "notFoundWallet": "Not Found Wallet, please install math wallet!",
   "addWallet": "Not Found Wallet, please create a wallet!",
   "addLiquidity": "Add Liquidity",

@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import styled from 'styled-components';
+import { isMobile } from 'react-device-detect';
 import { TokenType } from '../../state/token/types';
 import Column, {ColumnCenter} from '../../components/Column'
 import Row, {RowBetween} from '../../components/Row'
@@ -134,6 +135,33 @@ const InfoText = styled.div`
   margin-left: 4px;
   padding-right: 10px;
 `
+
+const MyPositionWrapper = styled(Column)`
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    width: 100%;
+    margin-top: 15px;
+  `}
+`
+
+interface MyPositionProps {
+  fromToken: TokenType | undefined,
+  toToken: TokenType | undefined,
+  mpShowData: showTextType[]
+}
+
+const MyPosition = ({fromToken, toToken, mpShowData}: MyPositionProps): React.ReactElement => {
+  return (
+    <MyPositionWrapper>
+      <Title>My position</Title>
+      <PairTitleWrapper>
+        <PairIconTitle left={fromToken?.logo ?? ''} right={toToken?.logo ?? ''} title={`${fromToken?.name ?? ''}/${toToken?.name ?? ''}`}></PairIconTitle>
+      </PairTitleWrapper>
+      <PairContentWrapper>
+        <PairTransContent contents={mpShowData}></PairTransContent>
+      </PairContentWrapper>
+    </MyPositionWrapper>
+  );
+}
 
 interface AddLiquidModalProps {
   isOpen: boolean
@@ -394,17 +422,9 @@ export default function AddLiquidModal({isOpen, onClose, fromTokenType, toTokenT
     return (
       <Modal isOpen={isOpen} onDismiss={() => {''}} maxHeight={90} customStyle={customStyle}>
         {
-          selectedPairExists(userPoolItems, fromToken, toToken) && 
+          selectedPairExists(userPoolItems, fromToken, toToken) && (!isMobile) &&
           <RightWrapper startAnimation={startAnimation}>
-            <Column>
-              <Title>My position</Title>
-              <PairTitleWrapper>
-                <PairIconTitle left={fromToken?.logo ?? ''} right={toToken?.logo ?? ''} title={`${fromToken?.name ?? ''}/${toToken?.name ?? ''}`}></PairIconTitle>
-              </PairTitleWrapper>
-              <PairContentWrapper>
-                <PairTransContent contents={mpShowData}></PairTransContent>
-              </PairContentWrapper>
-            </Column>
+            <MyPosition fromToken={fromToken} toToken={toToken} mpShowData={mpShowData}></MyPosition>
           </RightWrapper>
         }
         <BodyWrapper>
@@ -468,6 +488,10 @@ export default function AddLiquidModal({isOpen, onClose, fromTokenType, toTokenT
               </TipWrapper>
             }
             
+            {
+              selectedPairExists(userPoolItems, fromToken, toToken) && isMobile &&
+              <MyPosition fromToken={fromToken} toToken={toToken} mpShowData={mpShowData}></MyPosition>
+            }
           </Wrapper>
         </BodyWrapper>
       </Modal>

@@ -184,7 +184,7 @@ export default function AssetDialog({ account, wallet, onClose, open }: AssetDia
         }
       })
 
-      console.log(`${JSON.stringify(records)}`)
+      // console.log(`${JSON.stringify(records)}`)
 
       updateRecentTransaction(records)
     }

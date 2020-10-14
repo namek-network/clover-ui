@@ -2,10 +2,9 @@ import React, { useEffect, useState } from 'react'
 import _ from 'lodash'
 import styled from 'styled-components';
 import AssetDialog from './assetDialog'
-import {getAddress, createAccountInfo, createEmptyAccountInfo} from './utils'
+import {getAddress, createEmptyAccountInfo} from './utils'
 import { useAccountInfo, useAccountInfoUpdate } from '../../state/wallet/hooks';
-import { useTokenTypes } from '../../state/token/hooks'
-import { supportedWalletTypes, loadAllTokenAmount } from '../../utils/AccountUtils'
+import { supportedWalletTypes } from '../../utils/AccountUtils'
 import WalletConnectComp from './walletConnectComp'
 import { WalletType } from '../../utils/AccountUtils'
 import Row from '../Row'
@@ -96,10 +95,6 @@ export default function WalletComp(): React.ReactElement {
   const myInfo = useAccountInfo()
   const updateAccountInfo = useAccountInfoUpdate()
 
-  const myTokenTypes = useTokenTypes()
-
-  const apiInited = useApiInited()
-
   const wrongNetwork = useWrongNetwork()
 
   useEffect(() => {
@@ -118,50 +113,6 @@ export default function WalletComp(): React.ReactElement {
 
     setSelectedWallet(wallet ?? {name: '', showName: '', icon: ''})
   }, [myInfo])
-  
-  // useEffect(() => {
-  //   if (!apiInited || _.isEmpty(myInfo.address)) {
-  //     return
-  //   }
-
-  //   const subscribeBalance = async (addr: string, callback: (params: any) => void) => {
-  //     return await api.getBalanceSubscribe(addr, callback)
-  //   }
-
-  //   const unsubscribe = subscribeBalance(myInfo.address, (params: any) => {
-  //     console.log(`p:${params}`)
-  //   })
-
-  //   return () => {
-  //     unsubscribe.then((f) => {
-  //       f()
-  //     });
-  //   }
-  // }, [myInfo, myTokenTypes, apiInited])
-  useEffect(() => {
-    const listenToBalance = async () => {
-      if (!apiInited || _.isEmpty(myInfo.address)) {
-        return
-      }
-
-      const tokenAmounts = await loadAllTokenAmount(myInfo.address, myTokenTypes)
-      // const tokenAmounts = await api.getBalance(myInfo.address)
-
-      if (_.isEmpty(tokenAmounts)) {
-        return
-      }
-
-      if (!_.isEqual(tokenAmounts, myInfo.tokenAmounts)) {
-        updateAccountInfo(createAccountInfo(myInfo.address, myInfo.name, myInfo.walletName, tokenAmounts ?? []))
-      }
-    }
-
-    const unsub = setInterval(listenToBalance, 3000)
-
-    return () => {
-      clearInterval(unsub)
-    }
-  }, [apiInited, myInfo, myTokenTypes, updateAccountInfo])
 
   const handleAssetOpen = () => {
     setAssetOpen(true)

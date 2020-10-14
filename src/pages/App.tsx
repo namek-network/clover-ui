@@ -5,12 +5,12 @@ import styled from 'styled-components'
 import { isMobile } from 'react-device-detect'
 import { initApi } from '../utils/apiUtils'
 import { loadAllPools, loadCurrencyPair, loadTokenTypes, subscribeToEvents } from '../utils/tokenUtils'
-import { useTokenTypesUpdate, useCurrencyPairUpdate } from '../state/token/hooks'
+import { useTokenTypes, useTokenTypesUpdate, useCurrencyPairUpdate } from '../state/token/hooks'
 import { useStakePoolItemsUpdate } from '../state/farm/hooks'
 import { ToastContainer, Slide } from 'react-toastify';
 
 import { useApiConnectedUpdate, useApiInited, useApiInitedUpdate } from '../state/api/hooks'
-import { useAccountInfo } from '../state/wallet/hooks'
+import { useAccountInfo, useAccountInfoUpdate } from '../state/wallet/hooks'
 
 import Header from '../components/Header'
 import Footer from '../components/Footer'
@@ -54,6 +54,7 @@ export default function App(): React.ReactElement {
   const apiInitedUpdate = useApiInitedUpdate()
   const updateApiConnected = useApiConnectedUpdate()
   const accountInfo = useAccountInfo();
+  const tokenTypes = useTokenTypes()
 
   const onApiInited = useCallback(() => {
     apiInitedUpdate(true)
@@ -63,6 +64,7 @@ export default function App(): React.ReactElement {
   const updateTokenTypeList = useTokenTypesUpdate()
   const updateCurrencyPair = useCurrencyPairUpdate()
   const udateStakePoolItems = useStakePoolItemsUpdate()
+  const updateAccountInfo = useAccountInfoUpdate()
 
 
   const initPolkaApi = useCallback(async () => {
@@ -88,8 +90,8 @@ export default function App(): React.ReactElement {
       return
     }
     
-    subscribeToEvents(udateStakePoolItems).catch((e) => {console.log(e)})
-  }, [apiInited, udateStakePoolItems])
+    subscribeToEvents(udateStakePoolItems, apiInited, accountInfo, tokenTypes, updateAccountInfo).catch((e) => {console.log(e)})
+  }, [apiInited, udateStakePoolItems, accountInfo, tokenTypes, updateAccountInfo])
 
   useEffect(() => {
     if (_.isEmpty(accountInfo.address)) {

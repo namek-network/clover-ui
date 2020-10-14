@@ -54,7 +54,7 @@ export async function swapCurrency(
   api.getApi().setSigner(signer)
 
   // Create a extrinsic
-  const swapCurrency = api.getApi().tx.bithumbDex.swapCurrency(supplyCurrencyId, supplyAmount.bigNum, targetCurrencyId, targetAmount.bigNum, routes)
+  const swapCurrency = api.getApi().tx.cloverDex.swapCurrency(supplyCurrencyId, supplyAmount.bigNum, targetCurrencyId, targetAmount.bigNum, routes)
   
   // Sign and Send the transaction
   let unsub: any;

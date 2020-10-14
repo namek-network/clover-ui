@@ -50,7 +50,7 @@ export async function subscribeToEvents(udateStakePoolItems: (items: StakePoolIt
     let updateStakePool = false
     events.forEach((record: any) => {
       const { event, } = record;
-      if (event.section.toString() === 'bithumbDex' && (_.includes(['StakeShare', 'UnStakeShare', 'RewardsClaimed'], event.method.toString()))) {
+      if (event.section.toString() === 'cloverDex' && (_.includes(['StakeShare', 'UnStakeShare', 'RewardsClaimed'], event.method.toString()))) {
         updateStakePool = true
       }
     })

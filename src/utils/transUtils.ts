@@ -14,7 +14,7 @@ async function getSigner(addr: string) {
 }
 
 function extractAmountPair(event: any, address: string) {
-  if (event.event.section === 'bithumbDex' && event.event.data.length === 6) {
+  if (event.event.section === 'cloverDex' && event.event.data.length === 6) {
     //["address",0,1,1000000000000,1000000000000,999999999999]
     const [recieveAddress, token1Id, token2Id, token1Amount, token2Amount, shareAmount] = event.event.data
     if (recieveAddress.toString() === address) {
@@ -32,7 +32,7 @@ function extractAmountPair(event: any, address: string) {
 }
 
 function extractShareAmount(event: any, address: string) {
-  if (event.event.section === 'bithumbDex' && event.event.data.length === 5) {
+  if (event.event.section === 'cloverDex' && event.event.data.length === 5) {
     const [recieveAddress, , ,shareAmount, ] = event.event.data
     if (recieveAddress.toString() === address) {
       return BigNum.fromBigNum(shareAmount.toString())
@@ -68,7 +68,7 @@ function extractPayload(transName: string, events: any, address: string): any {
   switch(transName) {
     case 'addLiquidity': {
       events.forEach((event: any/*{ phase, event: { data, method, section } }*/) => {
-        if (event.event.section === 'bithumbDex' && event.event.data.length === 6) {
+        if (event.event.section === 'cloverDex' && event.event.data.length === 6) {
           payload.amountPair = extractAmountPair(event, address)
         } else if (event.event.section === 'system' && event.event.data.length === 2) {
           extractError(event)
@@ -79,7 +79,7 @@ function extractPayload(transName: string, events: any, address: string): any {
     }
     case 'withdrawLiquidity': {
       events.forEach((event: any/*{ phase, event: { data, method, section } }*/) => {
-        if (event.event.section === 'bithumbDex' && event.event.data.length === 6) {
+        if (event.event.section === 'cloverDex' && event.event.data.length === 6) {
           payload.amountPair = extractAmountPair(event, address)
         } else if (event.event.section === 'system' && event.event.data.length === 2) {
           extractError(event)
@@ -90,7 +90,7 @@ function extractPayload(transName: string, events: any, address: string): any {
     }
     case 'stakePoolShares': {
       events.forEach((event: any/*{ phase, event: { data, method, section } }*/) => {
-        if (event.event.section === 'bithumbDex' && event.event.data.length === 5) {
+        if (event.event.section === 'cloverDex' && event.event.data.length === 5) {
           payload.shareAmount = extractShareAmount(event, address)
         } else if (event.event.section === 'system' && event.event.data.length === 2) {
           extractError(event)
@@ -104,7 +104,7 @@ function extractPayload(transName: string, events: any, address: string): any {
         if (event.event.section === 'currencies' && event.event.data.length === 4) {
           payload.claimAmount = extractClaimAmount(event, address)
         }
-        else if (event.event.section === 'bithumbDex' && event.event.data.length === 5) {
+        else if (event.event.section === 'cloverDex' && event.event.data.length === 5) {
           payload.shareAmount = extractShareAmount(event, address)
         }
         else if (event.event.section === 'system' && event.event.data.length === 2) {

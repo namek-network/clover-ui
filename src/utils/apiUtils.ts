@@ -44,56 +44,56 @@ class ApiWrapper {
 
   getTransFunction(transName: string) {
     switch(transName) {
-      case 'unstakePoolShares': return this.api.tx.bithumbDex.unstakePoolShares
-      case 'stakePoolShares': return this.api.tx.bithumbDex.stakePoolShares
-      case 'withdrawRewards': return this.api.tx.bithumbDex.withdrawRewards
-      case 'addLiquidity': return this.api.tx.bithumbDex.addLiquidity
-      case 'withdrawLiquidity': return this.api.tx.bithumbDex.withdrawLiquidity
+      case 'unstakePoolShares': return this.api.tx.cloverDex.unstakePoolShares
+      case 'stakePoolShares': return this.api.tx.cloverDex.stakePoolShares
+      case 'withdrawRewards': return this.api.tx.cloverDex.withdrawRewards
+      case 'addLiquidity': return this.api.tx.cloverDex.addLiquidity
+      case 'withdrawLiquidity': return this.api.tx.cloverDex.withdrawLiquidity
     }
     return null
   }
 
   getTokenTypes() {
-    return this.api.rpc.bitdex.getCurrencies()
+    return this.api.rpc.clover.getCurrencies()
   }
 
   getCurrencyPair() {
-    return this.api.rpc.bitdex.currencyPair()
+    return this.api.rpc.clover.currencyPair()
   }
 
   getBalance(account: string, currencyType?: string) {
     if (_.isEmpty(currencyType)) {
-      return this.api.rpc.bitdex.getBalance(account)
+      return this.api.rpc.clover.getBalance(account)
     }
 
-    return this.api.rpc.bitdex.getBalance(account, currencyType)
+    return this.api.rpc.clover.getBalance(account, currencyType)
   }
 
   getBalanceSubscribe(account: string, cb: (params: any) => void) {
-    return this.api.rpc.bitdex.getBalance(account, cb)
+    return this.api.rpc.clover.getBalance(account, cb)
   }
-  
+
   targetAmountAvailable(source: string, target: string, amount: string) {
-    return this.api.rpc.bitdex.targetAmountAvailable(source, target, amount)
+    return this.api.rpc.clover.targetAmountAvailable(source, target, amount)
   }
 
   supplyAmountNeeded(source: string, target: string, amount: string) {
-    return this.api.rpc.bitdex.supplyAmountNeeded(source, target, amount)
+    return this.api.rpc.clover.supplyAmountNeeded(source, target, amount)
   }
 
   getLiquidity(addr?: string) {
     if (_.isEmpty(addr)) {
-      return this.api.rpc.bitdex.getLiquidity()
+      return this.api.rpc.clover.getLiquidity()
     }
-    return this.api.rpc.bitdex.getLiquidity(addr)
+    return this.api.rpc.clover.getLiquidity(addr)
   }
 
   toAddLiquidity(from: string, to: string, amountFrom: string, amountTo: string) {
-    return this.api.rpc.bitdex.toAddLiquidity(from, to, amountFrom, amountTo)
+    return this.api.rpc.clover.toAddLiquidity(from, to, amountFrom, amountTo)
   }
 
   getAccountStakingInfo(account: string, token1: string, token2: string) {
-    return this.api.rpc.bitdex.getAccountStakingInfo(account, token1, token2)
+    return this.api.rpc.clover.getAccountStakingInfo(account, token1, token2)
   }
 
   getAllPools() {
@@ -108,7 +108,7 @@ export const initApi = async (onInited: () => void, onConnected: () => void, onD
     return
   }
 
-  const wsProvider = new WsProvider('wss://api.ownstack.cn');
+  const wsProvider = new WsProvider('ws://localhost:9944');
   const theApi = await ApiPromise.create({ provider: wsProvider, types, rpc: {
     incentive: {
       getAllPools: {
@@ -119,7 +119,7 @@ export const initApi = async (onInited: () => void, onConnected: () => void, onD
       }
 
     },
-    bitdex: {
+    clover: {
         getCurrencies: {
           description: 'get currencies',
           params: [

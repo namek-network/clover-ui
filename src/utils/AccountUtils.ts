@@ -1,10 +1,11 @@
-import { web3Accounts, web3Enable, web3FromAddress } from '@polkadot/extension-dapp';
+import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
 import { TokenType } from '../state/token/types'
-import { InjectedAccountWithMeta, InjectedExtension } from '@polkadot/extension-inject/types';
+import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { AccountInfo, TokenAmount } from '../state/wallet/types';
 import BigNum from '../types/bigNum'
 import { api } from './apiUtils'
 import { originName } from '../constants'
+import keyring from '@polkadot/ui-keyring';
 import _ from 'lodash'
 
 export interface WalletType {
@@ -78,7 +79,17 @@ function isCloverWallet(injectedWallet: any) {
   return injectedWallet.name === 'enzyme'
 }
 
-export async function loadAccount(wallet: WalletType | undefined, tokenTypes: TokenType[], updateAccountInfo: (info: AccountInfo) => void): Promise<string> {
+function invalidWalletNetwork(allAccounts: InjectedAccountWithMeta[]): boolean {
+  keyring.loadAll({ ss58Format: 42, type: 'ed25519' }, allAccounts);
+
+  const accounts = keyring.getAccounts();
+  const addrs = _.map(accounts, (acc) => acc.address)
+
+  return _.some(allAccounts, (acc) => !_.includes(addrs, acc.address))
+}
+
+export async function loadAccount(wallet: WalletType | undefined, tokenTypes: TokenType[], 
+  updateAccountInfo: (info: AccountInfo) => void, updateWrongNetwork: (wrong: boolean) => void): Promise<string> {
   const injected = await web3Enable(originName);
 
   if (!injected.length) {
@@ -98,18 +109,18 @@ export async function loadAccount(wallet: WalletType | undefined, tokenTypes: To
     return "addWallet"
   }
 
-  const mathAccounts: any = await findMathAccount(allAccounts)
-  if (_.isEmpty(mathAccounts)) {
-    return "addWallet"
+  if (invalidWalletNetwork(allAccounts)) {
+    updateWrongNetwork(true)
+    return "change to valid network"
   }
 
-  const tokenAmounts = await loadAllTokenAmount(mathAccounts[0].address, tokenTypes)
+  const tokenAmounts = await loadAllTokenAmount(allAccounts[0].address, tokenTypes)
   if (tokenAmounts === null) {
     return "addWallet"
   }
 
-  const info = createAccountInfo(mathAccounts[0].address, 
-    mathAccounts[0].meta?.name ?? '', 
+  const info = createAccountInfo(allAccounts[0].address, 
+    allAccounts[0].meta?.name ?? '', 
     '' + _.get(wallet, 'name', ''), 
     tokenAmounts ?? [])
     
@@ -118,16 +129,3 @@ export async function loadAccount(wallet: WalletType | undefined, tokenTypes: To
   return 'ok'
 }
 
-async function findMathAccount(allAccounts: InjectedAccountWithMeta[]) {
-  return Promise.all(_.map(allAccounts, async (acc) => {
-    return await web3FromAddress(acc.address)
-  })).then((wallets: InjectedExtension[]) => {
-    return _.filter(_.zipWith(allAccounts, wallets, (a: InjectedAccountWithMeta, w: any) => {
-      if (w && (w.isMathWallet || isCloverWallet(w))) {
-        return a
-      } else {
-        return {}
-      }
-    }), (x) => !_.isEmpty(x))
-  })
-}

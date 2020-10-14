@@ -14,6 +14,7 @@ import './index.css'
 import 'react-toastify/dist/ReactToastify.css';
 import { useApiInited, useApiConnected } from '../../state/api/hooks';
 import InfoModal from './InfoModal';
+import { useWrongNetwork } from '../../state/wallet/hooks';
 
 const ConnectButtonWrapper = styled.div`
   margin-right: 8px;
@@ -99,6 +100,8 @@ export default function WalletComp(): React.ReactElement {
 
   const apiInited = useApiInited()
 
+  const wrongNetwork = useWrongNetwork()
+
   useEffect(() => {
     updateAccountInfo(createEmptyAccountInfo())
   }, [updateAccountInfo]);
@@ -175,7 +178,7 @@ export default function WalletComp(): React.ReactElement {
     return (
       <div>
         {
-          (inited && !apiConnected)? <WarningInfoComp></WarningInfoComp> :
+          ((inited && !apiConnected) || wrongNetwork)? <WarningInfoComp></WarningInfoComp> :
           myInfo.address === '' ? 
             <ConnectButtonWrapper>
               <WalletConnectComp btnStyle='top' onWalletClose={onWalletSelectDialogClose}></WalletConnectComp> 

@@ -9,6 +9,7 @@ import _ from 'lodash'
 import { useAccountInfoUpdate } from '../../state/wallet/hooks'
 import { useTokenTypes } from '../../state/token/hooks';
 import { useApiInited, useApiConnected } from '../../state/api/hooks'
+import { useWrongNetworkUpdate, useWrongNetwork } from '../../state/wallet/hooks'
 import { WalletType } from '../../utils/AccountUtils'
 
 export const Wrapper = styled.div`
@@ -46,6 +47,9 @@ export default function WalletConnectComp({
   const apiInited = useApiInited()
   const apiConnected = useApiConnected()
 
+  const updateWrongNetwork = useWrongNetworkUpdate()
+  const wrongNetwork = useWrongNetwork()
+
   const handleClick = () => {
     setOpen(true)
     onButtonClick && onButtonClick()
@@ -62,7 +66,7 @@ export default function WalletConnectComp({
         // toast('Api is not ready, please try later!')
         return 
       }
-      const msg = await loadAccount(value, myTokenTypes, updateAccountInfo);
+      const msg = await loadAccount(value, myTokenTypes, updateAccountInfo, updateWrongNetwork);
       if (msg !== 'ok') {
         // toast(t(msg))
       }
@@ -70,12 +74,12 @@ export default function WalletConnectComp({
 
     getAcount()
     onWalletClose && onWalletClose(value)
-  }, [apiInited, myTokenTypes, onWalletClose, updateAccountInfo]);
+  }, [apiInited, myTokenTypes, onWalletClose, updateAccountInfo, updateWrongNetwork]);
 
   return (
     <Wrapper>
       {
-        btnStyle === 'bottom' && <PrimitiveButton onClick={handleClick} disabled={!apiInited || !apiConnected}>{t('connectToWallet')}</PrimitiveButton>
+        btnStyle === 'bottom' && <PrimitiveButton onClick={handleClick} disabled={!apiInited || !apiConnected || wrongNetwork}>{t('connectToWallet')}</PrimitiveButton>
       } 
       {
         btnStyle === 'top' && <LittleConnectButton onClick={handleClick} disabled={!apiInited}>{apiInited ? t('connectToWallet') : t('connecting')}</LittleConnectButton>

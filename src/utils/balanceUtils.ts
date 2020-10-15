@@ -7,8 +7,8 @@ const M_LENGTH = 6 + 1;
 
 export function divideBase(value: string): string[] {
   const num = new BN(value)
-  const m = num.mod(base) //小数部分
-  const n = num.div(base) //整数部分
+  const m = num.mod(base)
+  const n = num.div(base)
 
   return [n.toString(), m.toString()]
 }

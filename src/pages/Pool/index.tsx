@@ -151,9 +151,9 @@ export default function Pool(): React.ReactElement {
         return {
           fromToken: _.find(tokenTypes, (tt) => tt.name === fromTokenName.toString()) ?? defaultTokenType,
           toToken: _.find(tokenTypes, (tt) => tt.name === toTokenName.toString()) ?? defaultTokenType,
-          fromAmount: fromAmount.toString(), 
-          toAmount: toAmount.toString(), 
-          userShare: userShare.toString(), 
+          fromAmount: fromAmount.toString(),
+          toAmount: toAmount.toString(),
+          userShare: userShare.toString(),
           userStaked: userStaked.toString(),
           totalShare: totalShare.toString()
         }
@@ -222,42 +222,39 @@ export default function Pool(): React.ReactElement {
               {t('myLiquidityList')}
             </Title>
             {
-              _.isEmpty(userPoolItems) ? <NoLiquidFount>{t('noLiquidity')}</NoLiquidFount> 
+              _.isEmpty(userPoolItems) ? <NoLiquidFount>{t('noLiquidity')}</NoLiquidFount>
                 : <PoolPaireList>
                   {
                     _.map(userPoolItems, (item) => (
                     <PoolPairItem item={item} key={item.fromToken.name + item.toToken.name}
                       onAddClick={handleClick}
                       onRemoveClick={handleRemoveClick}
-                      selectedItem={selectedItem} 
+                      selectedItem={selectedItem}
                       onSelectItem={setSeletedItem}></PoolPairItem>))
                   }
                 </PoolPaireList>
             }
-            
           </Column>
         </Wrapper>
         <ButtonWrapper>
         {
-          _.isEmpty(myInfo.address) ? <WalletConnectComp></WalletConnectComp> 
+          _.isEmpty(myInfo.address) ? <WalletConnectComp></WalletConnectComp>
           : <PrimitiveButton onClick={handleClick} disabled={disabled}>{t('addLiquidity')}</PrimitiveButton>
         }
         </ButtonWrapper>
-        
-        
-        <AddLiquidModal isOpen={addLiquidModalOpen} 
+        <AddLiquidModal isOpen={addLiquidModalOpen}
           fromTokenType={selectedItem.fromToken.id < 0 ? undefined : selectedItem.fromToken}
           toTokenType={selectedItem.toToken.id < 0 ? undefined : selectedItem.toToken}
           onClose={onAddLiquidModalClose}></AddLiquidModal>
-        <LiquidAddConfirmModal 
-          isOpen={liquidAddConfirmModalOpen}  
+        <LiquidAddConfirmModal
+          isOpen={liquidAddConfirmModalOpen}
           fromToken={dataFromAddLiquid.fromToken}
           toToken={dataFromAddLiquid.toToken}
           fromAmount={dataFromAddLiquid.fromAmount}
           toAmount={dataFromAddLiquid.toAmount}
           onClose={onLiquidAddConfirmModalClose}></LiquidAddConfirmModal>
-        <RemoveLiquidModal 
-          isOpen={removeLiquidModalOpen} 
+        <RemoveLiquidModal
+          isOpen={removeLiquidModalOpen}
           fromTokenType={selectedItem.fromToken}
           toTokenType={selectedItem.toToken}
           onClose={onRemoveLiquidModalClose}></RemoveLiquidModal>

@@ -19,12 +19,15 @@ export function times(bigNum1: string, bigNum2: string): string {
 export function div(bigNum1: string, bigNum2: string, usePercentage = false): string {
   const bigNum1BN = new BN(bigNum1, 10);
   const bigNum2BN = new BN(bigNum2, 10);
+  try {
+    if (usePercentage) {
+      return trimEnd0(bigNum1BN.div(bigNum2BN).times(new BN(100, 10)).toFixed(12))
+    }
 
-  if (usePercentage) {
-    return trimEnd0(bigNum1BN.div(bigNum2BN).times(new BN(100, 10)).toFixed(12))
+    return trimEnd0(bigNum1BN.div(bigNum2BN).toFixed(12))
+  } catch(ex) {
+    return '0'
   }
-
-  return trimEnd0(bigNum1BN.div(bigNum2BN).toFixed(12))
 }
 
 export function minus(bigNum1: string, bigNum2: string) {
@@ -41,7 +44,11 @@ export function toFixed(number: string, fixedNum: number): string {
 
 export function toFixedWithTrim(number: string, fixedNum: number): string {
   const bn = new BN(number, 10)
-  return trimEnd0(bn.toFixed(fixedNum))
+  try {
+    return trimEnd0(bn.toFixed(fixedNum))
+  } catch(ex) {
+    return '0'
+  }
 }
 
 export const defaultBase = '1000000000000';

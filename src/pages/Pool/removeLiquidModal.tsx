@@ -142,7 +142,7 @@ export default function RemoveLiquidModal({isOpen, onClose, fromTokenType, toTok
       fromTotal = BigNum.fromBigNum(item?.toAmount ?? '')
       toTotal = BigNum.fromBigNum(item?.fromAmount ?? '')
     }
-    
+
     const t1AmountBN = BigNum.fromBigNum(div(times(removeAmountBN.bigNum, fromTotal.bigNum), totalShareBN.bigNum))
     const t2AmountBN = BigNum.fromBigNum(div(times(removeAmountBN.bigNum, toTotal.bigNum), totalShareBN.bigNum))
     return {

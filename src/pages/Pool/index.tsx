@@ -242,22 +242,31 @@ export default function Pool(): React.ReactElement {
           : <PrimitiveButton onClick={handleClick} disabled={disabled}>{t('addLiquidity')}</PrimitiveButton>
         }
         </ButtonWrapper>
-        <AddLiquidModal isOpen={addLiquidModalOpen}
-          fromTokenType={selectedItem.fromToken.id < 0 ? undefined : selectedItem.fromToken}
-          toTokenType={selectedItem.toToken.id < 0 ? undefined : selectedItem.toToken}
-          onClose={onAddLiquidModalClose}></AddLiquidModal>
-        <LiquidAddConfirmModal
-          isOpen={liquidAddConfirmModalOpen}
-          fromToken={dataFromAddLiquid.fromToken}
-          toToken={dataFromAddLiquid.toToken}
-          fromAmount={dataFromAddLiquid.fromAmount}
-          toAmount={dataFromAddLiquid.toAmount}
-          onClose={onLiquidAddConfirmModalClose}></LiquidAddConfirmModal>
-        <RemoveLiquidModal
-          isOpen={removeLiquidModalOpen}
-          fromTokenType={selectedItem.fromToken}
-          toTokenType={selectedItem.toToken}
-          onClose={onRemoveLiquidModalClose}></RemoveLiquidModal>
+          {
+            addLiquidModalOpen && 
+            <AddLiquidModal isOpen={addLiquidModalOpen}
+              fromTokenType={selectedItem.fromToken.id < 0 ? undefined : selectedItem.fromToken}
+              toTokenType={selectedItem.toToken.id < 0 ? undefined : selectedItem.toToken}
+              onClose={onAddLiquidModalClose}></AddLiquidModal>
+          }
+          {
+            liquidAddConfirmModalOpen && 
+            <LiquidAddConfirmModal
+              isOpen={liquidAddConfirmModalOpen}
+              fromToken={dataFromAddLiquid.fromToken}
+              toToken={dataFromAddLiquid.toToken}
+              fromAmount={dataFromAddLiquid.fromAmount}
+              toAmount={dataFromAddLiquid.toAmount}
+              onClose={onLiquidAddConfirmModalClose}></LiquidAddConfirmModal>
+          }
+          {
+            removeLiquidModalOpen &&
+            <RemoveLiquidModal
+              isOpen={removeLiquidModalOpen}
+              fromTokenType={selectedItem.fromToken}
+              toTokenType={selectedItem.toToken}
+              onClose={onRemoveLiquidModalClose}></RemoveLiquidModal>
+          }
         <TransferStateModal isOpen={transferStateModalOpen} onClose={() => setTransferStateModalOpen(false)}></TransferStateModal>
         </ContentWrapper>
       </BodyWrapper>

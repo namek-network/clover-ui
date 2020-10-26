@@ -573,34 +573,47 @@ export default function Farm(): React.ReactElement {
         </FarmPlantWrapper>
       }
 
-      <AddLiquidModal isOpen={addLiquidModalOpen} 
-        fromTokenType={fromToken}
-        toTokenType={toToken}
-        onClose={onAddLiquidModalClose}></AddLiquidModal>
-      <LiquidAddConfirmModal 
-        isOpen={liquidAddConfirmModalOpen}  
-        fromToken={dataFromAddLiquid.fromToken}
-        toToken={dataFromAddLiquid.toToken}
-        fromAmount={dataFromAddLiquid.fromAmount}
-        toAmount={dataFromAddLiquid.toAmount}
-        onClose={onLiquidAddConfirmModalClose}></LiquidAddConfirmModal>
-      <DepositModal isOpen={depositModalOpen} 
-        fromTokenType={fromToken}
-        toTokenType={toToken}
-        balanceAmount={_.isEmpty(showData) ? '0' : showData[1].amount}
-        onClose={onDepositModalClose}></DepositModal>
-      <WithdrawAndClaimModal isOpen={withdrawAndClaimModalOpen}
-        fromTokenType={fromToken}
-        toTokenType={toToken}
-        balanceAmount={_.isEmpty(showData) ? '0' : showData[2].amount}
-        unClaimedAmount={_.isEmpty(showData) ? '0' : showData[3].amount}
-        onClose={onWithdrawAndClaimModalClose}></WithdrawAndClaimModal>
-      <ClaimModal 
-        isOpen={claimModalOpen}
-        fromTokenType={fromToken}
-        toTokenType={toToken}
-        balanceAmount={_.isEmpty(showData) ? '0' : showData[3].amount} 
-        onClose={onClaimModalClose}></ClaimModal>
+        {
+          addLiquidModalOpen &&
+          <AddLiquidModal isOpen={addLiquidModalOpen} 
+                fromTokenType={fromToken}
+                toTokenType={toToken}
+                onClose={onAddLiquidModalClose}></AddLiquidModal>
+        }
+        {
+          liquidAddConfirmModalOpen && 
+          <LiquidAddConfirmModal 
+            isOpen={liquidAddConfirmModalOpen}  
+            fromToken={dataFromAddLiquid.fromToken}
+            toToken={dataFromAddLiquid.toToken}
+            fromAmount={dataFromAddLiquid.fromAmount}
+            toAmount={dataFromAddLiquid.toAmount}
+            onClose={onLiquidAddConfirmModalClose}></LiquidAddConfirmModal>
+        }
+        {
+          depositModalOpen && <DepositModal isOpen={depositModalOpen} 
+          fromTokenType={fromToken}
+          toTokenType={toToken}
+          balanceAmount={_.isEmpty(showData) ? '0' : showData[1].amount}
+          onClose={onDepositModalClose}></DepositModal>
+        }
+        {
+          withdrawAndClaimModalOpen && <WithdrawAndClaimModal isOpen={withdrawAndClaimModalOpen}
+          fromTokenType={fromToken}
+          toTokenType={toToken}
+          balanceAmount={_.isEmpty(showData) ? '0' : showData[2].amount}
+          unClaimedAmount={_.isEmpty(showData) ? '0' : showData[3].amount}
+          onClose={onWithdrawAndClaimModalClose}></WithdrawAndClaimModal>
+        }
+        {
+          claimModalOpen && <ClaimModal 
+          isOpen={claimModalOpen}
+          fromTokenType={fromToken}
+          toTokenType={toToken}
+          balanceAmount={_.isEmpty(showData) ? '0' : showData[3].amount} 
+          onClose={onClaimModalClose}></ClaimModal>
+        }
+      
       <TransferStateModal isOpen={transferStateModalOpen} onClose={() => setTransferStateModalOpen(false)}></TransferStateModal>
       
     </BodyWrapper>

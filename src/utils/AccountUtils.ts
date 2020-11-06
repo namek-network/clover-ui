@@ -59,7 +59,7 @@ export async function loadAllTokenAmount(addr: string, tokenTypes: TokenType[]):
   if (_.isEmpty(ret)) {
     return null
   }
-  
+
   const types =  _.map(ret, (arr) => {
     const [type, amount] = arr
     return {
@@ -76,7 +76,7 @@ export async function loadAllTokenAmount(addr: string, tokenTypes: TokenType[]):
 }
 
 function isCloverWallet(injectedWallet: any) {
-  return injectedWallet.name === 'enzyme'
+  return injectedWallet.name === 'clover'
 }
 
 function invalidWalletNetwork(allAccounts: InjectedAccountWithMeta[]): boolean {
@@ -88,7 +88,7 @@ function invalidWalletNetwork(allAccounts: InjectedAccountWithMeta[]): boolean {
   return _.some(allAccounts, (acc) => !_.includes(addrs, acc.address))
 }
 
-export async function loadAccount(wallet: WalletType | undefined, tokenTypes: TokenType[], 
+export async function loadAccount(wallet: WalletType | undefined, tokenTypes: TokenType[],
   updateAccountInfo: (info: AccountInfo) => void, updateWrongNetwork: (wrong: boolean) => void): Promise<string> {
   const injected = await web3Enable(originName);
 
@@ -119,11 +119,11 @@ export async function loadAccount(wallet: WalletType | undefined, tokenTypes: To
     return "addWallet"
   }
 
-  const info = createAccountInfo(allAccounts[0].address, 
-    allAccounts[0].meta?.name ?? '', 
-    '' + _.get(wallet, 'name', ''), 
+  const info = createAccountInfo(allAccounts[0].address,
+    allAccounts[0].meta?.name ?? '',
+    '' + _.get(wallet, 'name', ''),
     tokenAmounts ?? [])
-    
+
   updateAccountInfo(info)
 
   return 'ok'

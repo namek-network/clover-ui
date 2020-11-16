@@ -38,10 +38,12 @@ const BodyWrapper = styled(Column)`
 const Wrapper = styled(ColumnCenter)`
   padding: 30px 27px 16px 24px;
   overflow: auto;
+  display: flex;
 `
 
 const RowWrapper = styled(RowBetween)`
   margin-top: 8px;
+  flex-shrink: 0;
 `
 
 const RowLeft = styled.div`
@@ -54,6 +56,7 @@ const RowRight = styled.div`
 
 const Button = styled(PrimitiveButton)`
   margin-top: 32px;
+  flex-shrink: 0;
 }`
 
 interface WithdrawAndClaimProps {
@@ -155,7 +158,7 @@ export default function WithdrawAndClaimModal({isOpen, onClose, fromTokenType, t
       <Modal isOpen={isOpen} onDismiss={() => {''}} maxHeight={90} customStyle={customStyle}>
         <BodyWrapper>
           <Head>
-            <Title>{t('deposit')}</Title>
+            <Title>{t('withdrawAndClaim')}</Title>
             <CloseButton onClick={() => onClose('close')}><i className="fa fo-x"></i></CloseButton>
           </Head>
           <Wrapper>

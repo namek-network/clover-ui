@@ -8,6 +8,12 @@ import { originName } from '../constants'
 import keyring from '@polkadot/ui-keyring';
 import _ from 'lodash'
 
+declare global {
+  interface Window {
+      send:any;
+  }
+}
+
 export interface WalletType {
   name: string,
   showName: string,
@@ -80,7 +86,7 @@ export async function loadAllTokenAmount(addr: string, tokenTypes: TokenType[]):
 }
 
 function isCloverWallet(injectedWallet: any) {
-  return injectedWallet.name === 'clover'
+  return injectedWallet.name === 'clover' || injectedWallet.name === 'cloverwallet'
 }
 
 function isPolkadotWallet(injectedWallet: any) {
@@ -100,6 +106,7 @@ export async function loadAccount(wallet: WalletType | undefined, tokenTypes: To
   updateAccountInfo: (info: AccountInfo) => void, updateWrongNetwork: (wrong: boolean) => void): Promise<string> {
   const injected = await web3Enable(originName);
 
+  window.send && window.send("log", injected)
   if (!injected.length) {
     return "notFoundWallet";
   }
@@ -113,6 +120,8 @@ export async function loadAccount(wallet: WalletType | undefined, tokenTypes: To
   }
 
   const allAccounts = await web3Accounts();
+
+  window.send && window.send("log", allAccounts)
 
   if (!allAccounts.length) {
     return "addWallet"

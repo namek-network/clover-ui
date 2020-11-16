@@ -38,10 +38,12 @@ const BodyWrapper = styled(Column)`
 const Wrapper = styled(ColumnCenter)`
   padding: 30px 27px 16px 24px;
   overflow: auto;
+  display: flex;
 `
 
 export const Button = styled(PrimitiveButton)`
   margin-top: 32px;
+  flex-shrink: 0;
 }`
 
 interface DepositModalProps {

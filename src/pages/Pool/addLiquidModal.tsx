@@ -45,6 +45,7 @@ const BodyWrapper = styled(Column)`
 `
 
 const Wrapper = styled(ColumnCenter)`
+  display: flex;
   padding: 12px 27px 16px 24px;
   overflow: auto;
 `
@@ -65,10 +66,12 @@ const CirclePlus = styled.div`
 `
 
 export const Button = styled(PrimitiveButton)`
+  flex-shrink: 0;
   margin-top: 12px;
 }`
 
 const ContentWrapper = styled(Column)`
+  flex-shrink: 0;
   background: #F9FAFB;
   margin-top: 9px;
   width: 100%;
@@ -120,6 +123,7 @@ const TipText = styled.div`
 const TipWrapper = styled(Row)`
   align-items: start;
   margin-top: 9px;
+  flex-shrink: 0;
 `
 
 const CircleInfo = styled(Circle)`

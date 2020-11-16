@@ -37,10 +37,12 @@ const BodyWrapper = styled(Column)`
 const Wrapper = styled(ColumnCenter)`
   padding: 0 27px 16px 24px;
   overflow: auto;
+  display: flex;
 `
 
 const Button = styled(PrimitiveButton)`
   margin-top: 32px;
+  flex-shrink: 0;
 }`
 
 const Amount1Text = styled.div`
@@ -117,7 +119,7 @@ export default function ClaimModal({isOpen, onClose, fromTokenType, toTokenType,
       <Modal isOpen={isOpen} onDismiss={() => {''}} maxHeight={90} customStyle={customStyle}>
         <BodyWrapper>
           <Head>
-            <Title>{t('deposit')}</Title>
+            <Title>{t('claim')}</Title>
             <CloseButton onClick={() => onClose('close')}><i className="fa fo-x"></i></CloseButton>
           </Head>
           <Wrapper>

@@ -10,7 +10,7 @@ import { useSwapTransStateUpdate } from '../../state/swap/hooks';
 import Modal from '../../components/Modal'
 import Column, { AutoColumn } from '../../components/Column'
 import { AutoRow, RowBetween, RowFixed } from '../../components/Row'
-import { ButtonBigCommon } from '../../components/Button';
+import { PrimitiveButton } from '../../components/Button';
 import CurrencyLogo from '../../components/CurrencyLogo'
 import sysConfig from '../../configs/sysConfig';
 import swapUtils from '../../utils/swapUtils';
@@ -212,7 +212,7 @@ export default function SwapConfirmModal({
 
           </TransactionInfoPanel>
 
-          <ButtonBigCommon onClick={handleConfirmSwap}>{t('confirmSwap')}</ButtonBigCommon>
+          <PrimitiveButton onClick={handleConfirmSwap}>{t('confirmSwap')}</PrimitiveButton>
 
         </PaddedColumn>
       </Column>

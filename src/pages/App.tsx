@@ -1,5 +1,4 @@
 import React, { Suspense, useEffect, useCallback } from 'react'
-import _ from 'lodash'
 import { HashRouter, Route, Switch } from 'react-router-dom'
 import styled from 'styled-components'
 import { isMobile } from 'react-device-detect'
@@ -8,6 +7,8 @@ import { loadAllPools, loadCurrencyPair, loadTokenTypes, subscribeToEvents } fro
 import { useTokenTypes, useTokenTypesUpdate, useCurrencyPairUpdate } from '../state/token/hooks'
 import { useStakePoolItemsUpdate } from '../state/farm/hooks'
 import { ToastContainer, Slide } from 'react-toastify';
+import { loadAccount } from '../utils/AccountUtils';
+import { useWrongNetworkUpdate } from '../state/wallet/hooks'
 
 import { useApiConnectedUpdate, useApiInited, useApiInitedUpdate } from '../state/api/hooks'
 import { useAccountInfo, useAccountInfoUpdate } from '../state/wallet/hooks'
@@ -65,7 +66,7 @@ export default function App(): React.ReactElement {
   const updateCurrencyPair = useCurrencyPairUpdate()
   const udateStakePoolItems = useStakePoolItemsUpdate()
   const updateAccountInfo = useAccountInfoUpdate()
-
+  const updateWrongNetwork = useWrongNetworkUpdate()
 
   const initPolkaApi = useCallback(async () => {
     await initApi(onApiInited, () => {updateApiConnected(true)}, () => {updateApiConnected(false)})
@@ -94,11 +95,19 @@ export default function App(): React.ReactElement {
   }, [apiInited, udateStakePoolItems, accountInfo, tokenTypes, updateAccountInfo])
 
   useEffect(() => {
-    if (_.isEmpty(accountInfo.address)) {
+    if (!apiInited) {
       return
     }
+
+    async function getAcount() {
+      await loadAccount(undefined, tokenTypes, updateAccountInfo, updateWrongNetwork);
+    }
+
+    if (isMobile) {
+      getAcount()
+    }
     
-  }, [accountInfo])
+  }, [apiInited, tokenTypes, updateAccountInfo, updateWrongNetwork])
   
   return (
     <Suspense fallback={null}>

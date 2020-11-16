@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
 import { BigNumber as BN } from "bignumber.js"
-import { ButtonBigCommon } from '../../components/Button'
+import { ButtonBigCommon, PrimitiveButton } from '../../components/Button'
 import { AutoColumn } from '../../components/Column'
 import { AutoRow, RowFixed } from '../../components/Row'
 import AppBody, { AppContentWrapper } from '../AppBody'
@@ -325,7 +325,7 @@ export default function Swap(): React.ReactElement {
             <WalletConnectComp></WalletConnectComp>
           }
           {!insufficientLiquidity && walletConnected &&
-            <ButtonBigCommon disabled={!swapEnabled} onClick={() => setSwapConfirmModalOpen(true)}>{t('swap')}</ButtonBigCommon>
+            <PrimitiveButton disabled={!swapEnabled} onClick={() => setSwapConfirmModalOpen(true)}>{t('swap')}</PrimitiveButton>
           }
         </BottomGrouping>
 

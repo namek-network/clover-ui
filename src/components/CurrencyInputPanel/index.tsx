@@ -11,6 +11,7 @@ import { escapeRegExp } from '../../utils'
 import { PairIconTitle } from '../../pages/Pool/poolPairItem'
 
 const InputPanel = styled.div<{ customStyle: string|undefined }>`
+  flex-shrink: 0;
   display: flex;
   flex-flow: column nowrap;
   position: relative;

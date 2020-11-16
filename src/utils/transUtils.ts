@@ -148,16 +148,15 @@ export async function doTransaction(transName: string, args:any[], accountAddr: 
   api.getApi().setSigner(signer)
 
   let unsub: () => void = () => {''};
-
   try {
     unsub = await api.getTransFunction(transName)(...args)
     .signAndSend(accountAddr, (params: any) => {
       console.log('Transaction status:', params.status.type);
-  
+
       if (params.status.isInBlock) {
         console.log('Completed at block hash', params.status.asInBlock.toHex());
         console.log('Events:');
-  
+
         params.events.forEach((event: any/*{ phase, event: { data, method, section } }*/) => {
           console.log(`${event.phase.toString()}, ${event.event.methohd}, ${event.event.section},${event.event.data.toString()}` );
         });
@@ -165,10 +164,10 @@ export async function doTransaction(transName: string, args:any[], accountAddr: 
           const payload = extractPayload(transName, params.events, accountAddr)
           onEnd('complete', `${params.status.asInBlock.toHex()}`, payload)
         } catch (e) {
-          console.log(e)
+          console.error(e)
           onEnd('error')
         }
-        
+
         unsub()
       }
     });
@@ -179,9 +178,9 @@ export async function doTransaction(transName: string, args:any[], accountAddr: 
     } else {
       onEnd('error')
     }
-    
+
     if (!_.isEmpty(unsub)) {
       unsub()
-    } 
+    }
   }
 }

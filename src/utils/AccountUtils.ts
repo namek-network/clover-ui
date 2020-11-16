@@ -30,6 +30,10 @@ export const supportedWalletTypes = [{
     name: 'Clover Wallet',
     showName: 'Clover',
     icon: require('../assets/images/icon-clover.svg')
+  }, {
+    name: 'Polkadot Wallet',
+    showName: 'polkadot-js',
+    icon: require('../assets/images/icon-polkadot.svg')
   }];
 
 export function getAddress (addr: string): string {
@@ -79,6 +83,10 @@ function isCloverWallet(injectedWallet: any) {
   return injectedWallet.name === 'clover'
 }
 
+function isPolkadotWallet(injectedWallet: any) {
+  return injectedWallet.name === 'polkadot-js'
+}
+
 function invalidWalletNetwork(allAccounts: InjectedAccountWithMeta[]): boolean {
   keyring.loadAll({ ss58Format: 42, type: 'ed25519' }, allAccounts);
 
@@ -99,7 +107,8 @@ export async function loadAccount(wallet: WalletType | undefined, tokenTypes: To
   /* eslint-disable  @typescript-eslint/no-explicit-any */
   const mathWallet = _.find(injected, (w: any) => w.isMathWallet === true)
   const cloverWallet: any = _.find(injected, (w: any) => isCloverWallet(w))
-  if (_.isEmpty(mathWallet) && _.isEmpty(cloverWallet)) {
+  const polkadotWallet: any = _.find(injected, (w: any) => isPolkadotWallet(w))
+  if (_.isEmpty(mathWallet) && _.isEmpty(cloverWallet) && _.isEmpty(polkadotWallet)) {
     return "notFoundWallet";
   }
 

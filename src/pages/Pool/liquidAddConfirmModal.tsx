@@ -98,13 +98,13 @@ export default function LiquidAddConfirmModal({isOpen, onClose, fromToken, toTok
   const accountInfo = useAccountInfo()
 
   const transStateUpdate = useTransStateUpdate()
-  
+
   useEffect(() => {
     const loadShareFromServer = async (inited: boolean, fromToken: TokenType, toToken: TokenType, fromAmount: BigNum, toAmount: BigNum) => {
       if (!inited || _.isEmpty(fromToken.name) || _.isEmpty(toToken.name)) {
         return
       }
-      
+
       const ret = await api.toAddLiquidity(fromToken.name, toToken.name, fromAmount.bigNum, toAmount.bigNum)
       setShareAmount(BigNum.fromBigNum(ret[0]).realNum)
 
@@ -143,7 +143,7 @@ export default function LiquidAddConfirmModal({isOpen, onClose, fromToken, toTok
 
     let amountText = `Supplying ${fromAmount.realNum} ${fromToken.name} and  ${toAmount.realNum} ${toToken.name}`
     const onStart = () => {
-      transStateUpdate({stateText: 'Waiting for Confrimation', amountText, status: 'start'})
+      transStateUpdate({stateText: 'Waiting for Confirmation', amountText, status: 'start'})
     }
     const onEnd = (state: string, blockHash?: string, payload?: any) => {
       let stateText = ''
@@ -194,7 +194,7 @@ export default function LiquidAddConfirmModal({isOpen, onClose, fromToken, toTok
               <PairText>{`${fromToken.name}/${toToken.name} Tokens`}</PairText>
               <TipText>Output is estimated. If the price changes by more than 0.5%. your transaction will revert.</TipText>
             </Wrapper>
-            
+
             <Wrapper>
               <PairContentWrapper>
                 <PairTransContent contents={showData}></PairTransContent>

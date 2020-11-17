@@ -192,7 +192,7 @@ export default function RemoveLiquidModal({isOpen, onClose, fromTokenType, toTok
 
     let amountText = `Withdrawing ${fromTokenType?.name ?? ''}/${toTokenType?.name ?? ''} Tokens ${amountBN.realNum}`
     const onStart = () => {
-      transStateUpdate({stateText: 'Waiting for Confrimation', amountText, status: 'start'})
+      transStateUpdate({stateText: 'Waiting for Confirmation', amountText, status: 'start'})
     }
     const onEnd = (state: string, blockHash?: string, payload?: any) => {
       let stateText = ''
@@ -216,7 +216,7 @@ export default function RemoveLiquidModal({isOpen, onClose, fromTokenType, toTok
     doTransaction('withdrawLiquidity', [fromTokenType?.id ?? -1, toTokenType?.id ?? -1, amountBN.bigNum], accountInfo.address, onError, onStart, onEnd)
 
   }, [fromTokenType, toTokenType, inputShareAmount, accountInfo, onClose, transStateUpdate])
-  
+
   useEffect(() => {
     const item = findPairItem(userPoolItems, fromTokenType, toTokenType)
     setBalanceAmount(BigNum.fromBigNum(item?.userShare ?? '').realNum)
@@ -241,7 +241,7 @@ export default function RemoveLiquidModal({isOpen, onClose, fromTokenType, toTok
       fromTotal = BigNum.fromBigNum(item?.toAmount ?? '')
       toTotal = BigNum.fromBigNum(item?.fromAmount ?? '')
     }
-    
+
     const rate = div(fromTotal.bigNum, toTotal.bigNum)
     const percent = totalBN.eq(BigNum.Zero) ? '-' : div(inputBN.bigNum, totalBN.bigNum, true)
 
@@ -281,7 +281,7 @@ export default function RemoveLiquidModal({isOpen, onClose, fromTokenType, toTok
               insufficientBalance={insufficientBalance}
               customStyle={'width: 100%;'}
               forPair={true}
-              tokenPair={{fromToken: fromTokenType ?? defaultTokenType, 
+              tokenPair={{fromToken: fromTokenType ?? defaultTokenType,
                 toToken: toTokenType ?? defaultTokenType}}
             />
             <CirclePlus><i className="fa fo-arrow-down"></i></CirclePlus>

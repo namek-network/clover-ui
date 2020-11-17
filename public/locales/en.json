@@ -32,7 +32,7 @@
   "confirmSwapFrom": "From",
   "confirmSwapTo": "To",
   "confirmSwapHint": "Output is estimated. If the price changes by more than 0.5%. your transaction will revert.",
-  "swapTransactionStarted": "Waiting for Confrimation",
+  "swapTransactionStarted": "Waiting for Confirmation",
   "swapTransactionSuccess": "Transaction Submitted",
   "swapTransactionFailed": "Transaction Failed",
   "viewOnSubscan": "View on Subscan",

@@ -108,10 +108,8 @@ export const initApi = async (onInited: () => void, onConnected: () => void, onD
     return
   }
 
-  const wsProvider = new WsProvider('wss://api.jisand.com');
-  // const wsProvider = new WsProvider('wss://api.ownstack.cn');
-  // const wsProvider = new WsProvider('ws://10.47.61.199:9944');
-  
+  const wsProvider = new WsProvider('wss://api.ownstack.cn');
+
   const theApi = await ApiPromise.create({ provider: wsProvider, types, rpc: {
     incentive: {
       getAllPools: {
